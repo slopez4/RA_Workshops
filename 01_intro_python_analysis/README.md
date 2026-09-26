@@ -1,6 +1,7 @@
 # Workshop 1 — Intro to Simple Analysis Scripts in Python
 
 **Session:** 09/28 · **Length:** 30–40 min · **No installation needed**
+
 **📊 Slides / reference guide:** [open the slides](https://slopez4.github.io/RA_Workshops/01_intro_python_analysis/slides.html) — keep it open while you work (press `R` to switch between slide view and a scrollable reference page).
 
 In this workshop you'll write a short Python analysis of a (fake) reward experiment:
