@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your First Analysis Script</title>
+<meta name="description" content="Slides and reference for Workshop 1: an intro to simple Python analysis scripts using a mock reward experiment.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;750&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --ink: #1d2230;
+  --muted: #5d6475;
+  --line: #e3e0d8;
+  --accent: #2f6fdf;
+  --accent-soft: #e6eefc;
+  --think: #fff5d6;
+  --think-line: #e9c85a;
+  --code-bg: #f3f1ec;
+  --c-comment: #7a8091;
+  --c-string: #1f7a4d;
+  --c-keyword: #8a3ab9;
+  --c-number: #b3541e;
+  --c-blank: #d9432f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161c;
+    --surface: #1b1e26;
+    --ink: #e8e9ee;
+    --muted: #a0a6b5;
+    --line: #2d313c;
+    --accent: #7fa8ff;
+    --accent-soft: #1f2a42;
+    --think: #2c2715;
+    --think-line: #8c7427;
+    --code-bg: #20232c;
+    --c-comment: #8990a1;
+    --c-string: #7fd1a3;
+    --c-keyword: #d19bf2;
+    --c-number: #f0a36e;
+    --c-blank: #ff7a66;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14161c;
+  --surface: #1b1e26;
+  --ink: #e8e9ee;
+  --muted: #a0a6b5;
+  --line: #2d313c;
+  --accent: #7fa8ff;
+  --accent-soft: #1f2a42;
+  --think: #2c2715;
+  --think-line: #8c7427;
+  --code-bg: #20232c;
+  --c-comment: #8990a1;
+  --c-string: #7fd1a3;
+  --c-keyword: #d19bf2;
+  --c-number: #f0a36e;
+  --c-blank: #ff7a66;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.45;
+}
+a { color: var(--accent); }
+h1, h2, h3 { line-height: 1.15; margin: 0 0 0.5em; letter-spacing: -0.01em; }
+h1 { font-size: 2.6em; font-weight: 750; }
+h2 { font-size: 1.75em; font-weight: 750; }
+h3 { font-size: 1.1em; font-weight: 600; color: var(--muted); margin-top: 0.8em; }
+p, ul, ol { margin: 0 0 0.7em; }
+li { margin: 0.2em 0; }
+.kicker {
+  font-size: 0.72em; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.6em;
+}
+.muted { color: var(--muted); }
+.big { font-size: 1.25em; }
+
+code, pre { font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; font-variant-ligatures: none; }
+:not(pre) > code {
+  background: var(--code-bg); padding: 0.08em 0.35em; border-radius: 4px; font-size: 0.9em;
+}
+pre {
+  background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+  padding: 0.85em 1.1em; margin: 0 0 0.8em; font-size: 0.8em; line-height: 1.55;
+  overflow-x: auto; white-space: pre;
+}
+.tok-c { color: var(--c-comment); font-style: italic; }
+.tok-s { color: var(--c-string); }
+.tok-k { color: var(--c-keyword); font-weight: 600; }
+.tok-n { color: var(--c-number); }
+.tok-b { color: var(--c-blank); font-weight: 600; background: color-mix(in srgb, var(--c-blank) 14%, transparent); border-radius: 3px; }
+
+table { border-collapse: collapse; width: 100%; margin: 0 0 0.8em; font-size: 0.82em; }
+th, td { text-align: left; padding: 0.4em 0.7em; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.think {
+  background: var(--think); border-left: 4px solid var(--think-line);
+  border-radius: 8px; padding: 0.7em 1em; margin: 0 0 0.8em;
+}
+.think::before { content: "🤔 Think"; display: block; font-weight: 600; font-size: 0.8em; margin-bottom: 0.25em; }
+.think p:last-child, .think ul:last-child, .think ol:last-child { margin-bottom: 0; }
+
+details.reveal {
+  border: 1px dashed var(--line); border-radius: 8px; padding: 0.5em 0.9em; margin: 0 0 0.8em;
+}
+details.reveal summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+details.reveal[open] summary { margin-bottom: 0.5em; }
+
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6em; align-items: start; }
+.btn {
+  display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+  padding: 0.55em 1.1em; border-radius: 8px; font-weight: 600;
+}
+:root[data-theme="dark"] .btn { color: #0d1220; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn { color: #0d1220; } }
+.steps { counter-reset: s; list-style: none; padding: 0; }
+.steps li { counter-increment: s; padding-left: 2.2em; position: relative; margin: 0.45em 0; }
+.steps li::before {
+  content: counter(s); position: absolute; left: 0; top: 0.05em;
+  width: 1.5em; height: 1.5em; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+  display: grid; place-items: center; font-weight: 700; font-size: 0.85em;
+}
+.pill {
+  display: inline-block; font-size: 0.72em; font-weight: 600; padding: 0.15em 0.6em; border-radius: 99px;
+  background: var(--accent-soft); color: var(--accent); vertical-align: middle;
+}
+
+/* ---------- Top bar ---------- */
+.bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 1rem;
+  font-size: 14px; background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(6px); border-bottom: 1px solid var(--line);
+}
+.bar .title { font-weight: 600; margin-right: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar button {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 6px; padding: 0.3rem 0.7rem; cursor: pointer;
+}
+.bar button:hover { border-color: var(--accent); }
+.progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 11; transition: width .2s; }
+
+/* ---------- Slide mode ---------- */
+body.mode-slides { overflow: hidden; }
+body.mode-slides .slide {
+  display: none; position: fixed; inset: 0; padding: 7vh 7vw 7vh;
+  font-size: min(1.75vw, 2.85vh); overflow-y: auto;
+  flex-direction: column;
+}
+body.mode-slides .slide.active { display: flex; }
+body.mode-slides .slide > .inner { max-width: 56em; width: 100%; margin: auto; }
+body.mode-slides .toc, body.mode-slides .ref-only { display: none; }
+body.mode-slides .bar { opacity: 0.25; transition: opacity .2s; }
+body.mode-slides .bar:hover, body.mode-slides .bar:focus-within { opacity: 1; }
+.slide-num { position: fixed; right: 1.2rem; bottom: 0.9rem; font-size: 13px; color: var(--muted); }
+body.mode-ref .slide-num, body.mode-ref .nav { display: none; }
+.nav { position: fixed; bottom: 0.7rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.4rem; }
+.nav button {
+  font-size: 18px; width: 2.2rem; height: 2.2rem; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); opacity: 0.5;
+}
+.nav button:hover { opacity: 1; }
+
+/* ---------- Reference mode ---------- */
+body.mode-ref { font-size: 17px; }
+body.mode-ref main { max-width: 880px; margin: 0 auto; padding: 4.2rem 16px 4rem; }
+body.mode-ref .slide {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 1.6em 1.8em; margin: 0 0 1.2rem; scroll-margin-top: 4rem;
+}
+body.mode-ref h1 { font-size: 2.1em; }
+body.mode-ref h2 { font-size: 1.45em; }
+.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.2em 1.6em; margin: 0 0 1.2rem; }
+.toc h2 { font-size: 1.1em; }
+.toc ol { columns: 2; column-gap: 2em; padding-left: 1.3em; margin: 0; font-size: 0.92em; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+
+@media (max-width: 700px) {
+  body.mode-ref .slide { padding: 1.1em 1em; }
+  .cols { grid-template-columns: 1fr; gap: 0; }
+  .toc ol { columns: 1; }
+  pre { font-size: 0.74em; }
+  table { font-size: 0.78em; }
+  th, td { padding: 0.35em 0.4em; }
+  .bar .title { font-size: 13px; }
+}
+@media print {
+  .bar, .nav, .slide-num, .progress { display: none !important; }
+}
+</style>
+</head>
+<body class="mode-slides">
+<div class="progress" id="progress"></div>
+<div class="bar">
+  <span class="title">Workshop 1 · Your First Analysis Script</span>
+  <button id="modeBtn" title="Switch view (R)">📖 Reference view</button>
+  <button id="themeBtn" title="Toggle light/dark">◐</button>
+</div>
+
+<main id="deck">
+
+<nav class="toc ref-only" id="toc">
+  <h2>Contents</h2>
+  <ol id="tocList"></ol>
+</nav>
+
+<!-- 1 -->
+<section class="slide" data-title="Title">
+<div class="inner">
+  <div class="kicker">RA Workshop 1 · 09/28</div>
+  <h1>Your First Analysis Script</h1>
+  <p class="big muted">Does reward change how people perform?<br>Bring a file in, check it, clean it, analyze it.</p>
+  <p style="margin-top:1.4em">
+    <a class="btn" href="https://colab.research.google.com/github/slopez4/RA_Workshops/blob/main/01_intro_python_analysis/notebooks/workshop_student.ipynb" target="_blank" rel="noopener">Open the notebook in Colab →</a>
+  </p>
+  <p class="muted" style="font-size:0.8em">Keys: <code>→</code> next · <code>←</code> back · <code>R</code> reference view · <code>F</code> fullscreen</p>
+</div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Today's plan">
+<div class="inner">
+  <div class="kicker">Agenda</div>
+  <h2>Today's plan</h2>
+  <table>
+    <tr><th>Time</th><th>What</th></tr>
+    <tr><td>0:00</td><td>Get set up in Colab</td></tr>
+    <tr><td>0:03</td><td><b>Part 0</b> · Python in 5 minutes</td></tr>
+    <tr><td>0:10</td><td><b>Part 1</b> · Bring the data in</td></tr>
+    <tr><td>0:15</td><td><b>Part 2</b> · Look before you analyze</td></tr>
+    <tr><td>0:22</td><td><b>Part 3</b> · Clean the data</td></tr>
+    <tr><td>0:27</td><td><b>Part 4</b> · Does reward change behavior?</td></tr>
+    <tr><td>0:33</td><td><b>Part 5</b> · Does the effect change over time?</td></tr>
+    <tr><td>0:37</td><td>Wrap-up: from notebook to script</td></tr>
+    <tr><td>then</td><td>Christian: <b>Reward + SFV</b> → Discussion: <b>Motivational Shifts</b></td></tr>
+  </table>
+</div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-title="Get set up">
+<div class="inner">
+  <div class="kicker">Setup · 2 min</div>
+  <h2>Get set up</h2>
+  <ol class="steps">
+    <li>Sign in to a Google account in your browser.</li>
+    <li>Open the notebook: <a href="https://colab.research.google.com/github/slopez4/RA_Workshops/blob/main/01_intro_python_analysis/notebooks/workshop_student.ipynb" target="_blank" rel="noopener">Colab link</a></li>
+    <li>If you see <i>"not authored by Google"</i> → click <b>Run anyway</b>.</li>
+    <li><b>File → Save a copy in Drive.</b> The tab should now say <i>"Copy of…"</i></li>
+    <li>Click the first grey code cell and press <b>Shift + Enter</b>. 👍 when you see output.</li>
+  </ol>
+  <p class="muted" style="font-size:0.85em">No Google account? <a href="https://mybinder.org/v2/gh/slopez4/RA_Workshops/main?labpath=01_intro_python_analysis%2Fnotebooks%2Fworkshop_student.ipynb" target="_blank" rel="noopener">Binder backup</a> (slower to start, doesn't save your work).</p>
+</div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-title="How a notebook works">
+<div class="inner">
+  <div class="kicker">Setup</div>
+  <h2>How a notebook works</h2>
+  <div class="cols">
+    <ul>
+      <li><b>Cells.</b> Grey boxes are code; the rest are notes.</li>
+      <li><b>Shift + Enter</b> runs a cell. Output appears underneath.</li>
+      <li>Run cells <b>top to bottom</b>. Later cells need earlier ones.</li>
+      <li><code># TODO</code> cells have a blank <code>___</code> for you to fill in.</li>
+    </ul>
+    <div>
+      <div class="think"><p><b>Errors are normal.</b> Read the <b>last line</b> of the red message. It tells you what confused Python.</p></div>
+      <p class="muted" style="font-size:0.85em">Something broke? <b>Runtime → Run before</b> re-runs everything above the current cell.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-title="Part 0 · Variables & lists">
+<div class="inner">
+  <div class="kicker">Part 0 · Python in 5 minutes</div>
+  <h2>Variables &amp; lists</h2>
+<pre><code class="py"># Anything after a # is a comment: a note for humans
+n_participants = 20             # a variable stores a value
+task_name = "reward task"       # text goes in quotes
+print(task_name, "has", n_participants, "participants")
+
+rts = [512, 634, 598, 2950, 101]   # a list holds several values
+len(rts)    # how many? -> 5
+max(rts)    # biggest   -> 2950
+rts[0]      # FIRST item -> 512   (Python counts from 0!)</code></pre>
+  <div class="think"><p>Two of those reaction times look suspicious. Which ones, and why?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p><b>101 ms</b> is too fast to have seen the stimulus and responded (an anticipatory press). <b>2950 ms</b> means they were probably distracted.</p>
+  </details>
+</div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-title="Part 0 · Loops & if">
+<div class="inner">
+  <div class="kicker">Part 0 · Python in 5 minutes</div>
+  <h2>Loops &amp; if-statements</h2>
+  <div class="cols">
+<pre><code class="py">for rt in rts:
+    if rt &lt; 150:
+        print(rt, "-> too fast")
+    elif rt &gt; 2500:
+        print(rt, "-> too slow")
+    else:
+        print(rt, "-> looks OK")</code></pre>
+    <ul>
+      <li><code>for</code> repeats the indented lines <b>once per item</b>.</li>
+      <li><code>if</code> / <code>elif</code> / <code>else</code> pick <b>one</b> branch.</li>
+      <li>Lines ending in <code>:</code> start a block.</li>
+      <li><b>Indentation (4 spaces) is the grammar.</b> It's how Python knows what's inside.</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="Part 1 · Bring the data in">
+<div class="inner">
+  <div class="kicker">Part 1 · Bring the data in</div>
+  <h2>Load a file in one line</h2>
+<pre><code class="py">import pandas as pd              # pandas: tables ("Excel inside Python")
+import matplotlib.pyplot as plt  # matplotlib: plots
+
+df = pd.read_csv(DATA_URL)   # df = "data frame" = a table
+df.head()                    # first 5 rows
+df.shape                     # (rows, columns)
+df["participant_id"].value_counts()   # rows per participant</code></pre>
+  <div class="think"><p>What does <b>one row</b> represent: a participant, a block, or a trial?<br>20 participants × 4 blocks × 20 trials = ? Does it match <code>df.shape</code>?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>One row = <b>one trial</b>. 20 × 4 × 20 = <b>1600</b>, and <code>df.shape</code> is <code>(1600, 8)</code> ✔. Every participant has 80 rows. <b>Always check the counts add up.</b></p>
+  </details>
+</div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-title="The mock experiment">
+<div class="inner">
+  <div class="kicker">Part 1 · Codebook</div>
+  <h2>The (fake) reward experiment</h2>
+  <p class="muted">A two-choice task in 4 blocks of 20 trials. <b>Reward</b> blocks earn points for fast, correct answers. Block order is counterbalanced.</p>
+  <table>
+    <tr><th>column</th><th>meaning</th></tr>
+    <tr><td><code>participant_id</code></td><td>P01–P20</td></tr>
+    <tr><td><code>order</code></td><td><code>reward_first</code> or <code>no_reward_first</code></td></tr>
+    <tr><td><code>block</code> · <code>trial</code></td><td>block 1–4 · trial 1–20 within block</td></tr>
+    <tr><td><code>condition</code></td><td><code>reward</code> or <code>no_reward</code></td></tr>
+    <tr><td><code>rt_ms</code></td><td>reaction time in ms (empty = no response)</td></tr>
+    <tr><td><code>correct</code></td><td>1 = correct, 0 = wrong or missed</td></tr>
+    <tr><td><code>motivation_rating</code></td><td>1–7, asked <b>once per block</b>, copied onto every row of that block</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="Part 2 · Look before you analyze">
+<div class="inner">
+  <div class="kicker">Part 2 · Look before you analyze</div>
+  <h2>Can I trust this data?</h2>
+<pre><code class="py">df.describe()          # min, max, mean, count of every numeric column
+df.isna().sum()        # missing values per column
+
+df["rt_ms"].hist(bins=60)   # how are the RTs spread out?
+plt.xlabel("Reaction time (ms)")
+plt.show()</code></pre>
+  <div class="think"><ul>
+    <li>What are the <b>min</b> and <b>max</b> of <code>rt_ms</code>? Are they believable?</li>
+    <li>Why is the <code>count</code> for <code>rt_ms</code> smaller than for the other columns?</li>
+  </ul></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>Min <b>81 ms</b> (impossible), max <b>5944 ms</b> (zoned out). Count is <b>1579</b> vs 1600 → <b>21 missed responses</b> with no RT. RTs are skewed right, which is typical.</p>
+  </details>
+</div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-title="Part 2 · Spot the guesser">
+<div class="inner">
+  <div class="kicker">Part 2 · Look before you analyze</div>
+  <h2>Is anyone just guessing?</h2>
+<pre><code class="py"># groupby = sort rows into piles (one per participant), then compute for each pile
+# the mean of a 0/1 column = proportion correct = accuracy
+acc_by_participant = df.groupby("participant_id")["correct"].mean()
+acc_by_participant.sort_values()</code></pre>
+  <div class="think"><p>Does anyone stand out? With two buttons, what accuracy would <b>guessing</b> give you?<br>Why decide what to do about it <b>before</b> looking at the results?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p><b>P07 ≈ 49%</b>; everyone else is 80–94%. Guessing gives 50%, so P07 was probably not doing the task.<br>If you drop people <i>after</i> seeing how they affect the result, you can make the data say almost anything.</p>
+  </details>
+</div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-title="Part 3 · Clean the data">
+<div class="inner">
+  <div class="kicker">Part 3 · Clean the data</div>
+  <h2>Keep only the rows you trust</h2>
+<pre><code class="py">too_fast = df["rt_ms"] &lt; 150        # True/False for every row
+too_fast.sum()                       # True counts as 1 -> how many?
+
+excluded = acc_by_participant[acc_by_participant &lt; 0.60].index.tolist()
+
+clean = df[
+    ~df["participant_id"].isin(excluded)   # ~ means NOT
+    &amp; (df["rt_ms"] &gt;= 150)                # &amp; means AND
+    &amp; (df["rt_ms"] &lt;= 2500)
+].copy()</code></pre>
+  <details class="reveal"><summary>What we found</summary>
+    <p><b>24</b> trials &lt; 150 ms · <b>21</b> trials &gt; 2500 ms · excluded <b>P07</b> · <b>1600 → 1458</b> rows.</p>
+  </details>
+</div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-title="Every cleaning step is a decision">
+<div class="inner">
+  <div class="kicker">Part 3 · Thinking about data</div>
+  <h2>Every cleaning step is a decision</h2>
+  <ul class="big">
+    <li><b>Write the rule, not the name.</b> "Below 60% accuracy," not "drop P07." Rules still work when new data arrive, and readers can see what you did.</li>
+    <li><b>Decide before you see results.</b> Otherwise it's too easy to (even unintentionally) pick the exclusions that give the answer you hoped for.</li>
+    <li><b>Know what your code silently does.</b></li>
+  </ul>
+  <div class="think"><p>We never wrote a line to remove the <b>missing</b> RTs, but they're gone. Why? Is that right when we compute <b>accuracy</b>?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>An empty cell is not <code>&gt;= 150</code>, so the comparison is False and the row is dropped. That's fine for RT (there is no RT), but for accuracy a missed response is arguably an <b>error</b>. The same rule can be right for one measure and wrong for another.</p>
+  </details>
+</div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-title="Part 4 · Does reward change behavior?">
+<div class="inner">
+  <div class="kicker">Part 4 · Does reward change behavior?</div>
+  <h2>One number per person first</h2>
+<pre><code class="py">clean.groupby("condition")[["rt_ms", "correct"]].mean()   # quick look
+
+# Better: average within each participant, so everyone counts equally
+per_person = clean.groupby(["participant_id", "condition"])["rt_ms"].mean().unstack()
+per_person["reward_effect"] = per_person["reward"] - per_person["no_reward"]
+
+(per_person["reward_effect"] &lt; 0).sum()    # how many were faster with reward?</code></pre>
+  <p class="muted" style="font-size:0.85em"><code>unstack()</code> turns the condition labels into columns, like a pivot table.</p>
+  <details class="reveal"><summary>What we found</summary>
+    <p>Reward <b>598 ms / 91.5%</b> vs no-reward <b>645 ms / 86.7%</b>. Faster <i>and</i> more accurate, so it isn't just trading accuracy for speed. <b>17 of 19</b> participants were faster with reward.</p>
+  </details>
+</div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-title="Part 4 · Plot individuals">
+<div class="inner">
+  <div class="kicker">Part 4 · Does reward change behavior?</div>
+  <h2>Plot individuals, not just means</h2>
+<pre><code class="py">for pid, row in per_person.iterrows():            # one gray line per person
+    plt.plot(["no_reward", "reward"], [row["no_reward"], row["reward"]],
+             color="gray", alpha=0.5, marker="o")
+
+plt.plot(["no_reward", "reward"],                  # group mean on top
+         [per_person["no_reward"].mean(), per_person["reward"].mean()],
+         color="black", linewidth=3, marker="o")
+plt.show()</code></pre>
+  <div class="think"><p>Does <b>everyone</b> show the effect? What does this plot tell you that a single average can't?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>Most lines go down, <b>2 go up</b>, and the size of the drop varies a lot. An average of −47 ms can hide people who show no effect at all.</p>
+  </details>
+</div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-title="Part 5 · Does the effect change over time?">
+<div class="inner">
+  <div class="kicker">Part 5 · Does the effect change over time?</div>
+  <h2>Is reward as powerful at the end as at the start?</h2>
+<pre><code class="py">half_of_block = {1: "1st half", 2: "1st half", 3: "2nd half", 4: "2nd half"}  # a dictionary
+clean["half"] = clean["block"].map(half_of_block)                              # look up each row
+
+by_half = clean.groupby(["participant_id", "half", "condition"])["rt_ms"].mean().unstack()
+by_half["reward_effect"] = by_half["reward"] - by_half["no_reward"]
+
+ratings = clean.drop_duplicates(["participant_id", "block"])   # 1 rating per block, not 20</code></pre>
+  <details class="reveal"><summary>What we found</summary>
+    <div class="cols">
+      <table>
+        <tr><th>RT (ms)</th><th class="num">no reward</th><th class="num">reward</th><th class="num">effect</th></tr>
+        <tr><td>1st half</td><td class="num">658</td><td class="num">594</td><td class="num"><b>−64</b></td></tr>
+        <tr><td>2nd half</td><td class="num">631</td><td class="num">601</td><td class="num"><b>−30</b></td></tr>
+      </table>
+      <table>
+        <tr><th>Motivation (1–7)</th><th class="num">no reward</th><th class="num">reward</th></tr>
+        <tr><td>1st half</td><td class="num">5.00</td><td class="num">5.37</td></tr>
+        <tr><td>2nd half</td><td class="num"><b>3.58</b></td><td class="num">5.00</td></tr>
+      </table>
+    </div>
+  </details>
+</div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-title="Discussion · Motivational shifts">
+<div class="inner">
+  <div class="kicker">Bridge to today's discussion</div>
+  <h2>Motivational shifts</h2>
+  <ol class="big">
+    <li>The reward advantage roughly <b>halves</b> in the second half. List as many explanations as you can.</li>
+    <li>Motivation dropped much more in <b>no-reward</b> blocks, yet no-reward RTs got <i>faster</i>. What does that tell you?</li>
+    <li>What would you add to the design to tell these explanations apart?</li>
+  </ol>
+  <p class="muted"><span class="pill">⭐ Stretch</span> Repeat Part 5 for <b>accuracy</b> instead of RT. Does the accuracy benefit fade too?</p>
+</div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-title="From notebook to script">
+<div class="inner">
+  <div class="kicker">Wrap-up</div>
+  <h2>From notebook to script</h2>
+  <div class="cols">
+    <div>
+      <p>Everything we ran, in order, <b>is</b> an analysis script. <a href="https://github.com/slopez4/RA_Workshops/blob/main/01_intro_python_analysis/analysis.py" target="_blank" rel="noopener"><code>analysis.py</code></a> is the same code, tidied:</p>
+      <ol class="steps">
+        <li><b>Settings:</b> every decision at the top</li>
+        <li><b>Load</b></li>
+        <li><b>Check</b></li>
+        <li><b>Clean</b></li>
+        <li><b>Analyze</b></li>
+        <li><b>Plot</b></li>
+      </ol>
+    </div>
+    <div>
+      <h3 style="margin-top:0">5 habits that matter more than syntax</h3>
+      <ol>
+        <li>Check the numbers add up.</li>
+        <li>Look at distributions before averages.</li>
+        <li>Set exclusion rules <i>before</i> results, and write them as rules.</li>
+        <li>Summarize per participant, then across.</li>
+        <li>Plot individuals, not just means.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-title="Cheat sheet">
+<div class="inner">
+  <div class="kicker">Reference</div>
+  <h2>Cheat sheet</h2>
+  <table>
+    <tr><th>I want to…</th><th>Code</th></tr>
+    <tr><td>load a CSV</td><td><code>df = pd.read_csv("file.csv")</code></td></tr>
+    <tr><td>see the first rows / size / columns</td><td><code>df.head()</code> · <code>df.shape</code> · <code>df.columns</code></td></tr>
+    <tr><td>summary stats / missing values</td><td><code>df.describe()</code> · <code>df.isna().sum()</code></td></tr>
+    <tr><td>pick one column</td><td><code>df["rt_ms"]</code></td></tr>
+    <tr><td>count / list unique values</td><td><code>df["col"].value_counts()</code> · <code>.nunique()</code></td></tr>
+    <tr><td>keep rows that match</td><td><code>df[df["rt_ms"] &gt;= 150]</code></td></tr>
+    <tr><td>combine conditions</td><td><code>&amp;</code> and · <code>|</code> or · <code>~</code> not (wrap each in <code>( )</code>)</td></tr>
+    <tr><td>average per group</td><td><code>df.groupby("condition")["rt_ms"].mean()</code></td></tr>
+    <tr><td>groups as columns</td><td><code>.unstack()</code></td></tr>
+    <tr><td>make a new column</td><td><code>df["new"] = df["a"] - df["b"]</code></td></tr>
+    <tr><td>recode values</td><td><code>df["block"].map({1: "early", 2: "late"})</code></td></tr>
+    <tr><td>histogram / bar plot</td><td><code>df["rt_ms"].hist()</code> · <code>table.plot(kind="bar")</code></td></tr>
+  </table>
+</div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-title="Common errors">
+<div class="inner">
+  <div class="kicker">Reference</div>
+  <h2>Common errors</h2>
+  <table>
+    <tr><th>Last line of the error</th><th>Fix</th></tr>
+    <tr><td><code>NameError: name 'df' is not defined</code></td><td>You skipped a cell. <b>Runtime → Run before</b></td></tr>
+    <tr><td><code>SyntaxError</code> pointing at <code>___</code></td><td>Fill in the blank first</td></tr>
+    <tr><td><code>SyntaxError: expected ':'</code></td><td>Add <code>:</code> after <code>for</code> / <code>if</code> / <code>elif</code> / <code>else</code></td></tr>
+    <tr><td><code>IndentationError</code></td><td>Line up the block with Tab / Shift+Tab</td></tr>
+    <tr><td><code>KeyError: 'rt'</code></td><td>Column name typo. Copy it from <code>df.columns</code></td></tr>
+    <tr><td><code>HTTP Error 404</code></td><td>Data URL is wrong. Tell the instructor</td></tr>
+    <tr><td>"Runtime disconnected"</td><td>Reconnect, then <b>Runtime → Run before</b></td></tr>
+  </table>
+</div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-title="Up next">
+<div class="inner">
+  <div class="kicker">Up next</div>
+  <h1>Christian: Reward + SFV</h1>
+  <p class="big muted">Keep the Part 5 question in mind:<br><b>why would reward's effect change over the course of a session?</b></p>
+  <p style="margin-top:1.4em; font-size:0.85em">
+    Materials: <a href="https://github.com/slopez4/RA_Workshops/tree/main/01_intro_python_analysis" target="_blank" rel="noopener">github.com/slopez4/RA_Workshops</a> ·
+    <a href="https://colab.research.google.com/github/slopez4/RA_Workshops/blob/main/01_intro_python_analysis/notebooks/workshop_solutions.ipynb" target="_blank" rel="noopener">solutions notebook</a>
+  </p>
+</div>
+</section>
+
+</main>
+
+<div class="nav"><button id="prevBtn" aria-label="Previous slide">‹</button><button id="nextBtn" aria-label="Next slide">›</button></div>
+<div class="slide-num" id="slideNum"></div>
+
+<script>
+(function () {
+  // --- tiny Python highlighter -------------------------------------------
+  var KW = /^(import|as|for|in|if|elif|else|True|False|and|or|not|print|len|max|min)$/;
+  var TOKEN = /(#[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|(___)|\b([A-Za-z_]\w*)\b|\b(\d+(?:\.\d+)?)\b/g;
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  document.querySelectorAll("code.py").forEach(function (el) {
+    var src = el.textContent, out = "", last = 0, m;
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      var t = esc(m[0]);
+      if (m[1]) out += '<span class="tok-c">' + t + "</span>";
+      else if (m[2]) out += '<span class="tok-s">' + t + "</span>";
+      else if (m[3]) out += '<span class="tok-b">' + t + "</span>";
+      else if (m[4]) out += KW.test(m[4]) ? '<span class="tok-k">' + t + "</span>" : t;
+      else out += '<span class="tok-n">' + t + "</span>";
+      last = TOKEN.lastIndex;
+    }
+    el.innerHTML = out + esc(src.slice(last));
+  });
+
+  // --- slides / reference mode --------------------------------------------
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var body = document.body, cur = 0;
+  var progress = document.getElementById("progress");
+  var num = document.getElementById("slideNum");
+  var modeBtn = document.getElementById("modeBtn");
+
+  slides.forEach(function (s, i) {
+    s.id = "s" + (i + 1);
+    var li = document.createElement("li");
+    li.innerHTML = '<a href="#s' + (i + 1) + '">' + esc(s.dataset.title) + "</a>";
+    document.getElementById("tocList").appendChild(li);
+  });
+
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  function show(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, j) { s.classList.toggle("active", j === cur); });
+    num.textContent = (cur + 1) + " / " + slides.length;
+    progress.style.width = ((cur + 1) / slides.length * 100) + "%";
+    if (location.hash !== "#s" + (cur + 1)) history.replaceState(null, "", "#s" + (cur + 1));
+  }
+
+  function setMode(mode) {
+    body.classList.toggle("mode-slides", mode === "slides");
+    body.classList.toggle("mode-ref", mode === "ref");
+    modeBtn.textContent = mode === "slides" ? "📖 Reference view" : "▶ Slide view";
+    progress.style.display = mode === "slides" ? "" : "none";
+    store("ws1-mode", mode);
+    if (mode === "slides") show(cur);
+    else slides[cur].scrollIntoView({ block: "start" });
+  }
+
+  function hashIndex() {
+    var m = /^#s(\d+)$/.exec(location.hash);
+    return m ? parseInt(m[1], 10) - 1 : 0;
+  }
+
+  cur = hashIndex();
+  var saved = load("ws1-mode");
+  setMode(saved || (window.innerWidth < 760 ? "ref" : "slides"));
+
+  window.addEventListener("hashchange", function () {
+    cur = hashIndex();
+    if (body.classList.contains("mode-slides")) show(cur);
+  });
+
+  modeBtn.addEventListener("click", function () {
+    setMode(body.classList.contains("mode-slides") ? "ref" : "slides");
+  });
+  document.getElementById("prevBtn").addEventListener("click", function () { show(cur - 1); });
+  document.getElementById("nextBtn").addEventListener("click", function () { show(cur + 1); });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === "r" || k === "R") { modeBtn.click(); return; }
+    if (k === "f" || k === "F") {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {});
+      else document.exitFullscreen();
+      return;
+    }
+    if (!body.classList.contains("mode-slides")) return;
+    if (k === "ArrowRight" || k === "PageDown" || k === " ") { e.preventDefault(); show(cur + 1); }
+    else if (k === "ArrowLeft" || k === "PageUp") { e.preventDefault(); show(cur - 1); }
+    else if (k === "Home") show(0);
+    else if (k === "End") show(slides.length - 1);
+  });
+
+  // swipe on touch screens
+  var x0 = null;
+  document.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener("touchend", function (e) {
+    if (x0 === null || !body.classList.contains("mode-slides")) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+
+  // theme toggle (follows the system by default)
+  var root = document.documentElement;
+  var savedTheme = load("ws1-theme");
+  if (savedTheme) root.setAttribute("data-theme", savedTheme);
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme")
+      ? root.getAttribute("data-theme") === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    store("ws1-theme", next);
+  });
+})();
+</script>
+</body>
+</html>
