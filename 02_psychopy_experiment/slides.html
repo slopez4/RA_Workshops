@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your First PsychoPy Experiment</title>
+<meta name="description" content="Slides and reference for Workshop 2: writing a simple PsychoPy experiment that presents 8 randomized animal and plant trials.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;750&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --ink: #1d2230;
+  --muted: #5d6475;
+  --line: #e3e0d8;
+  --accent: #2f6fdf;
+  --accent-soft: #e6eefc;
+  --think: #fff5d6;
+  --think-line: #e9c85a;
+  --code-bg: #f3f1ec;
+  --c-comment: #7a8091;
+  --c-string: #1f7a4d;
+  --c-keyword: #8a3ab9;
+  --c-number: #b3541e;
+  --c-blank: #d9432f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161c;
+    --surface: #1b1e26;
+    --ink: #e8e9ee;
+    --muted: #a0a6b5;
+    --line: #2d313c;
+    --accent: #7fa8ff;
+    --accent-soft: #1f2a42;
+    --think: #2c2715;
+    --think-line: #8c7427;
+    --code-bg: #20232c;
+    --c-comment: #8990a1;
+    --c-string: #7fd1a3;
+    --c-keyword: #d19bf2;
+    --c-number: #f0a36e;
+    --c-blank: #ff7a66;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14161c;
+  --surface: #1b1e26;
+  --ink: #e8e9ee;
+  --muted: #a0a6b5;
+  --line: #2d313c;
+  --accent: #7fa8ff;
+  --accent-soft: #1f2a42;
+  --think: #2c2715;
+  --think-line: #8c7427;
+  --code-bg: #20232c;
+  --c-comment: #8990a1;
+  --c-string: #7fd1a3;
+  --c-keyword: #d19bf2;
+  --c-number: #f0a36e;
+  --c-blank: #ff7a66;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.45;
+}
+a { color: var(--accent); }
+h1, h2, h3 { line-height: 1.15; margin: 0 0 0.5em; letter-spacing: -0.01em; }
+h1 { font-size: 2.6em; font-weight: 750; }
+h2 { font-size: 1.75em; font-weight: 750; }
+h3 { font-size: 1.1em; font-weight: 600; color: var(--muted); margin-top: 0.8em; }
+p, ul, ol { margin: 0 0 0.7em; }
+li { margin: 0.2em 0; }
+.kicker {
+  font-size: 0.72em; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.6em;
+}
+.muted { color: var(--muted); }
+.big { font-size: 1.25em; }
+
+code, pre { font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; font-variant-ligatures: none; }
+:not(pre) > code {
+  background: var(--code-bg); padding: 0.08em 0.35em; border-radius: 4px; font-size: 0.9em;
+}
+pre {
+  background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+  padding: 0.85em 1.1em; margin: 0 0 0.8em; font-size: 0.8em; line-height: 1.55;
+  overflow-x: auto; white-space: pre;
+}
+.tok-c { color: var(--c-comment); font-style: italic; }
+.tok-s { color: var(--c-string); }
+.tok-k { color: var(--c-keyword); font-weight: 600; }
+.tok-n { color: var(--c-number); }
+.tok-b { color: var(--c-blank); font-weight: 600; background: color-mix(in srgb, var(--c-blank) 14%, transparent); border-radius: 3px; }
+
+table { border-collapse: collapse; width: 100%; margin: 0 0 0.8em; font-size: 0.82em; }
+th, td { text-align: left; padding: 0.4em 0.7em; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.think {
+  background: var(--think); border-left: 4px solid var(--think-line);
+  border-radius: 8px; padding: 0.7em 1em; margin: 0 0 0.8em;
+}
+.think::before { content: "🤔 Think"; display: block; font-weight: 600; font-size: 0.8em; margin-bottom: 0.25em; }
+.think p:last-child, .think ul:last-child, .think ol:last-child { margin-bottom: 0; }
+
+details.reveal {
+  border: 1px dashed var(--line); border-radius: 8px; padding: 0.5em 0.9em; margin: 0 0 0.8em;
+}
+details.reveal summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+details.reveal[open] summary { margin-bottom: 0.5em; }
+
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6em; align-items: start; }
+.btn {
+  display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+  padding: 0.55em 1.1em; border-radius: 8px; font-weight: 600;
+}
+:root[data-theme="dark"] .btn { color: #0d1220; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn { color: #0d1220; } }
+.steps { counter-reset: s; list-style: none; padding: 0; }
+.steps li { counter-increment: s; padding-left: 2.2em; position: relative; margin: 0.45em 0; }
+.steps li::before {
+  content: counter(s); position: absolute; left: 0; top: 0.05em;
+  width: 1.5em; height: 1.5em; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+  display: grid; place-items: center; font-weight: 700; font-size: 0.85em;
+}
+.pill {
+  display: inline-block; font-size: 0.72em; font-weight: 600; padding: 0.15em 0.6em; border-radius: 99px;
+  background: var(--accent-soft); color: var(--accent); vertical-align: middle;
+}
+
+/* ---------- Top bar ---------- */
+.bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 1rem;
+  font-size: 14px; background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(6px); border-bottom: 1px solid var(--line);
+}
+.bar .title { font-weight: 600; margin-right: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar button {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 6px; padding: 0.3rem 0.7rem; cursor: pointer;
+}
+.bar button:hover { border-color: var(--accent); }
+.progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 11; transition: width .2s; }
+
+/* ---------- Slide mode ---------- */
+body.mode-slides { overflow: hidden; }
+body.mode-slides .slide {
+  display: none; position: fixed; inset: 0; padding: 7vh 7vw 7vh;
+  font-size: min(1.75vw, 2.85vh); overflow-y: auto;
+  flex-direction: column;
+}
+body.mode-slides .slide.active { display: flex; }
+body.mode-slides .slide > .inner { max-width: 56em; width: 100%; margin: auto; }
+body.mode-slides .toc, body.mode-slides .ref-only { display: none; }
+body.mode-slides .bar { opacity: 0.25; transition: opacity .2s; }
+body.mode-slides .bar:hover, body.mode-slides .bar:focus-within { opacity: 1; }
+.slide-num { position: fixed; right: 1.2rem; bottom: 0.9rem; font-size: 13px; color: var(--muted); }
+body.mode-ref .slide-num, body.mode-ref .nav { display: none; }
+.nav { position: fixed; bottom: 0.7rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.4rem; }
+.nav button {
+  font-size: 18px; width: 2.2rem; height: 2.2rem; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); opacity: 0.5;
+}
+.nav button:hover { opacity: 1; }
+
+/* ---------- Reference mode ---------- */
+body.mode-ref { font-size: 17px; }
+body.mode-ref main { max-width: 880px; margin: 0 auto; padding: 4.2rem 16px 4rem; }
+body.mode-ref .slide {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 1.6em 1.8em; margin: 0 0 1.2rem; scroll-margin-top: 4rem;
+}
+body.mode-ref h1 { font-size: 2.1em; }
+body.mode-ref h2 { font-size: 1.45em; }
+.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.2em 1.6em; margin: 0 0 1.2rem; }
+.toc h2 { font-size: 1.1em; }
+.toc ol { columns: 2; column-gap: 2em; padding-left: 1.3em; margin: 0; font-size: 0.92em; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+
+kbd {
+  font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; font-size: 0.8em;
+  border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px;
+  padding: 0.05em 0.4em; background: var(--surface);
+}
+.timeline { display: flex; align-items: flex-start; justify-content: center; gap: 1em; margin: 1em 0 1.2em; }
+.tl-box { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.25em; }
+.tl-box > span { font-size: 0.8em; color: var(--muted); }
+.tl-screen {
+  width: 7.5em; height: 5em; border-radius: 8px; background: #111; color: #fff;
+  display: grid; place-items: center; font-weight: 600;
+  border: 4px solid var(--line); margin-bottom: 0.3em;
+}
+.tl-screen span { font-size: 1.15em; }
+.tl-screen .tl-small { font-size: 0.9em; }
+.tl-arrow { font-size: 1.6em; color: var(--muted); margin-top: 1.3em; }
+
+@media (max-width: 700px) {
+  .timeline { flex-direction: column; gap: 0.4em; }
+  .timeline { align-items: center; }
+  .tl-arrow { transform: rotate(90deg); margin-top: 0; }
+  body.mode-ref .slide { padding: 1.1em 1em; }
+  .cols { grid-template-columns: 1fr; gap: 0; }
+  .toc ol { columns: 1; }
+  pre { font-size: 0.74em; }
+  table { font-size: 0.78em; }
+  th, td { padding: 0.35em 0.4em; }
+  .bar .title { font-size: 13px; }
+}
+@media print {
+  .bar, .nav, .slide-num, .progress { display: none !important; }
+}
+</style>
+</head>
+<body class="mode-slides">
+<div class="progress" id="progress"></div>
+<div class="bar">
+  <span class="title">Workshop 2 · Your First PsychoPy Experiment</span>
+  <button id="modeBtn" title="Switch view (R)">📖 Reference view</button>
+  <button id="themeBtn" title="Toggle light/dark">◐</button>
+</div>
+
+<main id="deck">
+
+<nav class="toc ref-only" id="toc">
+  <h2>Contents</h2>
+  <ol id="tocList"></ol>
+</nav>
+
+<!-- 1 -->
+<section class="slide" data-title="Title">
+<div class="inner">
+  <div class="kicker">RA Workshop 2</div>
+  <h1>Your First PsychoPy Experiment</h1>
+  <p class="big muted">Animals &amp; plants: 8 randomized trials.<br>Show a word, collect a keypress, save the data.</p>
+  <p style="margin-top:1.4em">
+    <a class="btn" href="https://github.com/slopez4/RA_Workshops/tree/main/02_psychopy_experiment" target="_blank" rel="noopener">Workshop files on GitHub →</a>
+  </p>
+  <p class="muted" style="font-size:0.8em">Keys: <kbd>→</kbd> next · <kbd>←</kbd> back · <kbd>R</kbd> reference view · <kbd>F</kbd> fullscreen</p>
+</div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Today's plan">
+<div class="inner">
+  <div class="kicker">Agenda</div>
+  <h2>Today's plan</h2>
+  <table>
+    <tr><th>Time</th><th>What</th></tr>
+    <tr><td>0:00</td><td>Check everyone has PsychoPy open and the starter script loaded</td></tr>
+    <tr><td>0:03</td><td>What an experiment is made of: Builder vs Coder, anatomy of a trial</td></tr>
+    <tr><td>0:07</td><td>Walk through the script: settings, dialog, window, <b>draw → flip</b></td></tr>
+    <tr><td>0:14</td><td><b>TODO 1–2</b> · Stimuli and randomization</td></tr>
+    <tr><td>0:19</td><td><b>TODO 3–4</b> · Show the word, score the response</td></tr>
+    <tr><td>0:27</td><td><b>TODO 5</b> · Save the data, run it, open the CSV</td></tr>
+    <tr><td>0:32</td><td>Make it yours: extensions · wrap-up</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-title="Install PsychoPy (before class)">
+<div class="inner">
+  <div class="kicker">Before class · ~10 min</div>
+  <h2>Install PsychoPy</h2>
+  <p class="muted">PsychoPy needs to run on your own computer: it controls the screen and keyboard timing directly, so it can't run in a browser tab.</p>
+  <ol class="steps">
+    <li>Go to <a href="https://www.psychopy.org/download.html" target="_blank" rel="noopener">psychopy.org/download</a> and download the <b>Standalone</b> installer for your computer. Use the same version as the lab computers (<b>2026.1</b>).</li>
+    <li><b>Windows:</b> run the <code>.exe</code> and accept the defaults.<br><b>Mac:</b> open the <code>.dmg</code>, drag PsychoPy into <i>Applications</i>. If macOS blocks it: <i>System Settings → Privacy &amp; Security</i> → <b>Open Anyway</b>.</li>
+    <li>Open PsychoPy. It starts in <b>Builder</b>; go to <b>View → Coder</b> (or <b>Window → Coder</b>).</li>
+    <li><b>Mac only:</b> <i>System Settings → Privacy &amp; Security</i> → allow PsychoPy under <b>Input Monitoring</b> and <b>Accessibility</b>, or it won't see your keypresses.</li>
+  </ol>
+  <p class="muted" style="font-size:0.85em">The download is large. Do it on good Wi-Fi <b>before</b> the session.</p>
+</div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-title="Get the workshop files">
+<div class="inner">
+  <div class="kicker">Setup</div>
+  <h2>Get the workshop files</h2>
+  <ol class="steps">
+    <li>Go to <a href="https://github.com/slopez4/RA_Workshops" target="_blank" rel="noopener">github.com/slopez4/RA_Workshops</a> → green <b>Code</b> button → <b>Download ZIP</b>.</li>
+    <li>Unzip it somewhere you can find it (e.g. <i>Documents</i>).</li>
+    <li>In PsychoPy Coder: <b>File → Open</b> → <code>02_psychopy_experiment/animals_plants_starter.py</code></li>
+    <li>Press the green <b>Run</b> button (or <kbd>Ctrl</kbd>+<kbd>R</kbd> / <kbd>⌘</kbd>+<kbd>R</kbd>). Type any ID, click OK, and play the 2 trials.</li>
+  </ol>
+  <div class="think"><p>If a window appeared and responded to <kbd>A</kbd> / <kbd>P</kbd>, you're ready. 👍<br>Stuck? Press <kbd>Esc</kbd> during a trial, or the red <b>Stop</b> button in Coder.</p></div>
+</div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-title="Builder vs Coder">
+<div class="inner">
+  <div class="kicker">The big picture</div>
+  <h2>Builder vs Coder</h2>
+  <div class="cols">
+    <div>
+      <h3 style="margin-top:0">Builder</h3>
+      <ul>
+        <li>Drag-and-drop routines and loops on a timeline</li>
+        <li>Fast to build standard experiments</li>
+        <li>Secretly <b>writes a Python script</b> for you</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Coder <span class="pill">today</span></h3>
+      <ul>
+        <li>You write the Python yourself</li>
+        <li>See exactly what happens, and when</li>
+        <li>Makes Builder less mysterious and easier to debug</li>
+      </ul>
+    </div>
+  </div>
+  <p>Either way, an experiment is just a script that <b>shows things</b>, <b>waits for responses</b>, and <b>writes a file</b>.</p>
+</div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-title="Anatomy of a trial">
+<div class="inner">
+  <div class="kicker">The big picture</div>
+  <h2>Anatomy of a trial</h2>
+  <div class="timeline">
+    <div class="tl-box"><div class="tl-screen"><span>+</span></div><b>Fixation</b><span>0.5 s</span></div>
+    <div class="tl-arrow">→</div>
+    <div class="tl-box"><div class="tl-screen"><span>eagle</span></div><b>Word</b><span>until <kbd>A</kbd> or <kbd>P</kbd><br>(max 3 s)</span></div>
+    <div class="tl-arrow">→</div>
+    <div class="tl-box"><div class="tl-screen"><span class="tl-small">Correct!</span></div><b>Feedback</b><span>0.5 s</span></div>
+  </div>
+  <p style="text-align:center" class="big">× 8 trials, <b>random order</b> &nbsp;·&nbsp; 4 animals + 4 plants</p>
+  <p class="muted" style="text-align:center">Before: participant ID box → instructions. &nbsp; After: save CSV → "Done!"</p>
+</div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="The script, section by section">
+<div class="inner">
+  <div class="kicker">Walkthrough</div>
+  <h2>The script, section by section</h2>
+  <div class="cols">
+    <ol class="steps">
+      <li><b>Settings:</b> stimuli, keys, timings</li>
+      <li><b>Dialog:</b> who is the participant?</li>
+      <li><b>Set up:</b> window, text, keyboard</li>
+      <li><b>Instructions</b></li>
+      <li><b>Trial loop:</b> shuffle, then repeat</li>
+      <li><b>Save:</b> write a CSV</li>
+      <li><b>Goodbye</b></li>
+    </ol>
+    <div>
+      <div class="think"><p>Same shape as Workshop 1's <code>analysis.py</code>: <b>every decision at the top</b>, then the steps in order. Want a longer fixation? Change one number in Settings, never hunt through the loop.</p></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-title="1 · Settings & stimuli">
+<div class="inner">
+  <div class="kicker">Section 1 · Settings</div>
+  <h2>Stimuli are just a list</h2>
+  <div class="cols">
+<pre><code class="py">STIMULI = [
+    {"word": "dog", "category": "animal"},
+    {"word": "oak", "category": "plant"},
+    # TODO 1: add 3 more animals
+    #         and 3 more plants
+]
+KEYS = {"a": "animal", "p": "plant"}
+FIXATION_TIME = 0.5      # seconds
+MAX_RESPONSE_TIME = 3.0
+FEEDBACK_TIME = 0.5</code></pre>
+  <div>
+  <p>One <b>dictionary</b> per stimulus. Each carries its own <b>correct answer</b> (<code>category</code>), so scoring is easy later.</p>
+  <details class="reveal"><summary>TODO 1 · one possible answer</summary>
+<pre><code class="py">    {"word": "eagle",  "category": "animal"},
+    {"word": "salmon", "category": "animal"},
+    {"word": "frog",   "category": "animal"},
+    {"word": "fern",   "category": "plant"},
+    {"word": "cactus", "category": "plant"},
+    {"word": "tulip",  "category": "plant"},</code></pre>
+  </details>
+  </div>
+  </div>
+</div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="2–3 · Dialog, window & stimuli">
+<div class="inner">
+  <div class="kicker">Sections 2–3 · Dialog and set up</div>
+  <h2>Who, and where to draw</h2>
+<pre><code class="py">info = {"participant": "", "session": "1"}
+dialog = gui.DlgFromDict(info, title="Animals &amp; Plants")   # pop-up box fills in info
+if not dialog.OK:
+    core.quit()                                           # they clicked Cancel
+
+win = visual.Window(size=(1000, 700), color="black", units="height", fullscr=False)
+
+word = visual.TextStim(win, text="", height=0.1)   # create once, change .text later
+kb = keyboard.Keyboard()</code></pre>
+  <ul>
+    <li><code>units="height"</code>: sizes are a fraction of screen height, so <code>0.1</code> = 10%. Looks the same on any monitor.</li>
+    <li><code>fullscr=False</code> while developing; set <code>True</code> for real participants.</li>
+  </ul>
+</div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-title="The key idea: draw → flip">
+<div class="inner">
+  <div class="kicker">The one concept to remember</div>
+  <h2>draw() → flip()</h2>
+  <div class="cols">
+    <div>
+      <p><code>.draw()</code> paints onto a <b>hidden</b> canvas.<br><code>win.flip()</code> swaps it onto the screen, all at once, on the monitor's next refresh.</p>
+<pre><code class="py">fixation.draw()   # nothing visible yet
+win.flip()        # NOW the + appears
+core.wait(0.5)    # leave it up for 0.5 s</code></pre>
+    </div>
+    <div>
+      <div class="think"><ul>
+        <li>What would you see if you called <code>draw()</code> but forgot <code>flip()</code>?</li>
+        <li>Why is it useful that everything appears <b>at the same moment</b>?</li>
+      </ul></div>
+      <details class="reveal"><summary>Answer</summary>
+        <p>Nothing: it stays on the hidden canvas. Showing everything on one flip means you know the <b>exact</b> moment a stimulus appeared, which is what reaction times are measured from.</p>
+      </details>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-title="4 · Instructions & functions">
+<div class="inner">
+  <div class="kicker">Section 4 · Instructions</div>
+  <h2>Write it once, use it twice</h2>
+<pre><code class="py">def show_message(text):                 # def = define a function
+    """Show a screen of text and wait for the space bar."""
+    message.text = text
+    message.draw()
+    win.flip()
+    kb.waitKeys(keyList=["space"])
+
+show_message("Press A if it is an ANIMAL ... Press SPACE to start.")   # instructions
+show_message("Done! Press SPACE to exit.")                               # the end screen</code></pre>
+  <p>A <b>function</b> bundles steps under one name. Instructions and the goodbye screen both use it, so a fix in one place fixes both.</p>
+</div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-title="5 · Randomization">
+<div class="inner">
+  <div class="kicker">Section 5 · Trial loop</div>
+  <h2>Randomize the order</h2>
+<pre><code class="py">trials = STIMULI.copy()     # copy, so the original list stays in its written order
+# TODO 2: shuffle the trials so every participant gets a new random order
+
+for trial_number, trial in enumerate(trials, start=1):   # trial_number = 1, 2, 3, ...
+    ...</code></pre>
+  <div class="think"><p>Why randomize at all? What could go wrong if everyone saw all 4 animals first?</p></div>
+  <details class="reveal"><summary>TODO 2 &amp; answer</summary>
+<pre><code class="py">random.shuffle(trials)</code></pre>
+    <p>Fixed orders mix up the <b>stimulus</b> with <b>when</b> it appeared: practice, fatigue, or getting into an "animal" rhythm. Randomizing spreads those effects evenly. Because the order differs per person, we <b>save the word on every row</b> of the data.</p>
+  </details>
+</div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-title="5a · Show the word">
+<div class="inner">
+  <div class="kicker">Section 5 · One trial</div>
+  <h2>Show the word, start the clock</h2>
+<pre><code class="py">    # (a) fixation cross
+    fixation.draw()
+    win.flip()
+    core.wait(FIXATION_TIME)
+
+    # (b) the word, and start the RT clock at the exact moment it appears
+    # TODO 3: put this trial's word on the screen (set word.text, then draw it)
+    win.callOnFlip(kb.clock.reset)   # reset the clock ON the flip, not before
+    kb.clearEvents()                 # forget keys pressed during fixation
+    win.flip()</code></pre>
+  <details class="reveal"><summary>TODO 3</summary>
+<pre><code class="py">    word.text = trial["word"]
+    word.draw()</code></pre>
+    <p>Run the starter before filling this in: a <b>blank screen</b> where the word should be.</p>
+  </details>
+</div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-title="5b · Collect & score the response">
+<div class="inner">
+  <div class="kicker">Section 5 · One trial</div>
+  <h2>Collect and score the response</h2>
+<pre><code class="py">    keys = kb.waitKeys(maxWait=MAX_RESPONSE_TIME, keyList=["a", "p", "escape"])
+
+    if keys is None:                     # nothing pressed in 3 s
+        response, rt, correct = None, None, 0
+        feedback.text = "Too slow!"
+    elif keys[0].name == "escape":       # emergency exit
+        break
+    else:
+        response = KEYS[keys[0].name]    # "a" -> "animal"
+        rt = keys[0].rt                  # seconds since the word appeared
+        correct = 0   # TODO 4: 1 if response matches the trial's category, else 0
+        feedback.text = "Correct!" if correct else "Wrong"</code></pre>
+  <details class="reveal"><summary>TODO 4</summary>
+<pre><code class="py">        correct = int(response == trial["category"])   # == gives True/False; int() makes it 1/0</code></pre>
+  </details>
+</div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-title="6 · Save the data">
+<div class="inner">
+  <div class="kicker">Section 6 · Save</div>
+  <h2>One row per trial</h2>
+  <div class="cols">
+<pre><code class="py">    results.append({   # one per trial
+        "participant": info["participant"],
+        "trial": trial_number,
+        "word": trial["word"],
+        "response": response,
+        "correct": correct,
+        # TODO 5: also save the RT
+    })
+
+# after the loop: list -> table -> CSV
+pd.DataFrame(results).to_csv(filename, index=False)</code></pre>
+  <div>
+  <div class="think"><p>This saves <b>once, at the end</b>. What happens to the data if the computer crashes on trial 7?</p></div>
+  <details class="reveal"><summary>TODO 5 &amp; answer</summary>
+<pre><code class="py">        "rt_s": rt,</code></pre>
+    <p>Everything is lost. Real experiments should <b>save after every trial</b> (PsychoPy's <code>ExperimentHandler</code> does this; Builder uses it).</p>
+  </details>
+  </div>
+  </div>
+</div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-title="Run it & open the data">
+<div class="inner">
+  <div class="kicker">Run it</div>
+  <h2>Run it, then open the data</h2>
+  <p>Your file is in <code>02_psychopy_experiment/data/</code>, named <code>ID_session1_date.csv</code>.</p>
+  <table>
+    <tr><th>participant</th><th>trial</th><th>word</th><th>category</th><th>response</th><th class="num">correct</th><th class="num">rt_s</th></tr>
+    <tr><td>RA01</td><td>1</td><td>eagle</td><td>animal</td><td>animal</td><td class="num">1</td><td class="num">0.593</td></tr>
+    <tr><td>RA01</td><td>2</td><td>tulip</td><td>plant</td><td>plant</td><td class="num">1</td><td class="num">0.469</td></tr>
+    <tr><td>RA01</td><td>3</td><td>salmon</td><td>animal</td><td></td><td class="num">0</td><td class="num"></td></tr>
+    <tr><td>RA01</td><td>4</td><td>oak</td><td>plant</td><td>animal</td><td class="num">0</td><td class="num">0.710</td></tr>
+    <tr><td colspan="7" class="muted">…</td></tr>
+  </table>
+  <div class="think"><p>Trial 3 has an empty <code>response</code> and <code>rt_s</code>. What happened? Compare your file with your neighbour's: why is the order different?</p></div>
+</div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-title="Make it yours">
+<div class="inner">
+  <div class="kicker">If you finish early</div>
+  <h2>Make it yours</h2>
+  <ol>
+    <li><b>Easy:</b> change the response keys to <kbd>←</kbd> / <kbd>→</kbd> (key names: <code>"left"</code>, <code>"right"</code>). Remember the instructions text!</li>
+    <li><b>Easy:</b> make the word yellow: <code>color="yellow"</code> in its <code>TextStim</code>.</li>
+    <li><b>Medium:</b> show each word <b>twice</b>: <code>trials = STIMULI * 2</code> before shuffling.</li>
+    <li><b>Medium:</b> remove the feedback screen. When would you want no feedback?</li>
+    <li><b>Harder:</b> use pictures: <code>visual.ImageStim(win, image="dog.png", size=0.4)</code> and add an <code>"image"</code> field to each stimulus.</li>
+    <li><b>Harder:</b> add a break screen halfway through (hint: at the top of the loop, <code>if trial_number == 5:</code>).</li>
+  </ol>
+</div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-title="Cheat sheet">
+<div class="inner">
+  <div class="kicker">Reference</div>
+  <h2>Cheat sheet</h2>
+  <table>
+    <tr><th>I want to…</th><th>Code</th></tr>
+    <tr><td>open a window</td><td><code>win = visual.Window(size=(1000, 700), units="height")</code></td></tr>
+    <tr><td>make text / an image</td><td><code>visual.TextStim(win, text="hi")</code> · <code>visual.ImageStim(win, image="x.png")</code></td></tr>
+    <tr><td>change what it shows</td><td><code>word.text = "cat"</code></td></tr>
+    <tr><td>put it on screen</td><td><code>word.draw()</code> then <code>win.flip()</code></td></tr>
+    <tr><td>wait a fixed time</td><td><code>core.wait(0.5)</code></td></tr>
+    <tr><td>wait for a key</td><td><code>kb.waitKeys(keyList=["a", "p"], maxWait=3)</code></td></tr>
+    <tr><td>key pressed / its RT</td><td><code>keys[0].name</code> · <code>keys[0].rt</code></td></tr>
+    <tr><td>time RTs from the flip</td><td><code>win.callOnFlip(kb.clock.reset)</code></td></tr>
+    <tr><td>shuffle a list</td><td><code>random.shuffle(trials)</code></td></tr>
+    <tr><td>ask for participant ID</td><td><code>gui.DlgFromDict(info)</code></td></tr>
+    <tr><td>quit cleanly</td><td><code>win.close()</code> · <code>core.quit()</code></td></tr>
+  </table>
+</div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-title="Common problems">
+<div class="inner">
+  <div class="kicker">Reference</div>
+  <h2>Common problems</h2>
+  <table>
+    <tr><th>What you see</th><th>Fix</th></tr>
+    <tr><td>Keys do nothing (Mac)</td><td>Allow PsychoPy in <i>Privacy &amp; Security → Input Monitoring</i> and <i>Accessibility</i>, then restart PsychoPy</td></tr>
+    <tr><td>Window frozen / can't escape</td><td>Press <kbd>Esc</kbd> during a trial, or the red <b>Stop</b> button in Coder</td></tr>
+    <tr><td>Blank screen where the word should be</td><td>Missing <code>word.draw()</code> before <code>win.flip()</code> (TODO 3)</td></tr>
+    <tr><td>Every answer says "Wrong"</td><td><code>correct</code> is still <code>0</code> (TODO 4)</td></tr>
+    <tr><td><code>ModuleNotFoundError: psychopy</code></td><td>You ran it outside PsychoPy (e.g. VS Code). Run it from PsychoPy Coder</td></tr>
+    <tr><td><code>IndentationError</code></td><td>Lines inside the loop need 4 spaces, lined up with their neighbours</td></tr>
+    <tr><td>Can't find the data file</td><td>It's in <code>data/</code> <b>next to the script</b>, not in Downloads</td></tr>
+    <tr><td>Window too big / wrong screen</td><td>Change <code>size=(1000, 700)</code>; keep <code>fullscr=False</code> while testing</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-title="Wrap-up">
+<div class="inner">
+  <div class="kicker">Wrap-up</div>
+  <h2>What you built</h2>
+  <div class="cols">
+    <ul class="big">
+      <li>A stimulus list with built-in answers</li>
+      <li>A new random order for every participant</li>
+      <li>Precise timing with <b>draw → flip</b></li>
+      <li>Responses scored and timed</li>
+      <li>One tidy CSV per participant, ready for Workshop 1's analysis</li>
+    </ul>
+    <div>
+      <p>The finished version is <a href="https://github.com/slopez4/RA_Workshops/blob/main/02_psychopy_experiment/animals_plants.py" target="_blank" rel="noopener"><code>animals_plants.py</code></a>; compare it with yours.</p>
+      <p class="muted">Next step: open PsychoPy <b>Builder</b> and you'll recognise the same pieces as routines, loops, and a conditions file.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+</main>
+
+<div class="nav"><button id="prevBtn" aria-label="Previous slide">‹</button><button id="nextBtn" aria-label="Next slide">›</button></div>
+<div class="slide-num" id="slideNum"></div>
+
+<script>
+(function () {
+  // --- tiny Python highlighter -------------------------------------------
+  var KW = /^(import|from|as|def|return|for|in|if|elif|else|break|True|False|None|and|or|not|print|len|int|max|min|sum)$/;
+  var TOKEN = /(#[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|(___)|\b([A-Za-z_]\w*)\b|\b(\d+(?:\.\d+)?)\b/g;
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  document.querySelectorAll("code.py").forEach(function (el) {
+    var src = el.textContent, out = "", last = 0, m;
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      var t = esc(m[0]);
+      if (m[1]) out += '<span class="tok-c">' + t + "</span>";
+      else if (m[2]) out += '<span class="tok-s">' + t + "</span>";
+      else if (m[3]) out += '<span class="tok-b">' + t + "</span>";
+      else if (m[4]) out += KW.test(m[4]) ? '<span class="tok-k">' + t + "</span>" : t;
+      else out += '<span class="tok-n">' + t + "</span>";
+      last = TOKEN.lastIndex;
+    }
+    el.innerHTML = out + esc(src.slice(last));
+  });
+
+  // --- slides / reference mode --------------------------------------------
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var body = document.body, cur = 0;
+  var progress = document.getElementById("progress");
+  var num = document.getElementById("slideNum");
+  var modeBtn = document.getElementById("modeBtn");
+
+  slides.forEach(function (s, i) {
+    s.id = "s" + (i + 1);
+    var li = document.createElement("li");
+    li.innerHTML = '<a href="#s' + (i + 1) + '">' + esc(s.dataset.title) + "</a>";
+    document.getElementById("tocList").appendChild(li);
+  });
+
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  function show(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, j) { s.classList.toggle("active", j === cur); });
+    num.textContent = (cur + 1) + " / " + slides.length;
+    progress.style.width = ((cur + 1) / slides.length * 100) + "%";
+    if (location.hash !== "#s" + (cur + 1)) history.replaceState(null, "", "#s" + (cur + 1));
+  }
+
+  function setMode(mode) {
+    body.classList.toggle("mode-slides", mode === "slides");
+    body.classList.toggle("mode-ref", mode === "ref");
+    modeBtn.textContent = mode === "slides" ? "📖 Reference view" : "▶ Slide view";
+    progress.style.display = mode === "slides" ? "" : "none";
+    store("ws2-mode", mode);
+    if (mode === "slides") show(cur);
+    else slides[cur].scrollIntoView({ block: "start" });
+  }
+
+  function hashIndex() {
+    var m = /^#s(\d+)$/.exec(location.hash);
+    return m ? parseInt(m[1], 10) - 1 : 0;
+  }
+
+  cur = hashIndex();
+  var saved = load("ws2-mode");
+  setMode(saved || (window.innerWidth < 760 ? "ref" : "slides"));
+
+  window.addEventListener("hashchange", function () {
+    cur = hashIndex();
+    if (body.classList.contains("mode-slides")) show(cur);
+  });
+
+  modeBtn.addEventListener("click", function () {
+    setMode(body.classList.contains("mode-slides") ? "ref" : "slides");
+  });
+  document.getElementById("prevBtn").addEventListener("click", function () { show(cur - 1); });
+  document.getElementById("nextBtn").addEventListener("click", function () { show(cur + 1); });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === "r" || k === "R") { modeBtn.click(); return; }
+    if (k === "f" || k === "F") {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {});
+      else document.exitFullscreen();
+      return;
+    }
+    if (!body.classList.contains("mode-slides")) return;
+    if (k === "ArrowRight" || k === "PageDown" || k === " ") { e.preventDefault(); show(cur + 1); }
+    else if (k === "ArrowLeft" || k === "PageUp") { e.preventDefault(); show(cur - 1); }
+    else if (k === "Home") show(0);
+    else if (k === "End") show(slides.length - 1);
+  });
+
+  // swipe on touch screens
+  var x0 = null;
+  document.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener("touchend", function (e) {
+    if (x0 === null || !body.classList.contains("mode-slides")) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+
+  // theme toggle (follows the system by default)
+  var root = document.documentElement;
+  var savedTheme = load("ws2-theme");
+  if (savedTheme) root.setAttribute("data-theme", savedTheme);
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme")
+      ? root.getAttribute("data-theme") === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    store("ws2-theme", next);
+  });
+})();
+</script>
+</body>
+</html>
