@@ -1,4 +1,4 @@
-# Class Outline — Workshop 2: Your First PsychoPy Experiment
+# Class Outline — 10/05 · Workshop 2: Your First PsychoPy Experiment
 
 ## Session overview
 

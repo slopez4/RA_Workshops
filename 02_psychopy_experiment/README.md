@@ -1,6 +1,6 @@
 # Workshop 2 — Your First PsychoPy Experiment
 
-**Length:** 30–40 min · **Requires PsychoPy installed on your computer (do this before class)**
+**Session:** 10/05 · **Length:** 30–40 min · **Requires PsychoPy installed on your computer (do this before class)**
 
 **📊 Slides / reference guide:** [open the slides](https://slopez4.github.io/RA_Workshops/02_psychopy_experiment/slides.html) — keep it open while you work (press `R` to switch between slide view and a scrollable reference page).
 
