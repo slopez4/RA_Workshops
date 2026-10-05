@@ -1,6 +1,6 @@
 # Workshop 2 — Your First PsychoPy Experiment
 
-**Session:** 10/05 · **Length:** 30–40 min · **Requires PsychoPy installed on your computer (do this before class)**
+**Session:** 10/05 · **Length:** 30–40 min · **PsychoPy is already installed on the lab computers**
 
 **📊 Slides / reference guide:** [open the slides](https://slopez4.github.io/RA_Workshops/02_psychopy_experiment/slides.html) — keep it open while you work (press `R` to switch between slide view and a scrollable reference page).
 
@@ -11,9 +11,10 @@ the same kind of file you analysed in [Workshop 1](../01_intro_python_analysis/)
 
 ---
 
-## Before class: install PsychoPy (~10 min)
+## For later: install PsychoPy on your own computer (~10 min)
 
-PsychoPy has to run on your own computer, because it controls screen and keyboard timing directly.
+You don't need this for the session; the lab computers are set up. To practice at home, install
+PsychoPy yourself. It runs on your computer, not in a browser, because it controls screen and keyboard timing directly.
 
 1. Download the **Standalone** installer from [psychopy.org/download](https://www.psychopy.org/download.html).
    Use the same version as the lab computers (**2026.1**).
@@ -26,8 +27,10 @@ PsychoPy has to run on your own computer, because it controls screen and keyboar
 
 ## Get the files and test
 
+In class, do this on the lab computer. At home, do it after installing.
+
 1. On [the repo page](https://github.com/slopez4/RA_Workshops), click **Code → Download ZIP** and unzip it.
-2. In PsychoPy Coder: **File → Open** → `02_psychopy_experiment/animals_plants_starter.py`.
+2. Open PsychoPy → **View → Coder**, then **File → Open** → `02_psychopy_experiment/animals_plants_starter.py`.
 3. Click the green **Run** button. Enter any ID, click OK, and press A or P on the 2 trials.
 
 If a window appears and responds to your keys, you're ready.
@@ -40,7 +43,7 @@ If a window appears and responds to your keys, you're ready.
 |---|---|
 | [`animals_plants_starter.py`](animals_plants_starter.py) | The script we complete together. It has 5 TODOs and runs at every step |
 | [`animals_plants.py`](animals_plants.py) | The finished experiment, to compare with yours |
-| [`slides.html`](https://slopez4.github.io/RA_Workshops/02_psychopy_experiment/slides.html) | Slides for class + reference page (cheat sheet, common problems) |
+| [`slides.html`](https://slopez4.github.io/RA_Workshops/02_psychopy_experiment/slides.html) | Slides for class + reference page (install steps, cheat sheet, common problems) |
 | [`CLASS_OUTLINE.md`](CLASS_OUTLINE.md) | Session plan: goals, timing, agenda |
 | [`TEACHING_GUIDE.md`](TEACHING_GUIDE.md) | How to run the session, TODO answers, troubleshooting |
 

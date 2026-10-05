@@ -257,7 +257,7 @@ kbd {
   <h2>Today's plan</h2>
   <table>
     <tr><th>Time</th><th>What</th></tr>
-    <tr><td>0:00</td><td>Check everyone has PsychoPy open and the starter script loaded</td></tr>
+    <tr><td>0:00</td><td>Open PsychoPy on the lab computer and load the starter script</td></tr>
     <tr><td>0:03</td><td>What an experiment is made of: Builder vs Coder, anatomy of a trial</td></tr>
     <tr><td>0:07</td><td>Walk through the script: settings, dialog, window, <b>draw → flip</b></td></tr>
     <tr><td>0:14</td><td><b>TODO 1–2</b> · Stimuli and randomization</td></tr>
@@ -268,31 +268,15 @@ kbd {
 </div>
 </section>
 
-<!-- 3 -->
-<section class="slide" data-title="Install PsychoPy (before class)">
-<div class="inner">
-  <div class="kicker">Before class · ~10 min</div>
-  <h2>Install PsychoPy</h2>
-  <p class="muted">PsychoPy needs to run on your own computer: it controls the screen and keyboard timing directly, so it can't run in a browser tab.</p>
-  <ol class="steps">
-    <li>Go to <a href="https://www.psychopy.org/download.html" target="_blank" rel="noopener">psychopy.org/download</a> and download the <b>Standalone</b> installer for your computer. Use the same version as the lab computers (<b>2026.1</b>).</li>
-    <li><b>Windows:</b> run the <code>.exe</code> and accept the defaults.<br><b>Mac:</b> open the <code>.dmg</code>, drag PsychoPy into <i>Applications</i>. If macOS blocks it: <i>System Settings → Privacy &amp; Security</i> → <b>Open Anyway</b>.</li>
-    <li>Open PsychoPy. It starts in <b>Builder</b>; go to <b>View → Coder</b> (or <b>Window → Coder</b>).</li>
-    <li><b>Mac only:</b> <i>System Settings → Privacy &amp; Security</i> → allow PsychoPy under <b>Input Monitoring</b> and <b>Accessibility</b>, or it won't see your keypresses.</li>
-  </ol>
-  <p class="muted" style="font-size:0.85em">The download is large. Do it on good Wi-Fi <b>before</b> the session.</p>
-</div>
-</section>
-
 <!-- 4 -->
 <section class="slide" data-title="Get the workshop files">
 <div class="inner">
-  <div class="kicker">Setup</div>
+  <div class="kicker">Setup · lab computers have PsychoPy installed</div>
   <h2>Get the workshop files</h2>
   <ol class="steps">
     <li>Go to <a href="https://github.com/slopez4/RA_Workshops" target="_blank" rel="noopener">github.com/slopez4/RA_Workshops</a> → green <b>Code</b> button → <b>Download ZIP</b>.</li>
     <li>Unzip it somewhere you can find it (e.g. <i>Documents</i>).</li>
-    <li>In PsychoPy Coder: <b>File → Open</b> → <code>02_psychopy_experiment/animals_plants_starter.py</code></li>
+    <li>Open PsychoPy and switch to <b>View → Coder</b>. Then <b>File → Open</b> → <code>02_psychopy_experiment/animals_plants_starter.py</code></li>
     <li>Press the green <b>Run</b> button (or <kbd>Ctrl</kbd>+<kbd>R</kbd> / <kbd>⌘</kbd>+<kbd>R</kbd>). Type any ID, click OK, and play the 2 trials.</li>
   </ol>
   <div class="think"><p>If a window appeared and responded to <kbd>A</kbd> / <kbd>P</kbd>, you're ready. 👍<br>Stuck? Press <kbd>Esc</kbd> during a trial, or the red <b>Stop</b> button in Coder.</p></div>
@@ -583,6 +567,22 @@ pd.DataFrame(results).to_csv(filename, index=False)</code></pre>
     <li><b>Harder:</b> use pictures: <code>visual.ImageStim(win, image="dog.png", size=0.4)</code> and add an <code>"image"</code> field to each stimulus.</li>
     <li><b>Harder:</b> add a break screen halfway through (hint: at the top of the loop, <code>if trial_number == 5:</code>).</li>
   </ol>
+</div>
+</section>
+
+<!-- reference: install -->
+<section class="slide" data-title="Install PsychoPy on your own computer">
+<div class="inner">
+  <div class="kicker">Reference · for later</div>
+  <h2>Install PsychoPy on your own computer</h2>
+  <p class="muted">The lab computers already have PsychoPy. To practice at home, install it yourself. It runs on your computer, not in a browser, because it controls screen and keyboard timing directly.</p>
+  <ol class="steps">
+    <li>Go to <a href="https://www.psychopy.org/download.html" target="_blank" rel="noopener">psychopy.org/download</a> and download the <b>Standalone</b> installer for your computer. Use the same version as the lab computers (<b>2026.1</b>).</li>
+    <li><b>Windows:</b> run the <code>.exe</code> and accept the defaults.<br><b>Mac:</b> open the <code>.dmg</code>, drag PsychoPy into <i>Applications</i>. If macOS blocks it: <i>System Settings → Privacy &amp; Security</i> → <b>Open Anyway</b>.</li>
+    <li>Open PsychoPy. It starts in <b>Builder</b>; go to <b>View → Coder</b> (or <b>Window → Coder</b>).</li>
+    <li><b>Mac only:</b> <i>System Settings → Privacy &amp; Security</i> → allow PsychoPy under <b>Input Monitoring</b> and <b>Accessibility</b>, or it won't see your keypresses.</li>
+  </ol>
+  <p class="muted" style="font-size:0.85em">The download is large, so use good Wi-Fi. Then follow "Get the workshop files" to test it.</p>
 </div>
 </section>
 

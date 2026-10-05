@@ -7,14 +7,14 @@ For whoever is running the session: prep, a minute-by-minute script, TODO answer
 ## 1. Before the session
 
 ### One week before
-- [ ] Send RAs the [README](README.md) / slide 3 and ask them to **install PsychoPy 2026.1 Standalone** and run the starter once. Installs are large and the Mac permission step is easy to miss; you do **not** want to troubleshoot installs live.
-- [ ] Ask them to reply "✅ it ran" or describe what went wrong, so you can fix problems before class.
+- [ ] Install **PsychoPy 2026.1 Standalone** on every lab computer RAs will use.
+- [ ] On **each** computer: open PsychoPy, switch to Coder, and run `animals_plants_starter.py` once. This catches keyboard permissions (Mac), first-launch prompts, and a missing Coder view before class.
 - [ ] Make sure GitHub Pages is on, so the [slides link](https://slopez4.github.io/RA_Workshops/02_psychopy_experiment/slides.html) works.
 
 ### Day before
 - [ ] Run both `animals_plants_starter.py` and `animals_plants.py` on the machine you'll present from.
-- [ ] Have a **USB stick or shared folder** with the PsychoPy installers and the workshop ZIP, for anyone whose install failed.
-- [ ] Plan for people without a working install: pair them with a neighbour (pairing is fine for this workshop).
+- [ ] Optional: put the workshop folder on each lab computer's Desktop so RAs can skip the ZIP download (slide 3).
+- [ ] If a computer misbehaves, pair that RA with a neighbour (pairing is fine for this workshop).
 
 ### 10 minutes before
 - [ ] Open the slides (press `F` for fullscreen) and PsychoPy Coder with `animals_plants_starter.py`.
@@ -35,29 +35,29 @@ For whoever is running the session: prep, a minute-by-minute script, TODO answer
 
 ## 3. Minute-by-minute script
 
-### 0:00–0:03 · Setup check (slides 1–4)
+### 0:00–0:03 · Setup check (slides 1–3)
 - "Thumbs up if you've already run the starter and seen two trials."
-- Anyone stuck → pair them with a neighbour now; fix installs after class.
+- Anyone stuck → pair them with a neighbour now; sort out that computer after class.
 
-### 0:03–0:07 · Big picture (slides 5–6)
+### 0:03–0:07 · Big picture (slides 4–5)
 - **Builder vs Coder:** "Builder writes a Python script like ours behind the scenes. Today we write it ourselves so Builder stops being a black box."
 - **Anatomy of a trial:** point at the three screens. "Every experiment you'll run in this lab is a version of this: something to look at, something to respond to, maybe feedback, repeated in some order."
 
-### 0:07–0:14 · Walk through the script (slides 7–11)
+### 0:07–0:14 · Walk through the script (slides 6–10)
 - Scroll the starter top to bottom, naming the 7 sections. Point out the parallel with Workshop 1: **settings at the top**.
 - **Dialog:** "That pop-up box is this one line. The participant ID ends up in the file name and on every row."
 - **Window:** `units="height"` makes sizes a fraction of screen height; `fullscr=False` while developing.
-- **draw → flip (slide 10), the key concept.** Whiteboard analogy: draw on a hidden whiteboard, then flip it around to face the room. Ask the 🤔 question.
+- **draw → flip (slide 9), the key concept.** Whiteboard analogy: draw on a hidden whiteboard, then flip it around to face the room. Ask the 🤔 question.
   *Answer:* draw without flip shows nothing. Flipping everything at once gives one exact onset time, which RTs are measured from.
-- **Functions (slide 11):** "`def` = teach Python a new command. We use it for instructions *and* the goodbye screen."
+- **Functions (slide 10):** "`def` = teach Python a new command. We use it for instructions *and* the goodbye screen."
 
-### 0:14–0:19 · TODO 1 & 2 (slides 8, 12)
+### 0:14–0:19 · TODO 1 & 2 (slides 7, 11)
 - **TODO 1:** add 3 animals + 3 plants. Any words work; the solution uses eagle, salmon, frog / fern, cactus, tulip. Watch for missing commas and quotes.
 - **TODO 2:** `random.shuffle(trials)`.
 - **Run it.** RAs should now get 8 trials but **blank screens** where the word should be (TODO 3 isn't done). Say: "That's what *draw without text* looks like. Let's fix it."
 - 🤔 *Why randomize?* Fixed orders confound the stimulus with its position: practice, fatigue, rhythm. Randomizing spreads those effects evenly. Because order differs per person, we save the word on every row.
 
-### 0:19–0:27 · TODO 3 & 4 (slides 13–14)
+### 0:19–0:27 · TODO 3 & 4 (slides 12–13)
 - **TODO 3:**
   ```python
   word.text = trial["word"]
@@ -68,7 +68,7 @@ For whoever is running the session: prep, a minute-by-minute script, TODO answer
 - **TODO 4:** `correct = int(response == trial["category"])`. `==` gives True/False; `int()` makes 1/0, the same `correct` column as Workshop 1.
 - Walk through the `if / elif / else`: timeout → `None`; escape → `break` (leaves the loop, still saves what we have); otherwise score it.
 
-### 0:27–0:32 · TODO 5, run, open the data (slides 15–16)
+### 0:27–0:32 · TODO 5, run, open the data (slides 14–15)
 - **TODO 5:** add `"rt_s": rt,` to the dictionary.
 - **Run it for real.** Then open `data/` next to the script and open the CSV (Excel, Numbers, or Coder itself).
 - 🤔 *Empty response and RT on a row?* A timeout: they didn't press within 3 s.
@@ -82,6 +82,7 @@ For whoever is running the session: prep, a minute-by-minute script, TODO answer
   - Each word twice: `trials = STIMULI * 2` (instead of `STIMULI.copy()`), then shuffle.
   - Break screen: inside the loop, at the top: `if trial_number == 5: show_message("Take a break. Press SPACE.")`.
   - Images: add `"image": "dog.png"` to each stimulus, create `pic = visual.ImageStim(win, size=0.4)`, then `pic.image = trial["image"]; pic.draw()`.
+- Point to **slide 17** (install PsychoPy on your own computer) for anyone who wants to keep practicing, and remind RAs to save their script before leaving the lab computer.
 - Wrap-up: "You've built what Builder builds. The CSV you just made is exactly the kind of file we analysed in Workshop 1."
 
 ---
@@ -109,4 +110,4 @@ For whoever is running the session: prep, a minute-by-minute script, TODO answer
 
 PsychoPy experiments *can* run in a browser via **Pavlovia** (PsychoPy's online platform), but only by
 building in **Builder** and exporting to JavaScript (PsychoJS). A Python Coder script like this one
-won't run online as-is. For learning to write the script, a local install is the simplest route.
+won't run online as-is. For learning to write the script, the lab computers (or a local install at home) are the simplest route.
