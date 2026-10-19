@@ -1,22 +1,22 @@
 # Teaching Guide — How Modern AI Works
 
 For whoever is running the session: prep, a minute-by-minute script, live demos, and likely questions.
-Every slide also has speaker notes in the deck itself.
+Every slide also has presenter notes: press `R` in the slides for reference view and open “Presenter notes” under each slide.
 
 ---
 
 ## 1. Before the session
 
 ### One week before
-- [ ] The deck is private until you share it: use the deck's **Share** menu so RAs (and any co-presenter) can open the link.
-- [ ] Optional: download a PDF or PowerPoint copy from the deck as a backup in case of Wi-Fi trouble.
+- [ ] Make sure GitHub Pages is on, so the [slides link](https://slopez4.github.io/RA_Workshops/03_how_modern_ai_works/slides.html) works.
+- [ ] Optional: keep a local copy of `slides.html` as a backup in case of Wi-Fi trouble (it works offline; only the fonts fall back).
 
 ### Day before
-- [ ] Click through all 16 slides once with the speaker notes open.
+- [ ] Click through all 16 slides once, then read the presenter notes in reference view (`R`).
 - [ ] If you'll do the live demos (section 3), try each one in the chatbot you'll use. Results vary between models and over time, so check what yours does now.
 
 ### 10 minutes before
-- [ ] Open the slides in Present mode. Have a whiteboard or a blank slide ready for the guesses from slide 2.
+- [ ] Open the slides and press `F` for fullscreen. Have a whiteboard or a blank slide ready for the guesses from slide 2.
 - [ ] Optional: a chatbot open in a second browser tab, zoomed in so it's readable on the projector.
 
 ---

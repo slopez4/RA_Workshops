@@ -9,7 +9,7 @@
 | **Format** | Short talk with questions to the room, one optional live demo, closing discussion |
 | **Length** | 35 min core + 5 min buffer |
 | **Setup** | Projector and the slides. Optional: a chatbot open in a browser tab for the demos |
-| **Materials** | [Slides](https://claude.ai/artifact/RNDm7HXKjdeMNRFmJKjj49) · [`TEACHING_GUIDE.md`](TEACHING_GUIDE.md) |
+| **Materials** | [Slides](https://slopez4.github.io/RA_Workshops/03_how_modern_ai_works/slides.html) · [`TEACHING_GUIDE.md`](TEACHING_GUIDE.md) |
 
 ## Learning goals
 
@@ -43,5 +43,5 @@ By the end, RAs will be able to:
 
 ## After the session
 
-- Share the slides link with RAs (see the teaching guide: the deck has to be shared first).
+- Share the slides link with RAs; the reference view (`R`) works as a handout.
 - Optional homework: ask a chatbot for three references on a topic the lab works on, then check whether each one exists and says what the chatbot claimed. Bring the results to the next lab meeting.
