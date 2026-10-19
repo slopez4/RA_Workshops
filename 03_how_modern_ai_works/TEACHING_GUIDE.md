@@ -1,22 +1,22 @@
 # Teaching Guide — How Modern AI Works
 
 For whoever is running the session: prep, a minute-by-minute script, live demos, and likely questions.
-Every slide also has speaker notes in the deck itself.
+Speaker notes for every slide are in [`SPEAKER_NOTES.md`](SPEAKER_NOTES.md).
 
 ---
 
 ## 1. Before the session
 
 ### One week before
-- [ ] The deck is private until you share it: use the deck's **Share** menu so RAs (and any co-presenter) can open the link.
-- [ ] Optional: download a PDF or PowerPoint copy from the deck as a backup in case of Wi-Fi trouble.
+- [ ] Make sure GitHub Pages is on, so the [slides link](https://slopez4.github.io/RA_Workshops/03_how_modern_ai_works/slides.html) works.
+- [ ] Optional: download `slides.html` from the repo as a backup in case of Wi-Fi trouble (it opens in any browser).
 
 ### Day before
-- [ ] Click through all 16 slides once with the speaker notes open.
+- [ ] Click through all 16 slides once with `SPEAKER_NOTES.md` open.
 - [ ] If you'll do the live demos (section 3), try each one in the chatbot you'll use. Results vary between models and over time, so check what yours does now.
 
 ### 10 minutes before
-- [ ] Open the slides in Present mode. Have a whiteboard or a blank slide ready for the guesses from slide 2.
+- [ ] Open the slides and press `F` for fullscreen. Have a whiteboard or a blank slide ready for the guesses from slide 2.
 - [ ] Optional: a chatbot open in a second browser tab, zoomed in so it's readable on the projector.
 
 ---
@@ -38,7 +38,7 @@ Every slide also has speaker notes in the deck itself.
 - Slide 2: “What do you think happens in the middle box?” Write 3–4 guesses on the board (it searches the internet, it has a database of answers, it thinks like a person…). Don't correct them yet.
 
 ### 0:04–0:09 · The big picture (slides 3–4)
-- Slide 3: point from the outside in. “Chess programs used to count as AI. Today, when people say AI they almost always mean the inner circles.”
+- Slide 3: point from the outside in. “Chess programs used to count as AI. Today, when people say AI they almost always mean the inner boxes.”
 - Slide 4 is the key shift: **rules + data → answers** vs **data + answers → rules**. Spam filter example. “The catch: the rules it learns are millions of numbers, not sentences you can read.”
 
 ### 0:09–0:15 · The machinery (slides 5–6)

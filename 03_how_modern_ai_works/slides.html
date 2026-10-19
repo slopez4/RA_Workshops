@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Modern AI Works</title>
+<meta name="description" content="Slides for Workshop 3: how modern AI works, from a single artificial neuron to a chatbot, and where it goes wrong.">
+<!-- Visual style adapted from the "8-Bit Orbit" template in zarazhangrui/beautiful-html-templates (MIT License, (c) 2026 Zara Zhang). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Space+Mono:wght@400;700&family=Tektur:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --neon-pink: #F0A6CA;
+  --neon-cyan: #5EDCF4;
+  --neon-yellow: #F4D03F;
+  --deep-navy: #0F1B3D;
+  --dark-void: #0A0E27;
+  --soft-lavender: #E2D5F2;
+  --ink-muted: rgba(15, 27, 61, 0.75);
+  --light-muted: rgba(255, 255, 255, 0.72);
+  --font-display: 'Tektur', 'Segoe UI', sans-serif;
+  --font-body: 'Chakra Petch', 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', Consolas, monospace;
+}
+
+/* The whole deck scales with the window, like a fixed 16:9 canvas */
+html { font-size: clamp(11px, min(1.15vw, 2.05vh), 28px); }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  font-family: var(--font-body); color: var(--deep-navy); background: var(--dark-void);
+}
+b { font-weight: 700; }
+
+.deck { width: 100%; height: 100vh; overflow: hidden; position: relative; cursor: crosshair; }
+.slides-container { width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+.slide {
+  width: 100%; height: 100vh; position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: 3.2rem 5rem;
+}
+
+/* === Atmosphere (from the template) === */
+.scanlines::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 50; mix-blend-mode: multiply;
+  background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(10,14,39,0.04) 2px, rgba(10,14,39,0.04) 4px);
+}
+.grain::before {
+  content: ""; position: absolute; inset: 0; opacity: 0.035; pointer-events: none; z-index: 49;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.bg-grid {
+  background-color: var(--dark-void); color: #fff;
+  background-image: linear-gradient(rgba(94,220,244,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(94,220,244,0.07) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.bg-grid::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 51;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(10,14,39,0.25) 100%);
+}
+.bg-grid-pink, .bg-grid-cyan, .bg-grid-lavender { background-size: 40px 40px; }
+.bg-grid-pink {
+  background-color: var(--neon-pink);
+  background-image: linear-gradient(rgba(15,27,61,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(15,27,61,0.06) 1px, transparent 1px);
+}
+.bg-grid-cyan {
+  background-color: var(--neon-cyan);
+  background-image: linear-gradient(rgba(15,27,61,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(15,27,61,0.08) 1px, transparent 1px);
+}
+.bg-grid-lavender {
+  background-color: var(--soft-lavender);
+  background-image: linear-gradient(rgba(15,27,61,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(15,27,61,0.05) 1px, transparent 1px);
+}
+.starfield, .pixel-particles { position: absolute; inset: 0; overflow: hidden; z-index: 1; pointer-events: none; }
+.starfield .star { position: absolute; width: 4px; height: 4px; background: var(--neon-cyan); opacity: 0.6; animation: twinkle 3s infinite ease-in-out; }
+.starfield .star:nth-child(2n) { background: var(--neon-yellow); }
+.starfield .star:nth-child(3n) { background: var(--neon-pink); }
+.starfield .star:nth-child(4n) { width: 6px; height: 6px; }
+@keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.3); } }
+.pixel-particles .p { position: absolute; width: 8px; height: 8px; opacity: 0.4; animation: float 8s infinite ease-in-out; }
+@keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-30px) rotate(90deg); } }
+
+/* === Neural-network decoration === */
+.nnet { position: absolute; z-index: 2; pointer-events: none; }
+.nnet svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.nnet .edge { stroke: var(--neon-cyan); stroke-width: 1.5; opacity: 0.28; }
+.nnet .pulse { stroke-width: 3; stroke-dasharray: 10 200; stroke-linecap: square; fill: none; animation: signal 2.6s linear infinite; }
+.nnet .node { fill: var(--dark-void); stroke: var(--neon-cyan); stroke-width: 3; }
+.nnet .node.on { fill: var(--neon-yellow); stroke: var(--neon-yellow); animation: fire 2.4s steps(2) infinite; }
+.nnet.ink .edge { stroke: var(--deep-navy); opacity: 0.22; }
+.nnet.ink .node { fill: transparent; stroke: var(--deep-navy); }
+.nnet.ink .node.on { fill: var(--deep-navy); stroke: var(--deep-navy); }
+@keyframes signal { from { stroke-dashoffset: 210; } to { stroke-dashoffset: 0; } }
+@keyframes fire { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* === Pixel UI === */
+.pixel-label {
+  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--neon-yellow); background: var(--deep-navy); padding: 0.3rem 0.75rem; display: inline-block; margin-bottom: 1.1rem;
+}
+.pixel-hero-text {
+  font-family: var(--font-display); font-weight: 900; font-size: 5.6rem; line-height: 1.05; letter-spacing: 0.04em;
+  color: var(--neon-cyan); text-shadow: 4px 4px 0 var(--neon-yellow), 8px 8px 0 var(--deep-navy);
+}
+.hero-subtitle { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.3em; color: var(--neon-pink); text-transform: uppercase; margin-bottom: 1.5rem; }
+.hero-tagline { font-size: 1.25rem; color: var(--light-muted); text-align: center; margin-top: 2rem; line-height: 1.6; }
+.hero-badges { display: flex; gap: 0.8rem; margin-top: 2.6rem; flex-wrap: wrap; justify-content: center; }
+.hero-badge { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.4rem 0.8rem; border: 2px solid var(--neon-yellow); color: var(--neon-yellow); }
+.pixel-btn {
+  display: inline-block; font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.75rem 1.6rem; background: var(--neon-cyan); color: var(--deep-navy); text-decoration: none;
+  box-shadow: 4px 0 0 0 var(--deep-navy), 0 4px 0 0 var(--deep-navy), 4px 4px 0 0 var(--deep-navy), 8px 4px 0 0 var(--neon-yellow), 4px 8px 0 0 var(--neon-yellow), 8px 8px 0 0 var(--neon-yellow);
+  transition: transform 0.1s;
+}
+.pixel-btn:hover { transform: translate(2px, 2px); }
+
+.slide-content { position: relative; z-index: 10; width: 100%; max-width: 68rem; display: flex; flex-direction: column; }
+.slide-content.center { align-items: center; text-align: center; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.15; }
+h2 { font-size: 2.35rem; margin-bottom: 1.8rem; color: var(--deep-navy); }
+.bg-grid h2 { color: var(--neon-cyan); }
+h3 { font-size: 1.15rem; margin-bottom: 0.35rem; }
+p, li { font-size: 1rem; line-height: 1.55; }
+.muted { color: var(--ink-muted); }
+.bg-grid .muted { color: var(--light-muted); }
+.small { font-size: 0.78rem; }
+.big { font-size: 1.45rem; line-height: 1.4; }
+.mono { font-family: var(--font-mono); }
+.em-line { font-size: 1.45rem; font-style: italic; font-weight: 500; line-height: 1.4; margin-top: 1.8rem; }
+.note { margin-top: 1.6rem; }
+
+/* Cards with pixel corners (feature-card / stat-block / tier-card from the template) */
+.card { background: rgba(255,255,255,0.35); border: 2px solid rgba(15,27,61,0.2); padding: 1.3rem 1.4rem; position: relative; }
+.card::before, .card::after { content: ""; position: absolute; width: 0.8rem; height: 0.8rem; }
+.card::before { top: -2px; left: -2px; border-top: 4px solid var(--deep-navy); border-left: 4px solid var(--deep-navy); }
+.card::after { bottom: -2px; right: -2px; border-bottom: 4px solid var(--deep-navy); border-right: 4px solid var(--deep-navy); }
+.card.featured { background: var(--deep-navy); color: #fff; border-color: var(--deep-navy); box-shadow: 8px 8px 0 var(--neon-yellow); }
+.card.featured::before, .card.featured::after { border-color: var(--neon-yellow); }
+.card.featured .muted { color: var(--light-muted); }
+.bg-grid .card { background: rgba(94,220,244,0.08); border-color: rgba(94,220,244,0.25); }
+.bg-grid .card::before, .bg-grid .card::after { border-color: var(--neon-cyan); }
+.card-label { font-family: var(--font-mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 0.6rem; }
+.featured .card-label, .bg-grid .card-label { color: var(--neon-pink); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; }
+
+/* Flow: box → box → box */
+.flow { display: flex; align-items: stretch; gap: 0.9rem; }
+.flow > .card { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.flow .arrow { align-self: center; font-family: var(--font-display); font-weight: 900; font-size: 2rem; color: var(--deep-navy); }
+.bg-grid .flow .arrow { color: var(--neon-pink); }
+.bignum { font-family: var(--font-display); font-weight: 900; font-size: 2.6rem; line-height: 1.05; }
+.featured .bignum { color: var(--neon-yellow); }
+
+/* Slide 3: nested squares */
+.family { display: grid; grid-template-columns: auto 1fr; gap: 3.5rem; align-items: center; }
+.nest { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 0.6rem; padding-top: 1rem; border: 4px solid; }
+.nest > span { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.nest.n1 { width: 22rem; height: 22rem; border-color: var(--neon-cyan); background: rgba(94,220,244,0.06); color: var(--neon-cyan); }
+.nest.n2 { width: 16.5rem; height: 16.5rem; border-color: var(--neon-pink); background: rgba(240,166,202,0.1); color: var(--neon-pink); }
+.nest.n3 { width: 11rem; height: 11rem; border-color: var(--neon-yellow); background: rgba(244,208,63,0.12); color: var(--neon-yellow); }
+.nest.n4 { width: 6rem; height: 6rem; border-color: var(--neon-cyan); background: var(--neon-cyan); color: var(--deep-navy); justify-content: center; padding: 0; box-shadow: 4px 4px 0 var(--neon-yellow); }
+.nest.n4 > span { font-family: var(--font-display); font-size: 1.1rem; }
+.defs { display: flex; flex-direction: column; gap: 1.3rem; }
+.defs h3 { color: #fff; }
+
+/* Slide 5: neuron numbers */
+.mono-lines { font-family: var(--font-mono); font-size: 1.15rem; line-height: 1.6; }
+
+/* Slide 6: training */
+.training { display: grid; grid-template-columns: 1.15fr 1fr; gap: 3rem; align-items: center; }
+.training svg { width: 100%; height: auto; display: block; }
+.steps { display: flex; flex-direction: column; gap: 1.3rem; }
+.step { display: grid; grid-template-columns: 2.6rem 1fr; gap: 0.9rem; align-items: start; }
+.step-num {
+  font-family: var(--font-display); font-weight: 900; font-size: 1.2rem; width: 2.4rem; height: 2.4rem;
+  display: grid; place-items: center; background: var(--deep-navy); color: var(--neon-yellow); box-shadow: 3px 3px 0 var(--neon-pink);
+}
+.step p { font-size: 1.1rem; }
+
+/* Slide 7: tokens */
+.quote-line-big { font-size: 1.6rem; font-style: italic; font-weight: 500; margin-bottom: 1.4rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+.chip { font-family: var(--font-mono); font-size: 1.15rem; font-weight: 700; padding: 0.35rem 0.75rem; background: var(--deep-navy); color: var(--neon-cyan); box-shadow: 3px 3px 0 rgba(15,27,61,0.35); }
+.chip:nth-child(even) { background: var(--neon-yellow); color: var(--deep-navy); }
+.down { font-family: var(--font-display); font-weight: 900; font-size: 2rem; margin: 0.5rem 0 0.4rem 0.6rem; }
+.ids { font-family: var(--font-mono); font-size: 1.15rem; font-weight: 700; background: rgba(255,255,255,0.4); border: 2px dashed var(--deep-navy); padding: 0.6rem 0.9rem; display: inline-block; }
+
+/* Slide 8: embeddings */
+.embed { display: grid; grid-template-columns: 1.35fr 1fr; gap: 3rem; align-items: center; }
+.embed-map { background: var(--deep-navy); border: 2px solid rgba(94,220,244,0.3); position: relative; }
+.embed-map svg { width: 100%; height: auto; display: block; }
+.embed-map svg text { font-family: var(--font-mono); font-size: 26px; fill: #fff; }
+.embed-map svg text.b { font-weight: 700; fill: var(--neon-yellow); }
+.legend { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-top: 0.8rem; font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light-muted); }
+.legend i { display: inline-block; width: 0.6rem; height: 0.6rem; margin-right: 0.4rem; vertical-align: middle; }
+.bullets-lg { display: flex; flex-direction: column; gap: 1.5rem; }
+.bullets-lg p { font-size: 1.15rem; }
+
+/* Slide 9: next-token bars (hbar chart from the template) */
+.hbars { display: flex; flex-direction: column; gap: 1rem; margin: 1.6rem 0 0.6rem; }
+.hbar-row { display: grid; grid-template-columns: 7rem 1fr 3.5rem; align-items: center; gap: 1rem; }
+.hbar-label { font-family: var(--font-mono); font-size: 1rem; font-weight: 700; text-align: right; }
+.hbar-track { height: 1.7rem; background: rgba(15,27,61,0.1); }
+.hbar-fill { height: 100%; width: 0; background: var(--neon-cyan); box-shadow: 4px 4px 0 var(--deep-navy); transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); }
+.hbar-fill.top { background: var(--deep-navy); box-shadow: 4px 4px 0 var(--neon-yellow); }
+.hbar-value { font-family: var(--font-mono); font-size: 1rem; font-weight: 700; }
+.blank { color: var(--deep-navy); background: var(--neon-yellow); padding: 0 0.4rem; font-style: normal; font-family: var(--font-mono); }
+
+/* Slide 10: attention */
+.att-q { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 0.9rem; }
+.sent { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; margin-bottom: 0.9rem; }
+.sent span { font-size: 1.3rem; padding: 0.25rem 0.5rem; border: 3px solid transparent; }
+.sent .hi { background: var(--deep-navy); color: var(--neon-cyan); font-weight: 700; box-shadow: 3px 3px 0 var(--neon-yellow); }
+.sent .lo { background: rgba(15,27,61,0.14); }
+.sent .it { border-color: var(--deep-navy); background: var(--neon-yellow); font-weight: 700; }
+.sent .end { font-weight: 700; }
+
+/* Slide 11: stats */
+.stat-number { font-family: var(--font-display); font-size: 2.7rem; font-weight: 900; color: var(--neon-cyan); line-height: 1; margin-bottom: 0.8rem; text-shadow: 3px 3px 0 var(--deep-navy); }
+.card.featured .stat-number { color: var(--neon-yellow); }
+.bg-grid .card.featured { background: var(--neon-pink); color: var(--deep-navy); box-shadow: 8px 8px 0 var(--neon-yellow); border-color: var(--neon-pink); }
+.bg-grid .card.featured .stat-number { color: var(--deep-navy); text-shadow: 3px 3px 0 var(--neon-yellow); }
+.bg-grid .card.featured::before, .bg-grid .card.featured::after { border-color: var(--deep-navy); }
+.source { position: absolute; left: 5rem; bottom: 1.4rem; z-index: 10; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.05em; color: var(--light-muted); }
+
+/* Slide 12: stages */
+.stage-tag { font-family: var(--font-mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 0.4rem; }
+.featured .stage-tag { color: var(--neon-pink); }
+.stage h3 { font-size: 1.6rem; margin-bottom: 0.7rem; }
+.featured.stage h3 { color: var(--neon-yellow); }
+
+/* Slide 13: pixel icons */
+.picon { width: 3rem; height: 3rem; margin-bottom: 0.9rem; display: block; }
+
+/* Slide 14: limits */
+.limit { border-left: 8px solid var(--deep-navy); }
+.limit h3 { font-size: 1.4rem; }
+
+/* Slide 15: statement (quote slide from the template) */
+.quote-container { max-width: 52rem; text-align: center; position: relative; padding: 2.5rem; }
+.quote-container::before, .quote-container::after { content: ""; position: absolute; width: 1.4rem; height: 1.4rem; border: 4px solid var(--deep-navy); }
+.quote-container::before { top: -8px; left: -8px; border-right: none; border-bottom: none; }
+.quote-container::after { bottom: -8px; right: -8px; border-left: none; border-top: none; }
+.statement { font-family: var(--font-display); font-weight: 900; font-size: 4.2rem; line-height: 1.08; color: var(--deep-navy); text-shadow: 4px 4px 0 var(--neon-yellow); }
+.quote-bar { width: 3.5rem; height: 6px; background: var(--neon-yellow); margin: 1.8rem auto; box-shadow: 4px 4px 0 var(--deep-navy); }
+.statement-sub { font-size: 1.45rem; font-style: italic; font-weight: 500; }
+
+/* Slide 16: discussion */
+.questions { display: flex; flex-direction: column; gap: 1.6rem; }
+.question { display: grid; grid-template-columns: 3rem 1fr; gap: 1.3rem; align-items: start; }
+.question .step-num { width: 2.8rem; height: 2.8rem; font-size: 1.4rem; background: var(--neon-cyan); color: var(--deep-navy); box-shadow: 4px 4px 0 var(--neon-yellow); }
+.question p { font-size: 1.45rem; line-height: 1.4; color: #fff; }
+
+/* === Navigation (from the template) === */
+.nav-dots { position: fixed; right: 24px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+.nav-dot { width: 12px; height: 12px; border: 2px solid var(--neon-cyan); background: transparent; cursor: pointer; position: relative; padding: 0; }
+.nav-dot::after { content: ""; position: absolute; inset: 2px; background: var(--neon-cyan); opacity: 0; transition: opacity 0.3s; }
+.nav-dot.active::after { opacity: 1; }
+.nav-dot:hover { border-color: var(--neon-yellow); }
+.slide-counter {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 100;
+  font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.15em; color: var(--neon-cyan); background: rgba(10,14,39,0.85); padding: 6px 18px;
+}
+.nav-hint { position: fixed; bottom: 22px; right: 24px; z-index: 100; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--neon-cyan); opacity: 0.6; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slides-container, .hbar-fill { transition: none; }
+  .starfield .star, .pixel-particles .p, .nnet .pulse, .nnet .node.on { animation: none; }
+}
+
+/* Phones: one long scrolling page instead of a slide show */
+@media (max-width: 760px) {
+  html { font-size: 15px; }
+  html, body { overflow: auto; height: auto; }
+  .deck { height: auto; overflow: visible; }
+  .slides-container { transform: none !important; }
+  .slide { height: auto; min-height: 100vh; padding: 3rem 16px 3.5rem; }
+  .nav-dots, .nav-hint, .slide-counter { display: none; }
+  .grid-2, .grid-3, .family, .training, .embed { grid-template-columns: 1fr; }
+  .flow { flex-direction: column; }
+  .flow .arrow { transform: rotate(90deg); }
+  .family { justify-items: center; }
+  .nest.n1 { width: 19rem; height: 19rem; } .nest.n2 { width: 14.5rem; height: 14.5rem; } .nest.n3 { width: 10rem; height: 10rem; } .nest.n4 { width: 5.4rem; height: 5.4rem; }
+  .pixel-hero-text { font-size: 3rem; }
+  .statement { font-size: 2.6rem; }
+  h2 { font-size: 1.8rem; }
+  .hbar-row { grid-template-columns: 5rem 1fr 3rem; }
+  .source { position: static; margin-top: 1.5rem; }
+  .nnet { opacity: 0.5; }
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+  <div class="nav-dots" id="navDots"></div>
+  <div class="slide-counter" id="slideCounter">01 / 16</div>
+  <div class="nav-hint">&larr; &rarr; KEYS &middot; F FULLSCREEN</div>
+
+  <div class="slides-container" id="slidesContainer">
+
+    <!-- 1 · Cover -->
+    <section class="slide bg-grid scanlines grain">
+      <div class="starfield"></div>
+      <div class="pixel-particles"></div>
+      <div class="nnet" data-layers="3,5,5,4,2" data-pulses="14" style="left:2%;top:12%;width:24%;height:76%;opacity:0.55"></div>
+      <div class="nnet" data-layers="2,4,5,5,3" data-pulses="14" style="right:4%;top:12%;width:24%;height:76%;opacity:0.55"></div>
+      <div class="slide-content center">
+        <div class="hero-subtitle">RA Workshop 3 &middot; 10/19</div>
+        <h1 class="pixel-hero-text">HOW MODERN<br>AI WORKS</h1>
+        <p class="hero-tagline">From artificial neurons to chatbots, one idea at a time</p>
+        <div class="hero-badges">
+          <span class="hero-badge">&rarr; next</span>
+          <span class="hero-badge">&larr; back</span>
+          <span class="hero-badge">F fullscreen</span>
+        </div>
+        <p style="margin-top:2.2rem">
+          <a class="pixel-btn" href="https://github.com/slopez4/RA_Workshops/tree/main/03_how_modern_ai_works" target="_blank" rel="noopener">Workshop files on GitHub</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- 2 · Today's question -->
+    <section class="slide bg-grid-lavender scanlines grain">
+      <div class="nnet ink" data-layers="2,3,2" data-pulses="4" style="right:4%;top:5%;width:18%;height:24%;opacity:0.6"></div>
+      <div class="slide-content">
+        <div><span class="pixel-label">Today&rsquo;s question</span></div>
+        <h2>What happens between your question and the chatbot&rsquo;s answer?</h2>
+        <div class="flow">
+          <div class="card">
+            <div class="card-label">Input</div>
+            <p class="big">&ldquo;Explain photosynthesis like I&rsquo;m twelve.&rdquo;</p>
+          </div>
+          <div class="arrow">&#9654;</div>
+          <div class="card featured" style="align-items:center;text-align:center">
+            <div class="pixel-hero-text" style="font-size:4.4rem;color:var(--neon-yellow);text-shadow:4px 4px 0 var(--neon-pink)">?</div>
+            <p class="big" style="font-family:var(--font-display);margin-top:0.6rem">The model</p>
+          </div>
+          <div class="arrow">&#9654;</div>
+          <div class="card">
+            <div class="card-label">Output</div>
+            <p class="big">A fluent answer, appearing word by word.</p>
+          </div>
+        </div>
+        <p class="em-line muted">Today we open the middle box.</p>
+      </div>
+    </section>
+
+    <!-- 3 · The family of AI -->
+    <section class="slide bg-grid scanlines grain">
+      <div class="starfield" data-count="25"></div>
+      <div class="slide-content">
+        <div><span class="pixel-label">The big picture</span></div>
+        <h2>AI is a family of nested ideas</h2>
+        <div class="family">
+          <div class="nest n1"><span>Artificial intelligence</span>
+            <div class="nest n2"><span>Machine learning</span>
+              <div class="nest n3"><span>Deep learning</span>
+                <div class="nest n4"><span>LLMs</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="defs">
+            <div><h3>Artificial intelligence</h3><p class="muted">Machines doing tasks we&rsquo;d say need intelligence.</p></div>
+            <div><h3>Machine learning</h3><p class="muted">Learning patterns from examples, not hand-written rules.</p></div>
+            <div><h3>Deep learning</h3><p class="muted">Machine learning with large, many-layered neural networks.</p></div>
+            <div><h3>Large language models (LLMs)</h3><p class="muted">Deep networks trained on vast amounts of text.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · ML flips programming around -->
+    <section class="slide bg-grid-cyan scanlines grain">
+      <div class="slide-content">
+        <div><span class="pixel-label">The key shift</span></div>
+        <h2>Machine learning flips programming around</h2>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-label">Traditional programming</div>
+            <p class="bignum" style="font-size:2rem;margin-bottom:1rem">Rules + data &#9654; answers</p>
+            <p class="big muted">A person writes the rules: &ldquo;If the email says <i>free money</i>, mark it as spam.&rdquo;</p>
+          </div>
+          <div class="card featured">
+            <div class="card-label">Machine learning</div>
+            <p class="bignum" style="font-size:2rem;margin-bottom:1rem">Data + answers &#9654; rules</p>
+            <p class="big muted">Show it thousands of emails already labeled spam or not, and let it work out the patterns itself.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · An artificial neuron -->
+    <section class="slide bg-grid scanlines grain">
+      <div class="nnet" data-layers="3,4,4,1" data-pulses="8" style="right:3%;top:4%;width:18%;height:22%;opacity:0.5"></div>
+      <div class="slide-content">
+        <div><span class="pixel-label">The building block</span></div>
+        <h2>An artificial neuron is a tiny calculator</h2>
+        <div class="flow">
+          <div class="card">
+            <div class="card-label">1 &middot; Inputs</div>
+            <p class="mono-lines">Furry: 1<br>Barks: 1<br>Wings: 0</p>
+          </div>
+          <div class="arrow">&#9654;</div>
+          <div class="card">
+            <div class="card-label">2 &middot; Weights</div>
+            <p class="mono-lines">&times; 0.6<br>&times; 0.9<br>&times; &minus;1.0</p>
+          </div>
+          <div class="arrow">&#9654;</div>
+          <div class="card">
+            <div class="card-label">3 &middot; Add up</div>
+            <p class="bignum" style="color:var(--neon-cyan)">1.5</p>
+            <p class="mono small muted">0.6+0.9+0</p>
+          </div>
+          <div class="arrow">&#9654;</div>
+          <div class="card featured" style="background:var(--neon-pink);color:var(--deep-navy);border-color:var(--neon-pink)">
+            <div class="card-label" style="color:var(--deep-navy)">4 &middot; Squash</div>
+            <p class="bignum" style="color:var(--deep-navy)">0.82</p>
+            <p class="small">&ldquo;Probably a dog&rdquo;</p>
+          </div>
+        </div>
+        <p class="big muted note">Stack millions or billions of these in layers and you have a <b style="color:#fff">neural network</b>. Nobody sets the weights by hand: they are <b style="color:#fff">learned</b>.</p>
+      </div>
+    </section>
+
+    <!-- 6 · Training -->
+    <section class="slide bg-grid-lavender scanlines grain">
+      <div class="slide-content">
+        <div><span class="pixel-label">Training</span></div>
+        <h2>Learning means nudging the weights downhill</h2>
+        <div class="training">
+          <div>
+            <svg viewBox="0 0 760 500" role="img" aria-label="An error curve shaped like a valley, with dots stepping down it toward the lowest point" shape-rendering="crispEdges">
+              <line x1="40" y1="40" x2="40" y2="470" stroke="#0F1B3D" stroke-width="4"/>
+              <line x1="40" y1="470" x2="740" y2="470" stroke="#0F1B3D" stroke-width="4"/>
+              <path d="M 40 60 C 200 520, 520 520, 720 120" fill="none" stroke="#0F1B3D" stroke-width="6" stroke-dasharray="14 8" shape-rendering="auto"/>
+              <rect x="69" y="150" width="24" height="24" fill="#F0A6CA" opacity="0.45"/>
+              <rect x="141" y="269" width="24" height="24" fill="#F0A6CA" opacity="0.6"/>
+              <rect x="222" y="350" width="24" height="24" fill="#F0A6CA" opacity="0.8"/>
+              <rect x="316" y="395" width="24" height="24" fill="#F0A6CA"/>
+              <rect x="386" y="395" width="34" height="34" fill="#F4D03F" stroke="#0F1B3D" stroke-width="4"/>
+            </svg>
+            <p class="small muted" style="margin-top:0.5rem">Height = how wrong the model is. Each dot is one training step.</p>
+          </div>
+          <div class="steps">
+            <div class="step"><div class="step-num">1</div><p><b>Guess.</b> Run an example through the network.</p></div>
+            <div class="step"><div class="step-num">2</div><p><b>Measure the error.</b> Compare the guess with the right answer.</p></div>
+            <div class="step"><div class="step-num">3</div><p><b>Nudge every weight</b> a little in the direction that shrinks the error.</p></div>
+            <p class="em-line muted" style="margin-top:0.4rem">Repeat, billions of times.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 · Tokens -->
+    <section class="slide bg-grid-pink scanlines grain">
+      <div class="slide-content">
+        <div><span class="pixel-label">Step 1 &middot; Tokens</span></div>
+        <h2>First, text is chopped into tokens</h2>
+        <p class="quote-line-big">&ldquo;Students love unbelievably long lectures.&rdquo;</p>
+        <div class="chips">
+          <span class="chip">Stud</span><span class="chip">ents</span><span class="chip">love</span><span class="chip">un</span><span class="chip">believ</span><span class="chip">ably</span><span class="chip">long</span><span class="chip">lect</span><span class="chip">ures</span><span class="chip">.</span>
+        </div>
+        <div class="down">&#9660;</div>
+        <div><span class="ids">[ 9218, 812, 3021, 403, 7745, 1102, 1588, 6431, 984, 13 ]</span></div>
+        <p class="big muted note">The model never sees letters, only a list of numbers. One token is roughly &frac34; of an English word. <i>(Split and IDs are illustrative.)</i></p>
+      </div>
+    </section>
+
+    <!-- 8 · Embeddings -->
+    <section class="slide bg-grid scanlines grain">
+      <div class="starfield" data-count="20"></div>
+      <div class="slide-content">
+        <div><span class="pixel-label">Step 2 &middot; Embeddings</span></div>
+        <h2>Each token becomes a point in &ldquo;meaning space&rdquo;</h2>
+        <div class="embed">
+          <div>
+            <div class="embed-map">
+              <svg viewBox="0 0 900 560" role="img" aria-label="A map of words: animals cluster together, foods cluster together, and the step from king to queen matches the step from man to woman">
+                <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#F4D03F"/></marker></defs>
+                <line x1="210" y1="425" x2="315" y2="473" stroke="#F4D03F" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#ah)"/>
+                <line x1="570" y1="385" x2="675" y2="433" stroke="#F4D03F" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#ah)"/>
+                <g fill="#5EDCF4"><rect x="140" y="130" width="20" height="20"/><rect x="210" y="175" width="20" height="20"/><rect x="155" y="225" width="20" height="20"/></g>
+                <g fill="#F0A6CA"><rect x="610" y="110" width="20" height="20"/><rect x="690" y="160" width="20" height="20"/><rect x="630" y="215" width="20" height="20"/></g>
+                <g fill="#F4D03F"><rect x="190" y="410" width="20" height="20"/><rect x="320" y="470" width="20" height="20"/><rect x="550" y="370" width="20" height="20"/><rect x="680" y="430" width="20" height="20"/></g>
+                <text x="172" y="148">cat</text><text x="242" y="193">dog</text><text x="187" y="243">horse</text>
+                <text x="642" y="128">pizza</text><text x="722" y="178">pasta</text><text x="662" y="233">bread</text>
+                <text class="b" x="180" y="428" text-anchor="end">king</text><text class="b" x="352" y="488">queen</text>
+                <text class="b" x="540" y="388" text-anchor="end">man</text><text class="b" x="712" y="448">woman</text>
+              </svg>
+            </div>
+            <div class="legend"><span><i style="background:var(--neon-cyan)"></i>animals</span><span><i style="background:var(--neon-pink)"></i>food</span><span><i style="background:var(--neon-yellow)"></i>people</span></div>
+          </div>
+          <div class="bullets-lg">
+            <p>Words used in similar ways land <b style="color:var(--neon-cyan)">close together</b>.</p>
+            <p>Directions carry meaning: <b style="color:var(--neon-yellow)">king &rarr; queen</b> is the same step as <b style="color:var(--neon-yellow)">man &rarr; woman</b>.</p>
+            <p class="muted">Real models use thousands of dimensions. We can only draw two.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 · Next-token prediction -->
+    <section class="slide bg-grid-lavender scanlines grain">
+      <div class="nnet ink" data-layers="3,4,3,1" data-pulses="5" style="right:4%;top:5%;width:18%;height:24%;opacity:0.6"></div>
+      <div class="slide-content">
+        <div><span class="pixel-label">Step 3 &middot; Prediction</span></div>
+        <h2>The model&rsquo;s one job: guess the next token</h2>
+        <p class="quote-line-big" style="margin-bottom:0">&ldquo;The students opened their <span class="blank">______</span>&rdquo;</p>
+        <div class="hbars" id="predictBars">
+          <div class="hbar-row"><div class="hbar-label">books</div><div class="hbar-track"><div class="hbar-fill top" data-width="82"></div></div><div class="hbar-value">41%</div></div>
+          <div class="hbar-row"><div class="hbar-label">laptops</div><div class="hbar-track"><div class="hbar-fill" data-width="56"></div></div><div class="hbar-value">28%</div></div>
+          <div class="hbar-row"><div class="hbar-label">notes</div><div class="hbar-track"><div class="hbar-fill" data-width="24"></div></div><div class="hbar-value">12%</div></div>
+          <div class="hbar-row"><div class="hbar-label">minds</div><div class="hbar-track"><div class="hbar-fill" data-width="8"></div></div><div class="hbar-value">4%</div></div>
+        </div>
+        <p class="big muted note">Pick one, add it to the text, and predict again. Every reply is written <b style="color:var(--deep-navy)">one token at a time</b>. <i>(Illustrative probabilities.)</i></p>
+      </div>
+    </section>
+
+    <!-- 10 · Attention -->
+    <section class="slide bg-grid-pink scanlines grain">
+      <div class="slide-content">
+        <div><span class="pixel-label">Step 4 &middot; Attention</span></div>
+        <h2>Attention lets each word look at its context</h2>
+        <p class="att-q">What does &ldquo;it&rdquo; refer to?</p>
+        <div class="sent"><span>The</span><span class="hi">animal</span><span>didn&rsquo;t</span><span>cross</span><span>the</span><span class="lo">street</span><span>because</span><span class="it">it</span><span>was</span><span>too</span><span class="end">tired.</span></div>
+        <div class="sent"><span>The</span><span class="lo">animal</span><span>didn&rsquo;t</span><span>cross</span><span>the</span><span class="hi">street</span><span>because</span><span class="it">it</span><span>was</span><span>too</span><span class="end">wide.</span></div>
+        <p class="small muted">Dark box = where &ldquo;it&rdquo; pays the most attention. Light box = some attention.</p>
+        <p class="big muted note">Change one word and the meaning of &ldquo;it&rdquo; shifts. This mechanism is the heart of the <b style="color:var(--deep-navy)">transformer</b> (2017), the design behind today&rsquo;s chatbots.</p>
+      </div>
+    </section>
+
+    <!-- 11 · Pretraining at scale -->
+    <section class="slide bg-grid scanlines grain">
+      <div class="starfield" data-count="30"></div>
+      <div class="nnet" data-layers="3,5,5,2" data-pulses="10" style="right:4%;top:5%;width:20%;height:22%;opacity:0.5"></div>
+      <div class="slide-content">
+        <div><span class="pixel-label">Pretraining</span></div>
+        <h2>Pretraining repeats that guess at enormous scale</h2>
+        <div class="grid-3">
+          <div class="card"><div class="stat-number">175 billion</div><p class="big">weights in GPT-3, released in 2020</p></div>
+          <div class="card"><div class="stat-number">15 trillion</div><p class="big">tokens of text used to train Meta&rsquo;s Llama 3 (2024)</p></div>
+          <div class="card featured"><div class="stat-number">Thousands</div><p class="big">of specialized chips, running for weeks to months</p></div>
+        </div>
+        <p class="big muted note">Newer models are bigger still, but most companies no longer publish exact sizes.</p>
+      </div>
+      <p class="source">Sources: Brown et al., 2020 (GPT-3); Meta AI, 2024 (Llama 3)</p>
+    </section>
+
+    <!-- 12 · Three stages -->
+    <section class="slide bg-grid-pink scanlines grain">
+      <div class="slide-content">
+        <div><span class="pixel-label">Becoming an assistant</span></div>
+        <h2>Three stages turn a text predictor into a chatbot</h2>
+        <div class="flow">
+          <div class="card stage" style="justify-content:flex-start">
+            <div class="stage-tag">Stage 1</div>
+            <h3>Pretraining</h3>
+            <p class="big muted">Predict the next token on huge amounts of text. It knows language, but only <i>continues</i> text.</p>
+          </div>
+          <div class="arrow">&#9654;</div>
+          <div class="card stage" style="justify-content:flex-start">
+            <div class="stage-tag">Stage 2</div>
+            <h3>Fine-tuning</h3>
+            <p class="big muted">Keep training on example conversations, so it learns to answer and follow instructions.</p>
+          </div>
+          <div class="arrow">&#9654;</div>
+          <div class="card featured stage" style="justify-content:flex-start">
+            <div class="stage-tag">Stage 3</div>
+            <h3>Feedback</h3>
+            <p class="big muted">People (and other models) rate answers; the model is nudged toward helpful, honest ones.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 · Beyond text -->
+    <section class="slide bg-grid-cyan scanlines grain">
+      <div class="slide-content">
+        <div><span class="pixel-label">Beyond text</span></div>
+        <h2>The same recipe now sees, hears and acts</h2>
+        <div class="grid-3">
+          <div class="card">
+            <svg class="picon" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true"><g fill="#0F1B3D"><rect x="3" y="3" width="6" height="1"/><rect x="1" y="4" width="2" height="1"/><rect x="9" y="4" width="2" height="1"/><rect x="0" y="5" width="1" height="2"/><rect x="11" y="5" width="1" height="2"/><rect x="1" y="7" width="2" height="1"/><rect x="9" y="7" width="2" height="1"/><rect x="3" y="8" width="6" height="1"/><rect x="5" y="5" width="2" height="2"/></g><g fill="#F0A6CA"><rect x="4" y="4" width="1" height="4"/><rect x="7" y="4" width="1" height="4"/><rect x="5" y="4" width="2" height="1"/><rect x="5" y="7" width="2" height="1"/></g></svg>
+            <h3 style="font-size:1.5rem">Seeing</h3>
+            <p class="big muted">Images are cut into small patches, and each patch becomes a token.</p>
+          </div>
+          <div class="card">
+            <svg class="picon" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true"><g fill="#0F1B3D"><rect x="0" y="5" width="1" height="2"/><rect x="2" y="3" width="1" height="6"/><rect x="4" y="1" width="1" height="10"/><rect x="6" y="4" width="1" height="4"/><rect x="8" y="2" width="1" height="8"/><rect x="10" y="5" width="1" height="2"/></g><rect x="4" y="5" width="1" height="2" fill="#F0A6CA"/><rect x="8" y="5" width="1" height="2" fill="#F0A6CA"/></svg>
+            <h3 style="font-size:1.5rem">Hearing</h3>
+            <p class="big muted">Speech is turned into tokens too, so models can listen and talk.</p>
+          </div>
+          <div class="card">
+            <svg class="picon" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="1" width="12" height="10" fill="#0F1B3D"/><g fill="#F0A6CA"><rect x="2" y="4" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/></g><rect x="5" y="7" width="4" height="1" fill="#F4D03F"/></svg>
+            <h3 style="font-size:1.5rem">Acting</h3>
+            <p class="big muted">It writes a request to a tool (search, run code) and reads the result back.</p>
+          </div>
+        </div>
+        <p class="em-line">Underneath: turn it into tokens, predict what comes next.</p>
+      </div>
+    </section>
+
+    <!-- 14 · Limits -->
+    <section class="slide bg-grid-lavender scanlines grain">
+      <div class="slide-content">
+        <div><span class="pixel-label">Limits</span></div>
+        <h2>Four ways it goes wrong</h2>
+        <div class="grid-2">
+          <div class="card limit"><h3>Hallucination</h3><p class="big muted">Confident, fluent and false, like a citation to a paper that doesn&rsquo;t exist.</p></div>
+          <div class="card limit"><h3>Bias</h3><p class="big muted">It learns the patterns in its data, including the unfair ones.</p></div>
+          <div class="card limit"><h3>Knowledge cutoff</h3><p class="big muted">It knows nothing after its training data ends, unless a tool looks it up.</p></div>
+          <div class="card limit"><h3>No built-in fact check</h3><p class="big muted">Training rewards <i>plausible</i> text. Plausible and true usually overlap, but not always.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 · The one thing to remember -->
+    <section class="slide bg-grid-cyan scanlines grain">
+      <div class="nnet ink" data-layers="3,4,4,3" data-pulses="6" style="left:3%;bottom:6%;width:16%;height:24%;opacity:0.5"></div>
+      <div class="nnet ink" data-layers="3,4,4,3" data-pulses="6" style="right:5%;top:6%;width:16%;height:24%;opacity:0.5"></div>
+      <div class="slide-content center">
+        <span class="pixel-label">The one thing to remember</span>
+        <div class="quote-container">
+          <p class="statement">Fluent isn&rsquo;t the same as true.</p>
+          <div class="quote-bar"></div>
+          <p class="statement-sub">Treat an AI answer as a draft to check, not a source to cite.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16 · Discussion -->
+    <section class="slide bg-grid scanlines grain">
+      <div class="starfield" data-count="40"></div>
+      <div class="pixel-particles"></div>
+      <div class="nnet" data-layers="2,4,6,6,4,2" data-pulses="18" style="right:2%;top:10%;width:22%;height:80%;opacity:0.45"></div>
+      <div class="slide-content">
+        <div><span class="pixel-label">Discussion</span></div>
+        <h2>Let&rsquo;s talk it through</h2>
+        <div class="questions" style="max-width:52rem">
+          <div class="question"><div class="step-num">1</div><p>If a model only predicts the next word, does it &ldquo;understand&rdquo; anything?</p></div>
+          <div class="question"><div class="step-num">2</div><p>An AI writes your analysis script or PsychoPy experiment. How would you check it?</p></div>
+          <div class="question"><div class="step-num">3</div><p>Artificial neurons were inspired by real ones. Where does the analogy break down?</p></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var total = slides.length, current = 0;
+  var container = document.getElementById("slidesContainer");
+  var counter = document.getElementById("slideCounter");
+  var dotsBox = document.getElementById("navDots");
+  var SVG = "http://www.w3.org/2000/svg";
+
+  // --- nav dots ---
+  slides.forEach(function (_, i) {
+    var dot = document.createElement("button");
+    dot.className = "nav-dot";
+    dot.setAttribute("aria-label", "Go to slide " + (i + 1));
+    dot.addEventListener("click", function () { go(i); });
+    dotsBox.appendChild(dot);
+  });
+  var dots = dotsBox.querySelectorAll(".nav-dot");
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+
+  function update() {
+    container.style.transform = "translateY(-" + current * 100 + "vh)";
+    counter.textContent = pad(current + 1) + " / " + pad(total);
+    dots.forEach(function (d, i) { d.classList.toggle("active", i === current); });
+    if (location.hash !== "#" + (current + 1)) history.replaceState(null, "", "#" + (current + 1));
+    animateBars(slides[current]);
+  }
+
+  function go(i) {
+    if (i < 0 || i >= total) return;
+    current = i;
+    update();
+  }
+
+  // Next-token bars grow when their slide is shown (always shown on phones)
+  function animateBars(slide) {
+    document.querySelectorAll(".hbar-fill").forEach(function (f) {
+      var show = !slide || slide.contains(f) || window.innerWidth <= 760;
+      f.style.width = show ? f.dataset.width + "%" : "0";
+    });
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === "ArrowDown" || k === "ArrowRight" || k === " " || k === "PageDown") { e.preventDefault(); go(current + 1); }
+    else if (k === "ArrowUp" || k === "ArrowLeft" || k === "PageUp") { e.preventDefault(); go(current - 1); }
+    else if (k === "Home") { e.preventDefault(); go(0); }
+    else if (k === "End") { e.preventDefault(); go(total - 1); }
+    else if (k === "f" || k === "F") {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {});
+      else document.exitFullscreen();
+    }
+  });
+
+  var y0 = null;
+  document.addEventListener("touchstart", function (e) { y0 = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener("touchend", function (e) {
+    if (y0 === null || window.innerWidth <= 760) return;
+    var dy = y0 - e.changedTouches[0].clientY;
+    if (Math.abs(dy) > 50) go(current + (dy > 0 ? 1 : -1));
+    y0 = null;
+  });
+
+  var wheelLock = false;
+  document.addEventListener("wheel", function (e) {
+    if (wheelLock || window.innerWidth <= 760 || Math.abs(e.deltaY) < 10) return;
+    wheelLock = true;
+    go(current + (e.deltaY > 0 ? 1 : -1));
+    setTimeout(function () { wheelLock = false; }, 800);
+  }, { passive: true });
+
+  window.addEventListener("hashchange", function () {
+    var n = parseInt(location.hash.slice(1), 10);
+    if (n >= 1 && n <= total && n - 1 !== current) go(n - 1);
+  });
+
+  // --- starfields and particles (from the template) ---
+  document.querySelectorAll(".starfield").forEach(function (box) {
+    var n = parseInt(box.dataset.count || "45", 10);
+    for (var i = 0; i < n; i++) {
+      var s = document.createElement("div");
+      s.className = "star";
+      s.style.left = Math.random() * 100 + "%";
+      s.style.top = Math.random() * 100 + "%";
+      s.style.animationDelay = Math.random() * 3 + "s";
+      box.appendChild(s);
+    }
+  });
+  var colors = ["var(--neon-cyan)", "var(--neon-pink)", "var(--neon-yellow)"];
+  document.querySelectorAll(".pixel-particles").forEach(function (box) {
+    for (var i = 0; i < 16; i++) {
+      var p = document.createElement("div");
+      p.className = "p";
+      p.style.background = colors[i % 3];
+      p.style.left = Math.random() * 100 + "%";
+      p.style.top = Math.random() * 100 + "%";
+      p.style.animationDelay = Math.random() * 5 + "s";
+      p.style.animationDuration = 6 + Math.random() * 6 + "s";
+      box.appendChild(p);
+    }
+  });
+
+  // --- neural-network decorations: layers of pixel nodes, with signals running along some edges ---
+  function el(name, attrs) {
+    var n = document.createElementNS(SVG, name);
+    for (var a in attrs) n.setAttribute(a, attrs[a]);
+    return n;
+  }
+  function buildNet(box) {
+    box.innerHTML = "";
+    var layers = box.dataset.layers.split(",").map(Number);
+    var pulses = parseInt(box.dataset.pulses || "8", 10);
+    var W = Math.max(box.clientWidth, 120), H = Math.max(box.clientHeight, 80), m = 10, size = 12;
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, "aria-hidden": "true", "shape-rendering": "crispEdges" });
+    var pos = layers.map(function (count, li) {
+      var x = m + li * (W - 2 * m) / (layers.length - 1);
+      var pts = [];
+      for (var j = 0; j < count; j++) pts.push([x, m + (j + 0.5) * (H - 2 * m) / count]);
+      return pts;
+    });
+    var edges = [];
+    for (var li = 0; li < pos.length - 1; li++)
+      pos[li].forEach(function (a) { pos[li + 1].forEach(function (b) { edges.push([a, b]); }); });
+    edges.forEach(function (e) {
+      svg.appendChild(el("line", { "class": "edge", x1: e[0][0], y1: e[0][1], x2: e[1][0], y2: e[1][1] }));
+    });
+    var pulseColors = ["#F4D03F", "#F0A6CA", "#5EDCF4"];
+    for (var k = 0; k < pulses; k++) {
+      var e = edges[Math.floor(Math.random() * edges.length)];
+      var line = el("line", { "class": "pulse", x1: e[0][0], y1: e[0][1], x2: e[1][0], y2: e[1][1], stroke: box.classList.contains("ink") ? "#0F1B3D" : pulseColors[k % 3] });
+      line.style.animationDelay = (-Math.random() * 2.6) + "s";
+      line.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+      svg.appendChild(line);
+    }
+    pos.forEach(function (layer) {
+      layer.forEach(function (p) {
+        var on = Math.random() < 0.3;
+        var r = el("rect", { "class": "node" + (on ? " on" : ""), x: p[0] - size / 2, y: p[1] - size / 2, width: size, height: size });
+        if (on) r.style.animationDelay = (-Math.random() * 2.4) + "s";
+        svg.appendChild(r);
+      });
+    });
+    box.appendChild(svg);
+  }
+  function buildNets() { document.querySelectorAll(".nnet").forEach(buildNet); }
+  buildNets();
+  // Rebuild when the window changes size (e.g. going fullscreen) so the networks keep their shape
+  var resizeTimer;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(buildNets, 200);
+  });
+
+  var start = parseInt(location.hash.slice(1), 10);
+  current = start >= 1 && start <= total ? start - 1 : 0;
+  // Jump straight to a linked slide without the slide-in animation
+  container.style.transition = "none";
+  update();
+  container.offsetHeight;
+  container.style.transition = "";
+})();
+</script>
+</body>
+</html>

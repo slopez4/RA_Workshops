@@ -2,7 +2,7 @@
 
 **Session:** 10/19 · **Length:** 35–40 min · **Nothing to install**
 
-**📊 Slides:** [open the deck](https://claude.ai/artifact/RNDm7HXKjdeMNRFmJKjj49) — speaker notes are on every slide.
+**📊 Slides:** [open the deck](https://slopez4.github.io/RA_Workshops/03_how_modern_ai_works/slides.html) — speaker notes are in [`SPEAKER_NOTES.md`](SPEAKER_NOTES.md). Press `F` for fullscreen.
 
 A talk-and-discussion session, no coding this time. We open up the tools many of you already
 use to help with the Python from [Workshop 1](../01_intro_python_analysis/) and the PsychoPy
@@ -27,7 +27,8 @@ it responsibly in the lab.
 
 | File | What it is |
 |---|---|
-| [Slides](https://claude.ai/artifact/RNDm7HXKjdeMNRFmJKjj49) | 16 slides with speaker notes (downloadable as PDF or PowerPoint from the deck) |
+| [`slides.html`](https://slopez4.github.io/RA_Workshops/03_how_modern_ai_works/slides.html) | 16 slides, opens in any browser |
+| [`SPEAKER_NOTES.md`](SPEAKER_NOTES.md) | What to say on each slide |
 | [`CLASS_OUTLINE.md`](CLASS_OUTLINE.md) | Session plan: goals, timing, agenda |
 | [`TEACHING_GUIDE.md`](TEACHING_GUIDE.md) | How to run the session, live demos, discussion prompts, likely questions |
 
