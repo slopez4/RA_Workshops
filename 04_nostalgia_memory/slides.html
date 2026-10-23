@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nostalgia, Memory and the Senses</title>
+<meta name="description" content="Slides and study guide for Workshop 4 (Memory and Brain Lab): what nostalgia is, how it works as a memory phenomenon, and what smell, music, food and other senses tell us about it. Includes an interactive evidence map and research seeds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,500&family=Shrikhand&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --f-body: 'Nunito', 'Segoe UI', sans-serif;
+  --f-disp: 'Fredoka', 'Nunito', sans-serif;
+  --f-70: 'Shrikhand', 'Fredoka', cursive;
+  --f-sign: 'Bungee', 'Fredoka', sans-serif;
+  --f-mono: 'Space Mono', Consolas, monospace;
+  /* the five pastel stripes from the reference palette */
+  --p-lav: #C5CAE9; --p-mint: #B5EAD7; --p-cream: #FFFFD1; --p-peach: #FFD7BA; --p-coral: #FF9AA2;
+}
+
+/* ============ Eras: one palette per slide, so every slide is internally cohesive ============ */
+/* 1970s: mustard, olive, rust, teal, brown */
+.era-70s {
+  --paper: #F6E7C8; --card: #FFF6DE; --ink: #3A2210; --muted: rgba(58,34,16,0.74); --line: #3A2210; --shadow: #3A2210;
+  --hi: #DA9100; --on-hi: #3A2210; --hi2: #B7410E; --on-hi2: #FFF6DE; --hi3: #4F7C6D; --on-hi3: #FFF6DE; --hi4: #699022; --on-hi4: #FFF6DE; --hi5: #F0D79A;
+  --hit: #B7410E; --hi3-rgb: 79,124,109; --th-bg: #3A2210; --th-fg: #F6E7C8; --hfont: var(--f-70); --hsize: 2.05rem; --hspace: 0;
+  --dot: rgba(58,34,16,0.09);
+}
+/* 1980s: primary playground (red, yellow, blue, green) */
+.era-play {
+  --paper: #EAF4FF; --card: #FFFFFF; --ink: #14284F; --muted: rgba(20,40,79,0.74); --line: #14284F; --shadow: #14284F;
+  --hi: #FFC914; --on-hi: #14284F; --hi2: #E63946; --on-hi2: #FFFFFF; --hi3: #1D6FD6; --on-hi3: #FFFFFF; --hi4: #2FA05A; --on-hi4: #FFFFFF; --hi5: #FFE9A0;
+  --hit: #D1202F; --hi3-rgb: 29,111,214; --th-bg: #14284F; --th-fg: #FFFFFF; --hfont: var(--f-sign); --hsize: 1.5rem; --hspace: 0.01em;
+  --dot: rgba(20,40,79,0.07);
+}
+/* 1990s: pastel (lavender, mint, cream, peach, coral) */
+.era-pastel {
+  --paper: #FFFCE0; --card: #FFFFFF; --ink: #33305A; --muted: rgba(51,48,90,0.76); --line: #33305A; --shadow: #33305A;
+  --hi: #FF9AA2; --on-hi: #33305A; --hi2: #C5CAE9; --on-hi2: #33305A; --hi3: #B5EAD7; --on-hi3: #33305A; --hi4: #FFD7BA; --on-hi4: #33305A; --hi5: #FFF3B0;
+  --hit: #C4405A; --hi3-rgb: 46,155,122; --th-bg: #33305A; --th-fg: #FFFCE0; --hfont: var(--f-disp); --hsize: 2.15rem; --hspace: 0;
+  --dot: rgba(51,48,90,0.08);
+}
+/* Now: the lab at night (indigo with the pastel accents) */
+.era-now {
+  --paper: #2B2850; --card: #37336A; --ink: #FFFCE0; --muted: rgba(255,252,224,0.78); --line: #C5CAE9; --shadow: #FF9AA2;
+  --hi: #FF9AA2; --on-hi: #2B2850; --hi2: #C5CAE9; --on-hi2: #2B2850; --hi3: #B5EAD7; --on-hi3: #2B2850; --hi4: #FFD7BA; --on-hi4: #2B2850; --hi5: #FFF3B0;
+  --hit: #FFD7BA; --hi3-rgb: 181,234,215; --th-bg: #C5CAE9; --th-fg: #2B2850; --hfont: var(--f-disp); --hsize: 2.1rem; --hspace: 0;
+  --dot: rgba(255,252,224,0.07);
+}
+
+html { font-size: clamp(11px, min(1.15vw, 2.05vh), 28px); }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: var(--f-body); background: #2B2850; color: #33305A; }
+b { font-weight: 800; }
+i { font-style: italic; }
+a { color: inherit; }
+
+.deck { width: 100%; height: 100vh; overflow: hidden; position: relative; }
+.slides-container { width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+.slide { width: 100%; height: 100vh; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 3.2rem 5rem 3.6rem; background-color: var(--paper); color: var(--ink); }
+.era-70s, .era-play, .era-pastel, .era-now { background-image: radial-gradient(var(--dot) 1.6px, transparent 2px); background-size: 26px 26px; }
+.slide-content { position: relative; z-index: 10; width: 100%; max-width: 68rem; display: flex; flex-direction: column; }
+.slide-content.center { align-items: center; text-align: center; }
+.decor { position: absolute; z-index: 2; pointer-events: none; }
+.decor svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+/* ============ Header row: era tag + decade ruler + sense bar ============ */
+.hdr { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.9rem; }
+.hdr-r { display: flex; align-items: center; gap: 0.9rem; }
+.tag { display: inline-flex; align-items: center; gap: 0.55rem; font-family: var(--f-mono); font-size: 0.64rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; background: var(--ink); color: var(--paper); padding: 0.28rem 0.85rem 0.28rem 0.3rem; border-radius: 999px; }
+.tag b { background: var(--hi); color: var(--on-hi); padding: 0.14rem 0.65rem; border-radius: 999px; font-family: var(--f-disp); font-size: 0.82rem; letter-spacing: 0.02em; font-weight: 700; text-transform: none; }
+.tag.try b { background: var(--hi2); color: var(--on-hi2); }
+.era-now .tag { background: var(--hi2); color: var(--on-hi2); }
+.ruler { display: inline-flex; gap: 0.25rem; }
+.ruler span { font-family: var(--f-disp); font-weight: 600; font-size: 0.66rem; padding: 0.12rem 0.55rem; border-radius: 999px; border: 2px solid var(--line); color: var(--ink); opacity: 0.55; }
+.ruler span.on { opacity: 1; background: var(--hi); color: var(--on-hi); }
+.sensebar { display: inline-flex; gap: 0.3rem; }
+.sensebar .sb { width: 1.9rem; height: 1.9rem; border-radius: 50%; border: 2.5px solid var(--line); display: grid; place-items: center; opacity: 0.4; }
+.sensebar .sb.on { opacity: 1; box-shadow: 2px 2px 0 var(--shadow); transform: translateY(-1px); }
+.sensebar .sb svg { width: 78%; height: 78%; }
+
+h1, h2, h3 { font-family: var(--f-disp); line-height: 1.12; }
+h2 { font-family: var(--hfont); font-size: var(--hsize); letter-spacing: var(--hspace); font-weight: 400; margin-bottom: 1.2rem; color: var(--ink); }
+.era-pastel h2, .era-now h2 { font-weight: 700; }
+h3 { font-size: 1.08rem; font-weight: 600; margin-bottom: 0.3rem; }
+p, li { font-size: 0.98rem; line-height: 1.48; }
+.muted { color: var(--muted); }
+.small { font-size: 0.78rem; }
+.big { font-size: 1.28rem; line-height: 1.38; }
+.cite { font-family: var(--f-mono); font-size: 0.7em; opacity: 0.85; white-space: nowrap; }
+.em-line { font-size: 1.2rem; font-style: italic; font-weight: 700; line-height: 1.38; margin-top: 1.2rem; }
+.hl { background: var(--hi); color: var(--on-hi); padding: 0 0.3rem; border-radius: 0.3rem; font-weight: 800; }
+
+/* ============ Cards ============ */
+.card { background: var(--card); color: var(--ink); border: 3px solid var(--line); border-radius: 18px; padding: 1rem 1.15rem; box-shadow: 5px 5px 0 var(--shadow); position: relative; }
+.card.featured { background: var(--hi); color: var(--on-hi); }
+.card.c2 { background: var(--hi2); color: var(--on-hi2); }
+.card.c3 { background: var(--hi3); color: var(--on-hi3); }
+.card.c4 { background: var(--hi4); color: var(--on-hi4); }
+.card.c5 { background: var(--hi5); color: var(--ink); }
+.era-now .card.c5 { color: #2B2850; }
+.card.featured .muted, .card.c2 .muted, .card.c3 .muted, .card.c4 .muted { color: inherit; opacity: 0.85; }
+.card-label { font-family: var(--f-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.8; margin-bottom: 0.5rem; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.3rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.1rem; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.85rem; }
+.grid-2 > *, .grid-3 > *, .grid-4 > *, .grid-5 > * { min-width: 0; }
+.card p + p { margin-top: 0.4rem; }
+.card ul { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+.card li { font-size: 0.92rem; line-height: 1.4; padding-left: 1.05rem; position: relative; }
+.card li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--hi2); border: 1.5px solid var(--line); }
+.card.c2 li::before, .card.c3 li::before, .card.c4 li::before { background: var(--hi); }
+.card.featured li::before { background: var(--hi2); }
+.bignum { font-family: var(--f-disp); font-weight: 700; font-size: 2.3rem; line-height: 1.05; margin-bottom: 0.4rem; }
+.era-70s .bignum { font-family: var(--f-70); font-weight: 400; }
+.era-play .bignum { font-family: var(--f-sign); font-weight: 400; font-size: 2rem; }
+.source { margin-top: 0.9rem; font-family: var(--f-mono); font-size: 0.58rem; line-height: 1.5; letter-spacing: 0.03em; color: var(--muted); }
+
+.flow { display: flex; align-items: stretch; gap: 0.8rem; }
+.flow > .card { flex: 1; min-width: 0; }
+.flow .arrow { align-self: center; font-family: var(--f-disp); font-weight: 700; font-size: 2rem; color: var(--ink); }
+
+/* Discuss bubble */
+.discuss { margin-top: 1.1rem; background: var(--hi2); color: var(--on-hi2); border: 3px solid var(--line); border-radius: 22px; box-shadow: 5px 5px 0 var(--shadow); padding: 0.75rem 1.2rem 0.75rem 1rem; display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center; position: relative; }
+.discuss::after { content: ""; position: absolute; left: 2.4rem; bottom: -0.9rem; width: 1.2rem; height: 1.2rem; background: var(--hi2); border-right: 3px solid var(--line); border-bottom: 3px solid var(--line); transform: rotate(45deg) skew(10deg, 10deg); }
+.discuss .dtag { font-family: var(--f-disp); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; background: var(--hi); color: var(--on-hi); padding: 0.35rem 0.7rem; border-radius: 999px; border: 2.5px solid var(--line); transform: rotate(-3deg); white-space: nowrap; }
+.discuss p { font-size: 1.02rem; line-height: 1.38; }
+
+/* Steps and questions */
+.steps { display: flex; flex-direction: column; gap: 0.95rem; }
+.step { display: grid; grid-template-columns: 2.5rem 1fr; gap: 0.85rem; align-items: start; }
+.step-num { font-family: var(--f-disp); font-weight: 700; font-size: 1.15rem; width: 2.4rem; height: 2.4rem; display: grid; place-items: center; background: var(--hi); color: var(--on-hi); border: 3px solid var(--line); border-radius: 50%; box-shadow: 2px 2px 0 var(--shadow); }
+.step:nth-child(2) .step-num { background: var(--hi2); color: var(--on-hi2); }
+.step:nth-child(3) .step-num { background: var(--hi3); color: var(--on-hi3); }
+.step:nth-child(4) .step-num { background: var(--hi4); color: var(--on-hi4); }
+.step b.t { font-family: var(--f-disp); font-weight: 700; }
+.questions { display: flex; flex-direction: column; gap: 1.2rem; }
+.question { display: grid; grid-template-columns: 3rem 1fr; gap: 1.1rem; align-items: center; }
+.question .step-num { width: 2.8rem; height: 2.8rem; font-size: 1.3rem; }
+.question p { font-size: 1.3rem; line-height: 1.35; }
+
+/* Buttons and toggles */
+.px-btn { font-family: var(--f-disp); font-weight: 600; font-size: 0.82rem; letter-spacing: 0.02em; padding: 0.5rem 1.1rem; background: var(--hi); color: var(--on-hi); border: 3px solid var(--line); border-radius: 999px; cursor: pointer; box-shadow: 3px 3px 0 var(--shadow); transition: transform 0.08s; text-decoration: none; display: inline-block; }
+.px-btn:hover { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--shadow); }
+.px-btn.ghost { background: transparent; color: var(--ink); box-shadow: none; }
+.px-btn.sm { font-size: 0.72rem; padding: 0.32rem 0.8rem; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--hit); outline-offset: 2px; }
+.tog { font-family: var(--f-disp); font-weight: 600; font-size: 0.78rem; padding: 0.3rem 0.75rem 0.3rem 0.5rem; border: 2.5px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.4rem; }
+.tog[aria-pressed="true"] { background: var(--ink); color: var(--paper); box-shadow: 2px 2px 0 var(--shadow); }
+.era-now .tog[aria-pressed="true"] { background: var(--hi); color: var(--on-hi); }
+.tog i { display: inline-block; width: 0.85rem; height: 0.85rem; border-radius: 50%; border: 2px solid var(--line); }
+.tog-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.3rem 0 0.2rem; }
+input[type=range] { accent-color: var(--hi2); width: 100%; cursor: pointer; }
+.try-note { font-size: 0.8rem; margin-top: 0.8rem; }
+
+/* Tally */
+.tally-grid { display: grid; grid-template-columns: 0.95fr 1.25fr; gap: 1.4rem; align-items: stretch; }
+.tally-grid > * { min-width: 0; }
+.age-row { display: grid; grid-template-columns: 1fr 3.6rem; gap: 0.8rem; align-items: center; margin: 0.3rem 0 0.8rem; }
+.age-val { font-family: var(--f-disp); font-size: 1.8rem; font-weight: 700; text-align: right; color: var(--hit); }
+.tally-chart svg { width: 100%; height: auto; display: block; }
+.tally-chart text { font-family: var(--f-mono); font-size: 13px; fill: var(--ink); }
+.tally-chart .axis { stroke: var(--ink); stroke-width: 2.5; }
+.tally-stats { font-family: var(--f-mono); font-size: 0.7rem; line-height: 1.6; color: var(--muted); margin-top: 0.4rem; min-height: 2.4rem; }
+.tally-stats b { color: var(--hit); }
+
+/* Peak-age strips */
+.strips { position: relative; margin: 0.4rem 0 0.6rem 15rem; padding-top: 1.5rem; }
+.strip { position: relative; height: 2rem; margin-bottom: 0.6rem; background: repeating-linear-gradient(90deg, rgba(20,40,79,0.1) 0, rgba(20,40,79,0.1) 1px, transparent 1px, transparent 10%); border-left: 3px solid var(--line); }
+.strip .lbl { position: absolute; right: calc(100% + 0.8rem); width: 14.2rem; text-align: right; font-size: 0.82rem; line-height: 1.15; font-weight: 800; top: 50%; transform: translateY(-50%); }
+.strip .lbl span { display: block; font-family: var(--f-mono); font-size: 0.58rem; font-weight: 400; opacity: 0.8; }
+.strip .bar { position: absolute; top: 0.3rem; bottom: 0.3rem; background: var(--hi3); border: 2.5px solid var(--line); border-radius: 999px; box-shadow: 2px 2px 0 var(--shadow); }
+.strip .bar.red { background: var(--hi2); }
+.strip .bar.yel { background: var(--hi); }
+.strip .bar.grn { background: var(--hi4); }
+.strip .peak { position: absolute; top: 50%; width: 1.4rem; height: 1.4rem; margin: -0.7rem 0 0 -0.7rem; background: var(--hi); border: 3px solid var(--line); border-radius: 50%; box-shadow: 2px 2px 0 var(--shadow); }
+.axis-ticks { position: absolute; top: 0; left: 0; right: 0; height: 1.3rem; font-family: var(--f-mono); font-size: 0.64rem; font-weight: 700; }
+.axis-ticks span { position: absolute; transform: translateX(-50%); }
+.axis-note { font-family: var(--f-mono); font-size: 0.6rem; text-align: right; color: var(--muted); margin-top: 0.1rem; }
+
+/* Tables */
+.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.86rem; }
+.tbl th { text-align: left; font-family: var(--f-mono); font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.4rem 0.7rem; background: var(--th-bg); color: var(--th-fg); }
+.tbl th:first-child { border-top-left-radius: 10px; } .tbl th:last-child { border-top-right-radius: 10px; }
+.tbl td { padding: 0.45rem 0.7rem; border-bottom: 2px dashed rgba(127,127,127,0.35); vertical-align: top; line-height: 1.35; }
+.tbl td:first-child { font-family: var(--f-disp); font-weight: 700; white-space: nowrap; color: var(--hit); }
+.tbl tbody tr:last-child td { border-bottom: none; }
+.card.tblcard { padding: 0.5rem 0.6rem 0.6rem; overflow: hidden; }
+
+/* LOVER */
+.lover { text-align: center; padding: 0.9rem 0.8rem; }
+.lover .letter { width: 3.4rem; height: 3.4rem; margin: 0 auto 0.4rem; border-radius: 50%; border: 3px solid var(--line); display: grid; place-items: center; font-family: var(--f-sign); font-size: 1.9rem; box-shadow: 2px 2px 0 var(--shadow); }
+.lover h3 { font-size: 0.9rem; margin: 0.1rem 0 0.4rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.lover p { font-size: 0.78rem; line-height: 1.38; text-align: left; }
+.lover .cite { display: block; margin-top: 0.4rem; text-align: left; white-space: normal; }
+
+/* Brain diagram */
+.brain { display: grid; grid-template-columns: 1fr 15rem 1fr; grid-template-rows: auto auto; gap: 1rem 1.2rem; align-items: center; }
+.brain .head { grid-column: 2; grid-row: 1 / span 2; }
+.brain .head svg { width: 100%; height: auto; display: block; }
+.brain .card { padding: 0.75rem 0.95rem; }
+.brain .card h3 { font-size: 0.95rem; }
+.brain .card p { font-size: 0.78rem; line-height: 1.38; }
+.brain .num { display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--ink); color: var(--paper); font-family: var(--f-disp); font-weight: 700; font-size: 0.8rem; margin-right: 0.4rem; }
+
+/* Evidence map */
+.emap-wrap { display: grid; grid-template-columns: 1.35fr 1fr; gap: 1.3rem; align-items: start; }
+.emap-wrap > * { min-width: 0; }
+.emap { border-collapse: separate; border-spacing: 3px; width: 100%; }
+.emap th { font-family: var(--f-mono); font-size: 0.54rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-align: center; padding: 0 0 0.25rem; color: var(--muted); }
+.emap th.row { text-align: left; font-family: var(--f-disp); font-size: 0.7rem; color: var(--hit); white-space: nowrap; padding-right: 0.4rem; text-transform: none; letter-spacing: 0; }
+.emap td { padding: 0; }
+.emap-cell { width: 100%; height: 2.3rem; border: 2px solid rgba(var(--hi3-rgb), 0.45); border-radius: 10px; background: repeating-linear-gradient(45deg, rgba(127,127,127,0.12) 0, rgba(127,127,127,0.12) 4px, transparent 4px, transparent 8px); color: var(--muted); font-family: var(--f-disp); font-weight: 700; font-size: 0.95rem; cursor: pointer; }
+.emap-cell.l1 { background: rgba(var(--hi3-rgb), 0.28); color: var(--ink); }
+.emap-cell.l2 { background: rgba(var(--hi3-rgb), 0.6); color: var(--ink); }
+.emap-cell.l3 { background: var(--hi3); color: var(--on-hi3); border-color: var(--line); }
+.emap-cell.sel { outline: 3px solid var(--hi); outline-offset: 1px; }
+.emap-legend { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 0.6rem; font-family: var(--f-mono); font-size: 0.56rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.emap-legend i { display: inline-block; width: 0.85rem; height: 0.85rem; margin-right: 0.35rem; vertical-align: -0.12rem; border: 2px solid rgba(var(--hi3-rgb), 0.6); border-radius: 4px; }
+.emap-panel { max-height: 24rem; overflow-y: auto; padding-right: 0.5rem; }
+.emap-panel h3 { color: var(--hit); font-size: 1rem; margin-bottom: 0.5rem; }
+.emap-panel .study { border-top: 2px dashed rgba(127,127,127,0.4); padding: 0.5rem 0; }
+.emap-panel .study:first-of-type { border-top: none; }
+.emap-panel .study p { font-size: 0.8rem; line-height: 1.4; }
+.emap-panel .study .meta { font-family: var(--f-mono); font-size: 0.6rem; opacity: 0.8; }
+.emap-panel .study a { text-decoration: underline; }
+.emap-panel .hint { font-size: 0.88rem; color: var(--muted); }
+
+/* Seeds */
+.seed { cursor: pointer; text-align: left; font: inherit; display: block; width: 100%; }
+.seed:hover { transform: translate(-1px, -1px); box-shadow: 7px 7px 0 var(--shadow); }
+.seed .num { font-family: var(--f-disp); font-weight: 700; font-size: 1.6rem; line-height: 1; }
+.seed h3 { font-size: 0.88rem; margin: 0.2rem 0 0.3rem; }
+.seed p { font-size: 0.72rem; line-height: 1.35; }
+.seed .lvl { font-family: var(--f-mono); font-size: 0.54rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.1rem 0.5rem; border: 2px solid currentColor; border-radius: 999px; display: inline-block; margin-top: 0.4rem; }
+.modal { position: fixed; inset: 0; z-index: 300; background: rgba(43,40,80,0.78); display: flex; align-items: center; justify-content: center; padding: 2rem; }
+.modal[hidden] { display: none; }
+.modal-card { background: #FFFCE0; color: #33305A; max-width: 46rem; width: 100%; max-height: 90vh; overflow-y: auto; padding: 1.5rem 1.7rem; border: 4px solid #33305A; border-radius: 22px; box-shadow: 8px 8px 0 #FF9AA2; font-size: 16px; }
+.modal-card h3 { font-size: 1.35rem; margin-bottom: 0.2rem; }
+.modal-card .q { font-size: 1.05rem; font-style: italic; font-weight: 700; margin: 0.5rem 0 0.9rem; }
+.modal-card dt { font-family: var(--f-mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #C4405A; margin-top: 0.7rem; }
+.modal-card dd { font-size: 0.95rem; line-height: 1.5; }
+.modal-card .px-btn { margin-top: 1rem; background: #FF9AA2; color: #33305A; border-color: #33305A; box-shadow: 3px 3px 0 #33305A; }
+
+/* Glossary */
+.gloss { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 2.2rem; }
+.gloss > div { min-width: 0; }
+.gloss dt { font-family: var(--f-disp); font-weight: 700; font-size: 0.92rem; color: var(--hit); }
+.gloss dd { font-size: 0.88rem; line-height: 1.35; color: var(--muted); }
+
+/* Cover */
+.cover { background: linear-gradient(90deg, var(--p-lav) 0 20%, var(--p-mint) 20% 40%, var(--p-cream) 40% 60%, var(--p-peach) 60% 80%, var(--p-coral) 80% 100%); background-image: linear-gradient(90deg, var(--p-lav) 0 20%, var(--p-mint) 20% 40%, var(--p-cream) 40% 60%, var(--p-peach) 60% 80%, var(--p-coral) 80% 100%); color: #33305A; }
+.cover .sticker { background: #FFFFFF; border: 4px solid #33305A; border-radius: 28px; box-shadow: 9px 9px 0 #33305A; padding: 1.6rem 2.4rem 1.7rem; text-align: center; max-width: 52rem; }
+.cover .sub { font-family: var(--f-mono); font-size: 0.74rem; letter-spacing: 0.26em; text-transform: uppercase; color: #C4405A; font-weight: 700; margin-bottom: 0.7rem; }
+.cover h1 { font-family: var(--f-70); font-weight: 400; font-size: 4.3rem; line-height: 1.02; color: #33305A; text-shadow: 4px 4px 0 #FF9AA2, 8px 8px 0 #B5EAD7; }
+.cover .tagline { font-size: 1.2rem; font-weight: 700; margin-top: 1.5rem; line-height: 1.4; }
+.cover .labline { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85; margin-top: 0.5rem; }
+.eras { display: flex; gap: 0.7rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+.era-chip { border: 3px solid #33305A; border-radius: 14px; padding: 0.35rem 0.8rem; font-family: var(--f-disp); font-weight: 700; font-size: 0.9rem; box-shadow: 3px 3px 0 #33305A; color: #33305A; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+.era-chip span.sw { display: flex; gap: 2px; }
+.era-chip span.sw i { width: 0.7rem; height: 0.7rem; border-radius: 50%; border: 1.5px solid #33305A; display: block; }
+.cover-senses { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1.3rem; }
+.cover-senses .sb { width: 3rem; height: 3rem; border-radius: 50%; border: 3px solid #33305A; display: grid; place-items: center; box-shadow: 3px 3px 0 #33305A; }
+.cover-senses .sb svg { width: 78%; height: 78%; }
+.cover .btn-row { justify-content: center; margin-top: 1.4rem; }
+.cover .hint-row { font-family: var(--f-mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.9rem; opacity: 0.8; }
+
+/* Plain-language notes, shown in reference view */
+.explain { display: none; align-self: stretch; text-align: left; margin-top: 2rem; background: #2B2850; color: #FFFCE0; border-left: 10px solid var(--hi); border-radius: 14px; padding: 1.1rem 1.4rem; position: relative; z-index: 10; }
+.cover .explain { margin-top: 1.5rem; }
+.ex-label { font-family: var(--f-mono); font-size: 0.64rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #FF9AA2; margin-bottom: 0.5rem; }
+.explain p { font-size: 1rem; line-height: 1.6; margin-bottom: 0.6rem; color: rgba(255,252,224,0.94); }
+.explain p:last-child { margin-bottom: 0; }
+.explain b { color: #B5EAD7; }
+.explain a { color: #FFD7BA; }
+.explain .check { margin-top: 0.8rem; padding-top: 0.7rem; border-top: 2px dashed rgba(197,202,233,0.5); }
+.explain .check b { color: #FFF3B0; }
+.explain ul { margin: 0.2rem 0 0.7rem 1.2rem; }
+.explain li { font-size: 0.95rem; line-height: 1.55; color: rgba(255,252,224,0.94); }
+.explain li::before { display: none; }
+.explain .seedfull { border-top: 1px solid rgba(197,202,233,0.4); padding-top: 0.6rem; margin-top: 0.6rem; }
+
+/* Navigation */
+.nav-dots { position: fixed; right: 16px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 5px; z-index: 100; padding: 8px 6px; background: rgba(255,252,224,0.88); border: 2px solid #33305A; border-radius: 999px; }
+.nav-dot { width: 11px; height: 11px; border: 2px solid #33305A; border-radius: 50%; background: transparent; cursor: pointer; padding: 0; }
+.nav-dot.active { background: #FF9AA2; transform: scale(1.25); }
+.nav-dot:hover { background: #B5EAD7; }
+.slide-counter { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 100; font-family: var(--f-mono); font-size: 12px; font-weight: 700; letter-spacing: 0.14em; color: #33305A; background: rgba(255,252,224,0.92); border: 2px solid #33305A; border-radius: 999px; padding: 4px 16px; }
+.nav-hint { position: fixed; bottom: 18px; right: 20px; z-index: 100; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.1em; color: #33305A; background: rgba(255,252,224,0.8); border-radius: 999px; padding: 3px 10px; opacity: 0.75; }
+.mode-btn { position: fixed; top: 12px; left: 16px; z-index: 100; font-family: var(--f-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #33305A; background: rgba(255,252,224,0.92); border: 2px solid #33305A; border-radius: 999px; padding: 5px 12px; cursor: pointer; opacity: 0.85; }
+.mode-btn:hover { opacity: 1; background: #B5EAD7; }
+.mode-btn:focus-visible { outline: 3px solid #C4405A; outline-offset: 2px; }
+
+/* Reference view (R) and phones */
+html.ref, html.ref body { overflow: auto; height: auto; }
+html.ref .deck { height: auto; overflow: visible; }
+html.ref .slides-container { transform: none !important; transition: none; }
+html.ref .slide { height: auto; min-height: 70vh; padding: 3.2rem 5rem 3.6rem; }
+html.ref .nav-dots, html.ref .nav-hint, html.ref .slide-counter { display: none; }
+html.ref .explain { display: block; }
+
+
+@media (prefers-reduced-motion: reduce) { .slides-container { transition: none; } }
+@media (max-width: 760px) {
+  html { font-size: 15px; }
+  .mode-btn { display: none; }
+  html.ref .slide { padding: 3rem 16px 3.5rem; }
+  .grid-2, .grid-3, .grid-4, .grid-5, .tally-grid, .emap-wrap, .gloss { grid-template-columns: 1fr; }
+  .flow { flex-direction: column; }
+  .flow .arrow { transform: rotate(90deg); }
+  .cover h1 { font-size: 2.6rem; }
+  h2 { font-size: 1.5rem; }
+  .era-play h2 { font-size: 1.15rem; }
+  .decor { opacity: 0.4; }
+  .card { overflow-x: auto; }
+  .strips { margin-left: 0; }
+  .decor[data-kind="hop"], .decor[data-kind="bars"] { display: none; }
+  .strip { height: 3.4rem; margin-bottom: 0.4rem; }
+  .strip .lbl { position: absolute; left: 0.5rem; right: auto; top: 0.1rem; width: auto; text-align: left; transform: none; }
+  .strip .lbl span { display: inline; margin-left: 0.4rem; }
+  .strip .bar { top: 1.6rem; bottom: 0.3rem; }
+  .strip .peak { top: 2.4rem; }
+  .brain { grid-template-columns: 1fr; }
+  .brain .head { grid-column: auto; grid-row: auto; max-width: 14rem; margin: 0 auto; }
+  .tbl { display: block; overflow-x: auto; }
+  .hdr { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<button class="mode-btn" id="modeBtn" type="button">Reference view (R)</button>
+
+<div class="deck" id="deck">
+  <div class="nav-dots" id="navDots"></div>
+  <div class="slide-counter" id="slideCounter">01 / 25</div>
+  <div class="nav-hint">&larr; &rarr; KEYS &middot; R REFERENCE &middot; F FULLSCREEN</div>
+
+  <div class="slides-container" id="slidesContainer">
+
+    <!-- 1 · Cover -->
+    <section class="slide era-pastel cover">
+      <div class="slide-content center">
+        <div class="sticker">
+          <div class="sub">RA Workshop 4 &middot; Memory and Brain Lab</div>
+          <h1>Nostalgia, Memory<br>&amp; the Senses</h1>
+          <p class="tagline">What can a smell, a song or a taste tell us about how we remember?</p>
+          <div class="cover-senses" id="coverSenses"></div>
+          <div class="eras">
+            <div class="era-chip">1970s<span class="sw"><i style="background:#DA9100"></i><i style="background:#699022"></i><i style="background:#B7410E"></i><i style="background:#4F7C6D"></i></span></div>
+            <div class="era-chip">1980s<span class="sw"><i style="background:#E63946"></i><i style="background:#FFC914"></i><i style="background:#1D6FD6"></i><i style="background:#2FA05A"></i></span></div>
+            <div class="era-chip">1990s<span class="sw"><i style="background:#C5CAE9"></i><i style="background:#B5EAD7"></i><i style="background:#FFD7BA"></i><i style="background:#FF9AA2"></i></span></div>
+            <div class="era-chip">Now<span class="sw"><i style="background:#2B2850"></i><i style="background:#C5CAE9"></i><i style="background:#B5EAD7"></i><i style="background:#FF9AA2"></i></span></div>
+          </div>
+          <div class="btn-row">
+            <a class="px-btn" href="workbook.html" target="_blank" rel="noopener">Homework workbook</a>
+            <a class="px-btn ghost" href="https://github.com/slopez4/RA_Workshops/tree/main/04_nostalgia_memory" target="_blank" rel="noopener">Files on GitHub</a>
+          </div>
+          <div class="hint-row">&rarr; next &middot; &larr; back &middot; R reference view &middot; F fullscreen</div>
+        </div>
+        <div class="explain">
+          <div class="ex-label">How to use this page</div>
+          <p>This page is a slideshow <b>and</b> a study guide. In <b>slide view</b>, use the arrow keys (or the dots on the right). In <b>reference view</b> (press <b>R</b>, or the button at the top left) you get every slide on one scrolling page, with a plain-language explanation and the sources under each one.</p>
+          <p>The deck travels through the decades: <b>1970s</b> colors for what nostalgia is, <b>1980s</b> playground colors for the memory lens, <b>1990s</b> pastels for the senses, and a night-time <b>now</b> for methods and your own ideas. The little ruler at the top right of each slide shows where you are.</p>
+          <p>Slides tagged <b>TRY IT</b> are interactive (2: your own cue and memory age; 21: evidence map; 22: research seeds). Slides with a <b>DISCUSS</b> bubble are where we stop and talk.</p>
+          <p>Every reference is listed, with DOI, in <a href="REFERENCES.md">REFERENCES.md</a>, and the longer write-up is in <a href="LITERATURE_REVIEW.md">LITERATURE_REVIEW.md</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 · TRY IT: your cue -->
+    <section class="slide era-pastel" id="s-tally">
+      <div class="decor" data-kind="clouds" style="right:2%;top:3%;width:15rem;height:6rem;"></div>
+      <div class="decor" data-kind="sparkles" style="left:1.5%;bottom:4%;width:9rem;height:6rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag try"><b>Try it</b>Warm-up</span></div>
+        <h2>Think of the last time something made you nostalgic</h2>
+        <div class="tally-grid">
+          <div class="card">
+            <div class="card-label">1 &middot; What was the cue?</div>
+            <div class="tog-row" id="tallyCues"></div>
+            <div class="card-label" style="margin-top:0.9rem">2 &middot; How old were you in the memory?</div>
+            <div class="age-row"><input type="range" id="tallyAge" min="0" max="50" value="10" aria-label="Age in the memory"><div class="age-val" id="tallyAgeVal">10</div></div>
+            <div class="btn-row">
+              <button class="px-btn" type="button" id="tallyAdd">Add mine</button>
+              <button class="px-btn ghost sm" type="button" id="tallyDemo">Add demo data</button>
+              <button class="px-btn ghost sm" type="button" id="tallyClear">Clear</button>
+            </div>
+            <p class="try-note muted">Demo data is made up (a rough sketch of the literature&rsquo;s patterns), just so the chart is not empty.</p>
+          </div>
+          <div class="card tally-chart">
+            <div class="card-label">Age in the memory, by cue</div>
+            <svg id="tallySvg" viewBox="0 0 500 250" role="img" aria-label="Stacked dots of memory age by cue type"></svg>
+            <div class="tally-stats" id="tallyStats" aria-live="polite">Add a memory to start the chart.</div>
+          </div>
+        </div>
+        <p class="em-line">We will come back to this chart when we reach smell, music and the reminiscence bump.</p>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>Before any theory, we collect our own data. Pick the cue that last made you nostalgic (a smell, a song, a photo, a taste, a place or object, a person or conversation, or something else) and drag the slider to your age in the memory. Each dot on the chart is one person&rsquo;s memory.</p>
+          <p>Keep this in mind: published work finds that <b>odor-cued</b> memories often come from the first decade of life, whereas <b>word- and picture-cued</b> memories peak in the second (Willander &amp; Larsson, 2006, older adults), and songs&rsquo; autobiographical salience peaks around adolescence (Jakubowski et al., 2020). Does our small sample look like that? With so few people, it should <i>not</i> be a test; the point is to notice what we would need (more people, matched cues, a better way to date memories).</p>
+          <p class="check"><b>Check yourself:</b> what could make our chart differ from the published pattern even if the pattern is real? (Think about sample age, how we chose the cue, and what we were asked.)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · Map -->
+    <section class="slide era-pastel">
+      <div class="decor" data-kind="clouds" style="left:1%;top:4%;width:13rem;height:5.5rem;"></div>
+      <div class="decor" data-kind="sparkles" style="right:2%;bottom:5%;width:9rem;height:6rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>Map</b>Today</span></div>
+        <h2>Four decades, one goal: good research questions</h2>
+        <div class="grid-4">
+          <div class="card c5"><div class="bignum">70s</div><h3>What nostalgia is</h3><p class="muted">Definition, triggers, functions, and what the lab evidence really says. Slides 4&ndash;7.</p></div>
+          <div class="card c3"><div class="bignum">80s</div><h3>The memory lens</h3><p class="muted">Cues, the reminiscence bump, feeling versus accuracy. Slides 8&ndash;11.</p></div>
+          <div class="card c2"><div class="bignum">90s</div><h3>The senses</h3><p class="muted">Smell, music, food, temperature, vision; brain; aging. Slides 12&ndash;19.</p></div>
+          <div class="card featured"><div class="bignum">Now</div><h3>Methods &amp; gaps</h3><p class="muted">How it is studied, where the holes are, eight seeds for your ideas. Slides 20&ndash;25.</p></div>
+        </div>
+        <div class="card c4" style="margin-top:1.5rem">
+          <div class="card-label">The plan for this session</div>
+          <p><b>About 25 min</b> of talk, with <b>three short discussion stops</b> (slides 7, 10, 17), then <b>10&ndash;15 min</b> where each of you pitches an idea. The homework workbook gets you ready.</p>
+        </div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>The talk goes from broad to specific, and each part has its own decade-themed look so you always know where you are. First we agree on what nostalgia is and what it is for. Then we look at it as a <i>memory</i> phenomenon, because that is what our lab studies. Then we ask what different senses add. Finally we look at methods and gaps, which is where your own scientific questions come from.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · What is nostalgia -->
+    <section class="slide era-70s">
+      <div class="decor" data-kind="arcs" style="right:0;bottom:0;width:22rem;height:12rem;"></div>
+      <div class="decor" data-kind="sun" style="left:0.5%;bottom:3%;width:8rem;height:8rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1970s</b>Part 1 &middot; What nostalgia is</span><span class="hdr-r"><span class="ruler" data-era="70"></span></span></div>
+        <h2>A bittersweet emotion about the personal past</h2>
+        <div class="grid-2">
+          <div class="card featured">
+            <div class="card-label">Working definition</div>
+            <p class="big">A <b>social</b>, <b>self-relevant</b>, <b>bittersweet</b> (although mostly positive) emotion that arises when reflecting on fond past memories.</p>
+            <p class="small muted" style="margin-top:0.6rem">Hepper et al., 2024; Sedikides et al., 2008</p>
+          </div>
+          <div class="card">
+            <div class="card-label">From disease to emotion</div>
+            <ul>
+              <li><b>1600s:</b> a medical diagnosis (Greek <i>nostos</i>, return home + <i>algos</i>, pain)</li>
+              <li><b>Later:</b> a psychiatric disorder</li>
+              <li><b>2000s:</b> a mostly positive, self-relevant, social emotion with key psychological functions</li>
+            </ul>
+            <p class="small muted" style="margin-top:0.5rem">Sedikides et al., 2008</p>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:1.3rem">
+          <div class="card c4"><div class="card-label">What lay people put at the center</div><p><b>Central:</b> memories, relationships, happiness<br><b>Peripheral:</b> daydreaming, regret, loneliness</p><p class="small muted">Hepper et al., 2012</p></div>
+          <div class="card c3"><div class="card-label">Is it universal?</div><p>The same structure appeared in <b>18 countries</b> (N = 1,704): nostalgia looks <b>pancultural</b>.</p><p class="small muted">Hepper et al., 2014</p></div>
+        </div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>The word began as a 17th-century medical diagnosis for homesickness. Modern social psychologists reframed it as an ordinary emotion: wistful, a bit sad because the past is gone, but mostly warm and about the people who matter to you.</p>
+          <p>To find out what people <i>mean</i> by nostalgia, Hepper and colleagues asked lay people to list and rate its features. Memories, relationships and happiness were central; daydreaming, regret and loneliness were peripheral. Students in 18 countries agreed on the ranking, which is why researchers call it pancultural.</p>
+          <p class="check"><b>Check yourself:</b> how is nostalgia different from just remembering something fondly? (Slide 5 gives a start.)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · Anatomy -->
+    <section class="slide era-70s">
+      <div class="decor" data-kind="blobs" style="right:1%;bottom:2%;width:16rem;height:10rem;"></div>
+      <div class="decor" data-kind="sun" style="right:1%;top:2%;width:7rem;height:7rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1970s</b>Part 1 &middot; What nostalgia is</span><span class="hdr-r"><span class="ruler" data-era="70"></span></span></div>
+        <h2>Anatomy of a nostalgic memory</h2>
+        <div class="grid-3">
+          <div class="card c5">
+            <div class="card-label">Content</div>
+            <ul>
+              <li>The <b>self</b> as protagonist</li>
+              <li><b>Close others</b> (friends, family) or momentous events (e.g., weddings)</li>
+              <li>More positive than negative affect</li>
+              <li><b>Redemption</b>: bad scenes followed by triumphs</li>
+            </ul>
+            <p class="small muted" style="margin-top:0.5rem">Wildschut et al., 2006</p>
+          </div>
+          <div class="card c4">
+            <div class="card-label">Appraisals</div>
+            <ul>
+              <li><b>Pleasant</b></li>
+              <li>Involves an <b>irretrievable loss</b></li>
+              <li>Feels <b>psychologically distant</b></li>
+              <li>Feels <b>unique</b></li>
+            </ul>
+            <p class="small muted" style="margin-top:0.5rem">This profile differs from all other emotions tested, sharing only longing (van Tilburg et al., 2019)</p>
+          </div>
+          <div class="card featured">
+            <div class="card-label">Feeling</div>
+            <p>Across <b>41 experiments</b> (N = 4,659), nostalgia inductions raised <b>positive and ambivalent</b> affect, but did <b>not significantly change</b> negative affect.</p>
+            <p style="margin-top:0.5rem">The size of the effect <b>varied markedly with the induction and the control condition</b>.</p>
+            <p class="small muted" style="margin-top:0.5rem">Leunissen et al., 2021</p>
+          </div>
+        </div>
+        <p class="em-line">&ldquo;Bittersweet&rdquo; is real, but how bitter depends on how you elicit and measure it.</p>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>Three descriptions of the same thing. <b>Content:</b> when people write about nostalgic experiences, they are the main character, with people they love, in an important moment. Often something bad turns out well. <b>Appraisals:</b> nostalgic events are good but gone for good, far away in time, and one of a kind. <b>Feeling:</b> mostly positive, with some mixed feelings.</p>
+          <p>The last point matters for design. Leunissen and colleagues pooled 41 experiments. Whether nostalgia looks purely happy or bittersweet depends on what you compare it with (an ordinary memory? a positive one?) and how you induced it.</p>
+          <p class="check"><b>Check yourself:</b> which of the three (content, appraisals, feeling) would you code from written memories, and which would you ask people to rate?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 · Triggers -> functions -->
+    <section class="slide era-70s">
+      <div class="decor" data-kind="arcs" style="left:0;bottom:0;width:20rem;height:11rem;transform:scaleX(-1)"></div>
+      <div class="decor" data-kind="sun" style="right:1%;top:2%;width:7rem;height:7rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1970s</b>Part 1 &middot; What nostalgia is</span><span class="hdr-r"><span class="ruler" data-era="70"></span></span></div>
+        <h2>Discomfort in, resources out: the regulatory model</h2>
+        <div class="flow">
+          <div class="card c5">
+            <div class="card-label">Triggers</div>
+            <ul>
+              <li>Negative mood, loneliness <span class="cite">W06; Z08</span></li>
+              <li>Threats to meaning <span class="cite">R11</span></li>
+              <li>Avoidance motivation <span class="cite">S14</span></li>
+              <li>Cold <span class="cite">Z12</span></li>
+              <li>Limited time horizons <span class="cite">H21</span></li>
+              <li><b>Sensory stimuli</b>, social gatherings <span class="cite">H24</span></li>
+            </ul>
+          </div>
+          <div class="arrow">&#9654;</div>
+          <div class="card featured" style="align-items:center;text-align:center;display:flex;flex-direction:column;justify-content:center">
+            <div class="bignum" style="font-size:1.9rem">Nostalgia</div>
+            <p>a homeostatic corrective</p>
+            <p class="small muted">Wildschut &amp; Sedikides, 2023a</p>
+          </div>
+          <div class="arrow">&#9654;</div>
+          <div class="card c4">
+            <div class="card-label">Functions</div>
+            <ul>
+              <li><b>Social connectedness</b></li>
+              <li><b>Self-continuity</b> <span class="cite">S16</span></li>
+              <li>Meaning in life <span class="cite">R11</span></li>
+              <li>Approach motivation, optimism <span class="cite">S14</span></li>
+              <li>Positive affect, self-esteem <span class="cite">W06</span></li>
+            </ul>
+          </div>
+        </div>
+        <p class="em-line">The senses show up on the <i>trigger</i> side: that is our focus today.</p>
+        <p class="source">W06 Wildschut et al., 2006 &middot; Z08 Zhou et al., 2008 &middot; R11 Routledge et al., 2011 &middot; S14 Stephan et al., 2014 &middot; Z12 Zhou et al., 2012 &middot; H21 Hepper et al., 2021 &middot; H24 Hepper et al., 2024 &middot; S16 Sedikides et al., 2016</p>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>A lot of experiments share one logic: put people in a bad or threatened state, and they become more nostalgic; make them nostalgic, and they feel more connected, more continuous with their past self, more that life is meaningful, and more ready to act. Wildschut and Sedikides (2023a) organize this as a <b>regulatory model</b>, like a thermostat for psychological comfort.</p>
+          <p>It is a model, not a law. It makes testable predictions (for example, causal mediation tests) and has boundary conditions.</p>
+          <p class="check"><b>Check yourself:</b> Zhou et al. (2012) found that coldness triggered nostalgia and nostalgia raised felt warmth. Which side of the model is each finding on?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 · Reality check -->
+    <section class="slide era-70s">
+      <div class="decor" data-kind="blobs" style="right:1%;top:2%;width:14rem;height:8rem;"></div>
+      <div class="decor" data-kind="arcs" style="right:0;bottom:0;width:17rem;height:9.5rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1970s</b>Part 1 &middot; Reality check</span><span class="hdr-r"><span class="ruler" data-era="70"></span></span></div>
+        <h2>How big, how general, how real?</h2>
+        <div class="grid-3">
+          <div class="card featured">
+            <div class="bignum">g &asymp; 0.39</div>
+            <p>average benefit across <b>347 experiments</b> (1,460 effect sizes); threat as a trigger about 0.43</p>
+            <p class="small muted" style="margin-top:0.4rem">Weingarten et al., 2026 (from the repository abstract; check before quoting)</p>
+          </div>
+          <div class="card c3">
+            <div class="bignum">&minus;</div>
+            <p>In <b>daily life</b>, state nostalgia related <b>negatively</b> to well-being; induced recollections were more positive</p>
+            <p class="small muted" style="margin-top:0.4rem">Newman et al., 2020</p>
+          </div>
+          <div class="card c4">
+            <div class="bignum">28 + HK</div>
+            <p><b>N = 2,606</b>: nostalgia is common everywhere; connectedness, continuity and meaning benefits appear across cultures</p>
+            <p class="small muted" style="margin-top:0.4rem">Hepper et al., 2024</p>
+          </div>
+        </div>
+        <div class="discuss"><span class="dtag">Discuss &middot; 3 min</span><p>Lab benefits are small to moderate, and daily-life nostalgia looks different. <b>What would you want to know before using an event reflection task in our lab?</b></p></div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>A Hedges&rsquo; g of about 0.39 is a small-to-moderate effect: you need roughly 100 people per group to detect it reliably in a simple two-group experiment (the workbook has a power sandbox). The meta-analysis is from 2026 and I could only read its repository abstract, so verify the numbers in the paper.</p>
+          <p>Newman et al. (2020) argue that the typical lab procedure (&ldquo;recall a nostalgic event&rdquo;) generates relatively positive memories on request, whereas in everyday life nostalgia is more mixed or even negative. That does not make the lab findings wrong; it limits how far they generalize.</p>
+          <p class="check"><b>Discussion prompts:</b> What does the control condition do? What does an &ldquo;ordinary event&rdquo; control equate and what does it not? How would you check demand characteristics?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 · Memory machinery -->
+    <section class="slide era-play">
+      <div class="decor" data-kind="bars" style="left:0;bottom:0.5%;width:17rem;height:8.5rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1980s</b>Part 2 &middot; The memory lens</span><span class="hdr-r"><span class="ruler" data-era="80"></span></span></div>
+        <h2>Nostalgia is an autobiographical memory, retrieved by a cue</h2>
+        <div class="grid-2" style="align-items:start">
+          <div class="steps">
+            <div class="step"><div class="step-num">1</div><p><b class="t">A cue appears</b> &mdash; a smell, a song, a photo. Retrieval is often <b>involuntary</b> (Berntsen, 1996).</p></div>
+            <div class="step"><div class="step-num">2</div><p><b class="t">It matches the trace</b> &mdash; a cue works to the extent it overlaps with what was encoded: <b>encoding specificity</b> (Tulving &amp; Thomson, 1973).</p></div>
+            <div class="step"><div class="step-num">3</div><p><b class="t">The memory is constructed</b> &mdash; from lifetime periods, general events and event details, guided by the self (Conway &amp; Pleydell-Pearce, 2000).</p></div>
+            <div class="step"><div class="step-num">4</div><p><b class="t">Senses reactivate</b> &mdash; vivid remembering re-engages sensory-specific cortex (Wheeler et al., 2000).</p></div>
+          </div>
+          <div class="card featured">
+            <div class="card-label">Why this matters for sensory nostalgia</div>
+            <ul>
+              <li>A sensory cue is literally part of the original event, so it should be a good key.</li>
+              <li>Cues can bring memories with <b>less effortful search</b>: music memories engaged fewer executive processes (El Haj et al., 2012).</li>
+              <li>The <b>kind</b> of memory a cue opens may depend on <b>when</b> the sense was most tied to experience.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>Autobiographical memories are rebuilt each time from pieces. A cue that overlaps with what you encoded at the time is a good retrieval key (encoding specificity). Many cue-triggered memories pop up without a deliberate search (involuntary memories). And when you vividly remember a picture or a sound, the parts of your brain that process pictures or sounds become active again.</p>
+          <p>Put those together and you get a simple hypothesis for sensory nostalgia: a smell or a song gives a fast, low-effort route into a trace that contains sensory details. The research below tests where that holds and where it does not.</p>
+          <p class="check"><b>Check yourself:</b> why might the same cue (a smell) bring back a memory from a different life period than a word describing that smell?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 · Reminiscence bump -->
+    <section class="slide era-play">
+      <div class="decor" data-kind="hop" style="left:0.9%;top:13%;width:3.4rem;height:30rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1980s</b>Part 2 &middot; The memory lens</span><span class="hdr-r"><span class="ruler" data-era="80"></span></span></div>
+        <h2>When do the remembered years come from?</h2>
+        <div class="strips" id="strips">
+          <div class="axis-ticks" aria-hidden="true"><span style="left:0%">0</span><span style="left:20%">10</span><span style="left:40%">20</span><span style="left:60%">30</span><span style="left:80%">40</span><span style="left:100%">50</span></div>
+          <div class="strip"><div class="lbl">Important events (bump)<span>Munawar et al., 2018</span></div><div class="bar" style="left:20%;width:40%"></div></div>
+          <div class="strip"><div class="lbl">Word-cued memories (bump)<span>Munawar et al., 2018</span></div><div class="bar grn" style="left:10%;width:50%"></div></div>
+          <div class="strip"><div class="lbl">Odor-cued: most memories<span>Willander &amp; Larsson, 2006</span></div><div class="bar red" style="left:0%;width:20%"></div></div>
+          <div class="strip"><div class="lbl">Word/picture cues: peak<span>Willander &amp; Larsson, 2006</span></div><div class="bar yel" style="left:22%;width:18%"></div></div>
+          <div class="strip"><div class="lbl">Songs: salience peak<span>Jakubowski et al., 2020</span></div><div class="peak" style="left:28%"></div></div>
+        </div>
+        <div class="axis-note">Age in the memory (years). Ranges come from different samples and designs, so they are not directly comparable.</div>
+        <div class="grid-3" style="margin-top:0.9rem">
+          <div class="card"><div class="card-label">Why a bump?</div><p>Identity formation and cultural life scripts have the most support (Rathbone et al., 2008; Munawar et al., 2018).</p></div>
+          <div class="card c3"><div class="card-label">Music</div><p>Also a <b>cascading</b> bump: liking and memories rise for music from your <b>parents&rsquo;</b> youth (Krumhansl &amp; Zupnick, 2013).</p></div>
+          <div class="card featured"><div class="card-label">Open question</div><p>Is <i>nostalgia</i> itself bump-shaped, and does the peak depend on the cue&rsquo;s sense?</p></div>
+        </div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>The <b>reminiscence bump</b> is the tendency for older adults to recall disproportionately many memories from roughly ages 10 to 30. A systematic review of 68 studies (Munawar et al., 2018) puts the window at about 10&ndash;30 for important events and about 5&ndash;30 for word cues. The leading explanations tie it to identity formation (we remember well the years when our self took shape).</p>
+          <p>Cue type changes the picture. In older adults, odor-cued memories came mostly from the <b>first decade</b>, whereas word and picture cues peaked at 11&ndash;20 (Willander &amp; Larsson, 2006). For songs, autobiographical salience peaked around age 14 (Jakubowski et al., 2020, N = 470).</p>
+          <p>The bars above are a visual summary of ranges reported in different studies. They are <b>not</b> data from one experiment.</p>
+          <p class="check"><b>Check yourself:</b> go back to slide 2. Which cue types in our chart should, according to this literature, sit furthest left?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 · Feeling vs accuracy -->
+    <section class="slide era-play">
+      <div class="decor" data-kind="slide" style="right:3.2rem;top:1%;width:16rem;height:10.8rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1980s</b>Part 2 &middot; The memory lens</span><span class="hdr-r"><span class="ruler" data-era="80"></span></span></div>
+        <h2>A feeling about remembering, or a record of the past?</h2>
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-label">Fluency misattribution</div>
+            <p>When some words were encoded to support <b>richer recollection</b>, people judged having met them in a more <b>positive</b> context. Nostalgia may partly be successful remembering misattributed to a pleasant past.</p>
+            <p class="small muted" style="margin-top:0.5rem">Leboe &amp; Ansons, 2006</p>
+          </div>
+          <div class="card c3">
+            <div class="card-label">Perspective matters</div>
+            <p>Nostalgic (vs ordinary) recall raised positive affect when recalled from a <b>first-person</b> view, but not from a <b>third-person</b> view.</p>
+            <p class="small muted" style="margin-top:0.5rem">Rogers, 2020 (N = 409)</p>
+          </div>
+          <div class="card featured">
+            <div class="card-label">A gap for a memory lab</div>
+            <p>In our (non-systematic) search we did not find studies that check <b>nostalgic memories against an external record</b> of what happened.</p>
+          </div>
+        </div>
+        <div class="discuss"><span class="dtag">Discuss &middot; 3 min</span><p>How would you show that a nostalgic memory is <b>richer</b> rather than just <b>rosier</b>? What ground truth could we get in our lab?</p></div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>Leboe and Ansons (2006) proposed that the warm feeling of nostalgia can come from how <i>easily and richly</i> we remember, which we mistakenly credit to the past having been good. Their experiments used word lists, not personal memories, so they show the mechanism is possible, not that it explains all nostalgia.</p>
+          <p>Rogers (2020) adds that perspective (seeing the memory through your own eyes or from outside) changes how much positive affect nostalgic recall carries.</p>
+          <p>What is missing is a direct test of accuracy: for example, a lab-staged event or a documented life event, remembered later in a nostalgic or ordinary mode and scored against the record.</p>
+          <p class="check"><b>Check yourself:</b> why is &ldquo;more detailed&rdquo; not the same as &ldquo;more accurate&rdquo;?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 · Measuring memory richness -->
+    <section class="slide era-play">
+      <div class="decor" data-kind="bars" style="left:0;bottom:0.5%;width:15rem;height:7.5rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1980s</b>Part 2 &middot; The memory lens</span><span class="hdr-r"><span class="ruler" data-era="80"></span></span></div>
+        <h2>Measuring memory: feels rich vs is rich</h2>
+        <div class="card tblcard">
+          <table class="tbl">
+            <thead><tr><th>Measure</th><th>What it captures</th><th>Used in</th></tr></thead>
+            <tbody>
+              <tr><td>Autobiographical Interview</td><td>Blind-coded <b>internal (episodic)</b> vs <b>external (semantic)</b> details in a spoken or written recall</td><td>Levine et al., 2002; Belfi et al., 2016 (music &gt; faces)</td></tr>
+              <tr><td>Rating scales</td><td>Subjective <b>vividness, reliving, &ldquo;brought back in time&rdquo;</b>, emotion</td><td>Willander &amp; Larsson, 2006; de Bruijn &amp; Bender, 2018</td></tr>
+              <tr><td>Age of the memory</td><td>When the event happened (reminiscence-bump analyses)</td><td>Willander &amp; Larsson, 2006; Jakubowski et al., 2020</td></tr>
+              <tr><td>Text analysis</td><td>Affective and other word categories in the memory text (LIWC)</td><td>de Bruijn &amp; Bender, 2018</td></tr>
+              <tr><td>Rehearsal</td><td>How often the memory was thought or talked about before</td><td>Rubin et al., 1984; Willander &amp; Larsson, 2006</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="em-line">Pick measures that can separate <i>feeling</i> from <i>content</i>: ratings alone cannot.</p>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>The <b>Autobiographical Interview</b> (Levine et al., 2002) is the memory field&rsquo;s standard way to quantify how episodic a recall is. Trained coders who do not know the condition count details that refer to the event (internal) and those that do not (external). Belfi et al. (2016) used it to show music-evoked memories had a greater proportion of internal details and more perceptual details than memories evoked by famous faces.</p>
+          <p>Rating scales are fast but mix up how a memory feels with what it contains. If you only measure the feeling, you cannot tell &ldquo;richer&rdquo; from &ldquo;rosier&rdquo;.</p>
+          <p class="check"><b>Check yourself:</b> which measure would you add to Seed 3 (&ldquo;Rich or just rosy?&rdquo;) and why?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 · Which senses -->
+    <section class="slide era-pastel">
+      <div class="decor" data-kind="clouds" style="left:0.5%;bottom:3%;width:11rem;height:4.6rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1990s</b>Part 3 &middot; The senses</span><span class="hdr-r"><span class="ruler" data-era="90"></span><span class="sensebar" data-hi="eye,ear,hand,tongue,nose"></span></span></div>
+        <h2>Which senses bring nostalgia?</h2>
+        <div class="grid-2" style="margin-bottom:1rem">
+          <div class="card featured"><p>Sensory stimuli are one of three major self-reported triggers (with threat and social gatherings) in <b>28 countries</b>, especially in more-developed ones.</p><p class="small muted">Hepper et al., 2024</p></div>
+          <div class="card c3"><p>Asked <i>&ldquo;What makes you feel nostalgic?&rdquo;</i> (N = 256), people most often named <b>photographs, music, media, smells, conversations, food</b>.</p><p class="small muted">Zaragoza Scherman et al., 2026</p></div>
+        </div>
+        <div class="card tblcard">
+          <table class="tbl">
+            <thead><tr><th>Sense</th><th>Signature finding</th><th>Key papers</th></tr></thead>
+            <tbody>
+              <tr><td>Smell</td><td>Older, more emotional, rarely rehearsed; detail effects mixed</td><td>Rubin 1984; Herz 2004; Willander &amp; Larsson 2006</td></tr>
+              <tr><td>Music</td><td>Frequent, often involuntary, vivid; drives mixed emotion</td><td>Janata 2007; Barrett 2010; Jakubowski 2023</td></tr>
+              <tr><td>Taste / food</td><td>Strong elicitor, predominantly positive and social</td><td>Reid 2023; Reid 2026</td></tr>
+              <tr><td>Temperature</td><td>Cold triggers nostalgia; nostalgia raises felt warmth</td><td>Zhou 2012</td></tr>
+              <tr><td>Vision / VR</td><td>Hippocampus&ndash;reward coupling; VR boosts felt nostalgia</td><td>Oba 2016; Y&#305;lmaz-&Ouml;zdemir 2025</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>The two studies at the top tell us <i>that</i> the senses matter: in a 28-country survey sensory stimuli were a major trigger, and in an open-ended question people spontaneously named photos, music, smells and food. Neither tells us which sense works best, only what people say.</p>
+          <p>The table is a map for the next slides. Notice the imbalance: smell and music have the most work, food and temperature less, and direct head-to-head comparisons are rare.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 · Smell I -->
+    <section class="slide era-pastel">
+      <div class="decor" data-kind="ribbons" style="left:0;bottom:0;width:22rem;height:7rem;transform:scaleX(-1)"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1990s</b>Part 3 &middot; Smell</span><span class="hdr-r"><span class="ruler" data-era="90"></span><span class="sensebar" data-hi="nose"></span></span></div>
+        <h2>The Proust effect: odor memories are LOVER</h2>
+        <div class="grid-5">
+          <div class="card lover c5"><div class="letter" style="background:var(--hi)">L</div><h3>Limbic</h3><p>Personally meaningful odors drove larger amygdala and hippocampal responses (N = 5, pilot).</p><span class="cite">Herz et al., 2004</span></div>
+          <div class="card lover c3"><div class="letter" style="background:var(--hi2)">O</div><h3>Old</h3><p>Most odor-cued memories came from the <b>first decade</b>; word/picture cues peaked at 11&ndash;20.</p><span class="cite">Willander &amp; Larsson, 2006 (N = 93)</span></div>
+          <div class="card lover c4"><div class="letter" style="background:var(--hi3)">V</div><h3>Vivid</h3><p>Childhood odors gave richer memories than images (N = 170). <b>But</b> no vividness difference in Herz (2004).</p><span class="cite">de Bruijn &amp; Bender, 2018</span></div>
+          <div class="card lover c2"><div class="letter" style="background:var(--hi4)">E</div><h3>Emotional</h3><p>The same cue was more emotional as an odor than seen or heard.</p><span class="cite">Herz &amp; Schooler, 2002; Herz, 2004</span></div>
+          <div class="card lover featured"><div class="letter" style="background:var(--hi5)">R</div><h3>Rare</h3><p>Odor memories had been <b>thought and talked about less</b> beforehand.</p><span class="cite">Rubin et al., 1984</span></div>
+        </div>
+        <p class="em-line">LOVER is a summary of the pattern, not a law: <i>V</i> is the shakiest letter.</p>
+        <p class="source">LOVER acronym: Larsson et al., 2014 &middot; review: Hackl&auml;nder et al., 2019</p>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>Proust&rsquo;s madeleine gave the field its name: the idea that smells (and tastes) unlock vivid, emotional, long-forgotten childhood memories. Experiments from 1984 on have supported parts of this. Larsson and colleagues (2014) summarized the behavioral and neural findings as <b>LOVER</b>: Limbic, Old, Vivid, Emotional, Rare.</p>
+          <p>Look at each letter&rsquo;s evidence base. &ldquo;Limbic&rdquo; rests on a five-person fMRI pilot plus a later fMRI study; &ldquo;Old&rdquo; on older-adult samples; &ldquo;Vivid&rdquo; is mixed (Herz, 2004 found no vividness or specificity difference; de Bruijn &amp; Bender, 2018 and Chu &amp; Downes, 2002 found richer or more detailed memories). Hackl&auml;nder et al. (2019) argue the field should now explain <i>why</i>.</p>
+          <p class="check"><b>Check yourself:</b> which letter would you test first, and what comparison cue would you use?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 · Smell II -->
+    <section class="slide era-pastel">
+      <div class="decor" data-kind="ribbons" style="left:0;bottom:0;width:20rem;height:6.5rem;transform:scaleX(-1)"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1990s</b>Part 3 &middot; Smell</span><span class="hdr-r"><span class="ruler" data-era="90"></span><span class="sensebar" data-hi="nose"></span></span></div>
+        <h2>What is contested &mdash; and scent-evoked nostalgia</h2>
+        <div class="grid-2" style="align-items:start">
+          <div class="card">
+            <div class="card-label">Contested or conditional</div>
+            <ul>
+              <li><b>Naming the odor</b> reduced the childhood peak and pleasantness (N = 72) <span class="cite">Willander &amp; Larsson, 2007</span></li>
+              <li><b>Aversive film</b>, matched triggers (N = 70): odor beat <i>auditory</i>, not <i>visual</i> triggers on detail and arousal <span class="cite">Toffolo et al., 2012</span></li>
+              <li><b>Vividness and specificity</b> did not differ by cue form <span class="cite">Herz, 2004</span></li>
+              <li>Most evidence is from <b>older adults</b>, with <b>different cue sets</b> per modality</li>
+              <li>Field advice: move from <i>establishing</i> to <i>explaining</i> <span class="cite">Hackl&auml;nder et al., 2019</span></li>
+            </ul>
+          </div>
+          <div class="card featured">
+            <div class="card-label">Scent-evoked nostalgia</div>
+            <p>Participants sampled <b>12 scents</b>. Nostalgia was greater for scents that were <b>arousing, familiar and autobiographically relevant</b>, and in people high in <b>nostalgia proneness</b>.</p>
+            <p style="margin-top:0.5rem">It predicted positive affect, self-esteem, self-continuity, optimism, social connectedness and meaning, and carried <b>more positive emotion</b> than non-nostalgic memories.</p>
+            <p class="small muted" style="margin-top:0.5rem">Reid et al., 2015</p>
+          </div>
+        </div>
+        <p class="em-line">Back to slide 2: does smell sit left of the other cues in our chart?</p>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>The odor literature is a good case study in how an exciting effect gets complicated. Telling people what the smell is changes the memories (Willander &amp; Larsson, 2007), so &ldquo;odor vs word&rdquo; is not a clean contrast. Odor beat sound but not visual cues for memories of an aversive film (Toffolo et al., 2012). Herz (2004) found odors more emotional but not more vivid or specific.</p>
+          <p>Reid et al. (2015) is the most direct nostalgia study: the same three ingredients that drive music nostalgia (arousal, familiarity, autobiographical relevance) also drive scent nostalgia. It measures scent-by-scent ratings and has no other sense in the design.</p>
+          <p class="check"><b>Check yourself:</b> why does it matter that a scent&rsquo;s familiarity predicts nostalgia when we try to compare smell with music?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 · Music -->
+    <section class="slide era-pastel">
+      <div class="decor" data-kind="sparkles" style="left:1%;bottom:3%;width:9rem;height:6rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1990s</b>Part 3 &middot; Music</span><span class="hdr-r"><span class="ruler" data-era="90"></span><span class="sensebar" data-hi="ear"></span></span></div>
+        <h2>Music: frequent, bittersweet, often involuntary</h2>
+        <div class="grid-4">
+          <div class="card c5"><div class="bignum">~30%</div><p>of song excerpts evoked an autobiographical memory; nostalgia was the 3rd most common emotion</p><p class="small muted">Janata et al., 2007</p></div>
+          <div class="card c3"><div class="bignum">N = 582</div><p>replication: nostalgic songs higher in valence and arousal than <b>matched familiar</b> songs</p><p class="small muted">Hennessy et al., 2024; Barrett et al., 2010</p></div>
+          <div class="card c4"><div class="bignum">~1/day</div><p>everyday music-evoked memories, vivid and often involuntary (N = 31 diaries)</p><p class="small muted">Jakubowski &amp; Ghosh, 2021</p></div>
+          <div class="card featured"><div class="bignum">music &gt; food</div><p>more frequent, more involuntary, more important memories (39 young + 39 older)</p><p class="small muted">Jakubowski et al., 2023</p></div>
+        </div>
+        <div class="grid-2" style="margin-top:1.1rem">
+          <div class="card"><div class="card-label">What predicts it</div><p>Nostalgia grows with <b>autobiographical salience, arousal, familiarity</b> and mixed emotions; nostalgia proneness adds to it (Barrett et al., 2010).</p></div>
+          <div class="card"><div class="card-label">Why so rich?</div><p>Music memories beat face memories on detail (Belfi et al., 2016), and <b>involuntariness alone doesn&rsquo;t explain it</b> (Belfi et al., 2022).</p></div>
+        </div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>Music is the best-studied sensory route to nostalgia. Hearing a song from your past often brings a memory (about 30% of excerpts in one corpus-based study) and nostalgia is among the most common emotions it evokes. The original finding (Barrett et al., 2010) that nostalgia grows with a song&rsquo;s autobiographical salience, arousal and familiarity was conceptually replicated in a larger sample with self-selected songs and musically matched controls (Hennessy et al., 2024).</p>
+          <p>Diary studies show how this plays out in daily life: music memories are frequent and often involuntary (Jakubowski &amp; Ghosh, 2021) and, compared with food, produce more memories, more involuntary ones, and more personally important ones (Jakubowski et al., 2023).</p>
+          <p>Why music memories are so rich is still open: it is not just that they are involuntary (Belfi et al., 2022).</p>
+          <p class="check"><b>Check yourself:</b> what is the advantage of the matched, familiar, non-nostalgic songs in Hennessy et al. (2024)?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16 · Taste, temperature, vision -->
+    <section class="slide era-pastel">
+      <div class="decor" data-kind="clouds" style="left:0.5%;bottom:3%;width:11rem;height:4.6rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1990s</b>Part 3 &middot; Taste, touch, sight</span><span class="hdr-r"><span class="ruler" data-era="90"></span><span class="sensebar" data-hi="tongue,hand,eye"></span></span></div>
+        <h2>Beyond smell and sound</h2>
+        <div class="grid-3">
+          <div class="card c4">
+            <div class="card-label">Taste &amp; food</div>
+            <ul>
+              <li>A <b>powerful elicitor</b>; profile like other elicitors but <b>predominantly positive</b> (3 studies incl. tasting 12 flavours) <span class="cite">Reid et al., 2023</span></li>
+              <li>Nostalgia for food raised comfort <b>via social connectedness</b> (preregistered) <span class="cite">Reid et al., 2026</span></li>
+              <li>Six themes, from childhood to homesickness <span class="cite">Vignolles &amp; Pichon, 2014</span></li>
+            </ul>
+          </div>
+          <div class="card c3">
+            <div class="card-label">Temperature &amp; touch</div>
+            <ul>
+              <li><b>Cold</b> days and rooms raised nostalgia</li>
+              <li>Nostalgia raised <b>perceived warmth</b></li>
+              <li>Nostalgic recall increased tolerance of <b>noxious cold</b></li>
+            </ul>
+            <p class="small muted" style="margin-top:0.5rem">Zhou et al., 2012</p>
+          </div>
+          <div class="card c2">
+            <div class="card-label">Vision, immersion, multisensory</div>
+            <ul>
+              <li>Childhood images engaged <b>hippocampus + reward</b> regions <span class="cite">Oba et al., 2016</span></li>
+              <li>A <b>VR</b> task gave stronger, longer-lasting felt nostalgia than the standard task <span class="cite">Y&#305;lmaz-&Ouml;zdemir et al., 2025</span></li>
+              <li>EEG: auditory and audiovisual &gt; visual state nostalgia <span class="cite">Hu et al., 2025</span></li>
+            </ul>
+          </div>
+        </div>
+        <p class="em-line">Food and temperature link nostalgia to <i>body states</i> and <i>belonging</i>: a different mechanism from vivid recall?</p>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p><b>Food</b> is a strong elicitor of nostalgia and mostly a positive, social one: foods tied to family and occasions bring togetherness, which the preregistered experiments link to comfort (Reid et al., 2023, 2026). Troisi and Gabriel (2011) show that comfort foods activate relationship concepts, which fits.</p>
+          <p><b>Temperature</b> is the clearest case of the body and nostalgia talking to each other (Zhou et al., 2012): coldness raises nostalgia, nostalgia raises felt warmth. This is a nice replication target.</p>
+          <p><b>Vision and immersion</b>: Oba et al. (2016) is the key fMRI study with visual cues; VR is a new induction method. The EEG study (Hu et al., 2025) is worth reading critically: the text I retrieved suggests a fixed presentation order and non-matched control stimuli, so check it yourself.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17 · Minefield -->
+    <section class="slide era-pastel">
+      <div class="decor" data-kind="sparkles" style="right:1%;top:2%;width:9rem;height:6rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1990s</b>Part 3 &middot; Design</span><span class="hdr-r"><span class="ruler" data-era="90"></span><span class="sensebar" data-hi="eye,ear,hand,tongue,nose"></span></span></div>
+        <h2>Comparing senses is a minefield</h2>
+        <div class="grid-4">
+          <div class="card c5"><h3>Familiarity &amp; relevance</h3><p class="small muted">Both drive nostalgia, so unequal cues confound the senses.<br><span class="cite">Barrett 2010; Reid 2015</span></p></div>
+          <div class="card c3"><h3>Who picks the cue?</h3><p class="small muted">Experimenter-chosen vs self-selected, with matched controls.<br><span class="cite">Hennessy 2024</span></p></div>
+          <div class="card c4"><h3>Labels</h3><p class="small muted">Naming an odor changes age and quality of memories.<br><span class="cite">Willander &amp; Larsson 2007</span></p></div>
+          <div class="card c2"><h3>Matching</h3><p class="small muted">Intensity, valence, arousal, salience equated across modalities.<br><span class="cite">Toffolo 2012</span></p></div>
+          <div class="card c2"><h3>Within vs between</h3><p class="small muted">Same people for all senses, or different people per sense?<br><span class="cite">Herz 2004 vs Willander 2006</span></p></div>
+          <div class="card c4"><h3>Order</h3><p class="small muted">A fixed order confounds modality with time.</p></div>
+          <div class="card c3"><h3>Sample</h3><p class="small muted">Older adults, students, patients: results may not transfer.<br><span class="cite">Glachet 2019</span></p></div>
+          <div class="card c5"><h3>Outcome</h3><p class="small muted">Nostalgia, emotion, vividness, specificity often dissociate.<br><span class="cite">Herz 2004; de Bruijn 2018</span></p></div>
+        </div>
+        <div class="discuss"><span class="dtag">Discuss &middot; 3 min</span><p>Pick two senses. <b>How would you make a fair comparison</b> of how nostalgic they make people? What would you hold constant, and what would you give up?</p></div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>When one study says &ldquo;smell beats vision&rdquo; and another says &ldquo;music beats food,&rdquo; ask what else differed. Most apparent differences between senses can be produced by differences in how familiar the cues were, how they were chosen, whether they were named, the order of testing, and who was tested.</p>
+          <p>The workbook has a &ldquo;Spot the confound&rdquo; exercise built from exactly these issues.</p>
+          <p class="check"><b>Discussion prompts:</b> Is it possible to match a smell, a song and a picture on everything except sense? What would a Latin-square order look like with three senses?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18 · Brain -->
+    <section class="slide era-pastel">
+      <div class="decor" data-kind="clouds" style="right:3%;top:3%;width:11rem;height:4.6rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1990s</b>Part 3 &middot; Brain</span><span class="hdr-r"><span class="ruler" data-era="90"></span></span></div>
+        <h2>A proposed neural model of nostalgia</h2>
+        <div class="brain">
+          <div class="card c2"><h3><span class="num">1</span>Self-reflection</h3><p><b>mPFC &middot; PCC &middot; precuneus.</b> Dorsal mPFC tracked how autobiographically salient each song was (Janata, 2009).</p></div>
+          <div class="head" id="headSvg"></div>
+          <div class="card c4"><h3><span class="num">3</span>Reward</h3><p><b>striatum &middot; SN/VTA &middot; vmPFC.</b> Hippocampus&ndash;ventral striatum coupling scaled with nostalgia tendency (Oba et al., 2016).</p></div>
+          <div class="card c3"><h3><span class="num">2</span>Autobiographical memory</h3><p><b>hippocampus + midline.</b> Odor memories: amygdala and hippocampus (Herz et al., 2004, N = 5); medial temporal and emotion regions (Arshamian et al., 2013).</p></div>
+          <div class="card c5"><h3><span class="num">4</span>Emotion regulation</h3><p><b>ACC &middot; mPFC.</b> Nostalgic music: default-mode, salience, reward, medial temporal networks; stronger in older adults (Hennessy et al., 2025, N = 57).</p></div>
+        </div>
+        <p class="source">Model: Yang et al., 2022 (prospective review). The authors note only a handful of neural studies existed; the studies shown are small and use different cues. Head drawing is schematic.</p>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>Yang and colleagues (2022) propose that nostalgia recruits four sets of processes: self-reflection, autobiographical memory, emotion regulation and reward, each with candidate brain regions. It is a model to test, not a result.</p>
+          <p>The empirical studies fit loosely: music-evoked salience in dorsal medial prefrontal cortex (Janata, 2009), hippocampus&ndash;striatum coupling for visual childhood cues (Oba et al., 2016), amygdala/hippocampus for a personal odor (Herz et al., 2004, five participants), and network-level default-mode, salience and reward engagement for personalized nostalgic music, stronger in older adults (Hennessy et al., 2025).</p>
+          <p class="check"><b>Check yourself:</b> why is it hard to compare these studies with each other? (Think cue type, sample, control stimuli.)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19 · Aging & clinical -->
+    <section class="slide era-pastel">
+      <div class="decor" data-kind="sparkles" style="left:1%;bottom:3%;width:9rem;height:6rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>1990s</b>Part 3 &middot; Aging &amp; clinical</span><span class="hdr-r"><span class="ruler" data-era="90"></span></span></div>
+        <h2>Nostalgia and sensory cues across the lifespan</h2>
+        <div class="grid-2" style="align-items:start">
+          <div class="card c3">
+            <div class="card-label">Dementia</div>
+            <ul>
+              <li>Three experiments (N = 27, 29, 50): nostalgia raised <b>connectedness, meaning, self-continuity, optimism, self-esteem</b>, positive affect; nostalgic participants recalled <b>more self-referent dementia information</b> <span class="cite">Ismail et al., 2018</span></li>
+              <li>Systematic review &amp; meta-analysis of experimental evidence <span class="cite">Ismail et al., 2020</span></li>
+            </ul>
+          </div>
+          <div class="card c4">
+            <div class="card-label">Cues in Alzheimer&rsquo;s disease</div>
+            <ul>
+              <li>Odor and music improved <b>specificity, emotion, retrieval time</b> in mild AD <span class="cite">El Haj et al., 2018</span></li>
+              <li>Odor raised arousal, reliving and positivity <b>only in AD, not in healthy controls</b> <span class="cite">Glachet &amp; El Haj, 2019</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card featured" style="margin-top:1.1rem">
+          <div class="card-label">Healthy aging</div>
+          <p>Older adults recalled <b>older, less specific, more positive, vivid and rehearsed</b> music and food memories (Jakubowski et al., 2023) and showed <b>stronger</b> responses to nostalgic music (Hennessy et al., 2025). Nostalgia proneness went with maintained well-being from 18 to 91, and buffered limited time horizons (Hepper et al., 2021).</p>
+        </div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>This is where the memory and nostalgia literatures meet clinically. Sensory cues can help when autobiographical memory is impaired: in mild Alzheimer&rsquo;s disease, odor and music cues improved the specificity and emotion of recalled memories. In healthy older adults the odor benefit was not seen (Glachet &amp; El Haj, 2019).</p>
+          <p>Nostalgia itself seems to be beneficial for people with dementia in small experiments (Ismail et al., 2018). Most of these clinical samples are small, so treat them as promising, not settled.</p>
+          <p class="check"><b>Check yourself:</b> why must a study of odor cues in older adults measure olfactory ability?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 20 · Methods -->
+    <section class="slide era-now">
+      <div class="decor" data-kind="sparkles" style="right:1%;top:2%;width:9rem;height:6rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>Now</b>Part 4 &middot; Methods</span><span class="hdr-r"><span class="ruler" data-era="now"></span></span></div>
+        <h2>The methods toolkit</h2>
+        <div class="card tblcard">
+          <table class="tbl">
+            <thead><tr><th>Need</th><th>Options</th><th>Watch out for</th></tr></thead>
+            <tbody>
+              <tr><td>Induce</td><td>Event reflection task (nostalgic vs ordinary event); self-selected songs; scents; foods; VR</td><td>VR beat the event reflection task on felt nostalgia (Y&#305;lmaz-&Ouml;zdemir 2025); effects depend on the induction (Leunissen 2021)</td></tr>
+              <tr><td>Control</td><td>Ordinary event; recent positive event; reflection / brooding; familiar non-nostalgic songs matched on features</td><td>The control changes the effect size; match on what you can</td></tr>
+              <tr><td>Trait</td><td>Southampton Nostalgia Scale; Nostalgia Inventory (Batcho 1995); PINE for daily life (Newman 2020)</td><td>Nostalgia proneness predicts cue-evoked nostalgia (Reid 2015; Barrett 2010)</td></tr>
+              <tr><td>State</td><td>Short state items as a manipulation check</td><td>Use validated wording in real studies</td></tr>
+              <tr><td>Memory</td><td>Autobiographical Interview; vividness / reliving; LIWC</td><td>Blind coders; control for word count</td></tr>
+              <tr><td>Everyday</td><td>Diary with cue logging</td><td>Reactivity, compliance, privacy</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>The most common induction is the <b>event reflection task</b>: participants recall and describe a nostalgic or an ordinary event, then complete measures. VR, songs, scents and foods are alternatives. Trait measures (Southampton Nostalgia Scale, Nostalgia Inventory) capture proneness; state items work as manipulation checks.</p>
+          <p>Choosing the control is a major design decision. Jiang et al. (2021) compared nostalgia with reflection and brooding; Hennessy et al. (2024, 2025) compared nostalgic songs with familiar non-nostalgic songs matched on features.</p>
+          <p>The workbook includes practice versions of state items and an event reflection task so you can experience the method; use validated instruments in any real study.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 21 · Evidence map -->
+    <section class="slide era-now" id="s-emap">
+      <div class="slide-content">
+        <div class="hdr"><span class="tag try"><b>Try it</b>Part 4</span><span class="hdr-r"><span class="ruler" data-era="now"></span></span></div>
+        <h2>Evidence map: where is the work, and where are the holes?</h2>
+        <div class="emap-wrap">
+          <div>
+            <table class="emap" id="emap" aria-label="Evidence map: sense by outcome"></table>
+            <div class="emap-legend"><span><i style="background:repeating-linear-gradient(45deg,rgba(127,127,127,0.25) 0,rgba(127,127,127,0.25) 3px,transparent 3px,transparent 6px)"></i>none in list</span><span><i style="background:rgba(var(--hi3-rgb),0.28)"></i>1</span><span><i style="background:rgba(var(--hi3-rgb),0.6)"></i>2&ndash;3</span><span><i style="background:var(--hi3)"></i>4+</span></div>
+          </div>
+          <div class="card emap-panel" id="emapPanel" aria-live="polite"><p class="hint">Click a cell to list the studies in it. Empty cells mean <b>no study in this reading list</b>, not that none exists. That is a search you should run.</p></div>
+        </div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>This grid is built from the 48 studies in the curated reading list (<a href="evidence_data.js">evidence_data.js</a>), tagged by sense and by outcome. Each number is how many studies in the list fall in that cell. It is a reading list, <b>not</b> a systematic count, so use it to see where to look, then check the literature yourself.</p>
+          <p>Things worth noticing: smell and music have the most cells filled; temperature and multisensory rows are sparse; &ldquo;accuracy&rdquo; is almost empty except for general-nostalgia studies; and few cells combine a sense with a memory-content measure beyond vividness ratings.</p>
+          <p class="check"><b>Check yourself:</b> pick an empty cell and write the question it suggests. Then search for studies in that cell before you claim it is empty.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 22 · Seeds -->
+    <section class="slide era-now" id="s-seeds">
+      <div class="decor" data-kind="sparkles" style="right:1%;top:2%;width:9rem;height:6rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag try"><b>Try it</b>Part 4</span><span class="hdr-r"><span class="ruler" data-era="now"></span></span></div>
+        <h2>Eight seeds for your own questions</h2>
+        <div class="grid-4" id="seedGrid"></div>
+        <p class="em-line">Click a card for the literature hook, design, measures and pitfalls. Improve one, or bring your own.</p>
+        <div class="explain" id="seedExplain">
+          <div class="ex-label">In plain words</div>
+          <p>These are starting points, not assignments. Each one is tied to a gap in the literature I found (and I flag which gaps I am less sure about). The full details are listed below.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 23 · Pitch -->
+    <section class="slide era-now">
+      <div class="decor" data-kind="sparkles" style="right:2%;bottom:5%;width:12rem;height:8rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>Now</b>Your turn &middot; 10&ndash;15 min</span><span class="hdr-r"><span class="ruler" data-era="now"></span></span></div>
+        <h2>Your 60-second pitch</h2>
+        <div class="questions" style="max-width:52rem">
+          <div class="question"><div class="step-num">1</div><p><b class="hl">Question.</b> What do you want to know, in one sentence?</p></div>
+          <div class="question"><div class="step-num" style="background:var(--hi2);color:var(--on-hi2)">2</div><p><b class="hl">Cue &amp; comparison.</b> Which sense(s), who picks the cue, and what is the control?</p></div>
+          <div class="question"><div class="step-num" style="background:var(--hi3);color:var(--on-hi3)">3</div><p><b class="hl">Measure.</b> How will you separate <i>feeling</i> from <i>content</i>?</p></div>
+          <div class="question"><div class="step-num" style="background:var(--hi4);color:var(--on-hi4)">4</div><p><b class="hl">Gap &amp; risk.</b> What has been done, and what could sink the study?</p></div>
+        </div>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>Bring the one-page brief that the workbook&rsquo;s study builder exports. Take about a minute to say the question, the cue and control, the measure, and the gap and main risk. The group then gives one strength and one concern each. The aim is a better question, not a verdict.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 24 · Homework -->
+    <section class="slide era-now">
+      <div class="decor" data-kind="clouds" style="right:3%;top:3%;width:11rem;height:4.6rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>Lab hours</b>Homework</span><span class="hdr-r"><span class="ruler" data-era="now"></span></span></div>
+        <h2>Homework workbook (about 3&ndash;4 hours, in pieces)</h2>
+        <div class="grid-3">
+          <div class="card"><h3>1 &middot; Read like a scientist</h3><p class="small">Pick 3 papers from 8; fill a structured extraction form (question, design, N, cue, control, result, limitation).</p></div>
+          <div class="card c3"><h3>2 &middot; Be a participant</h3><p class="small">Run an event reflection task on yourself and keep a 7-day cue diary (sense, voluntary or not, age of memory).</p></div>
+          <div class="card c2"><h3>3 &middot; Spot the confound</h3><p class="small">Eight short design vignettes drawn from the literature, with feedback.</p></div>
+          <div class="card c4"><h3>4 &middot; Evidence map &amp; search</h3><p class="small">Explore the map, then search for studies in one empty cell.</p></div>
+          <div class="card"><h3>5 &middot; Power sandbox</h3><p class="small">How many people do you need for g &asymp; 0.39? What if you test an interaction?</p></div>
+          <div class="card featured"><h3>6 &middot; Build your study</h3><p class="small">Pick a seed (or your own), fill the guided brief, export a one-page summary for the pitch.</p></div>
+        </div>
+        <p class="em-line"><a href="workbook.html" target="_blank" rel="noopener">Open the workbook</a> &middot; everything saves in your browser and exports as Markdown or CSV.</p>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>The workbook (<a href="workbook.html">workbook.html</a>) is interactive and literature-driven. Plan to do the modules in lab hours across the week. Your progress is saved in your own browser only; use the export buttons to keep a copy or to share a brief with the group. Details and time estimates are in <a href="HOMEWORK.md">HOMEWORK.md</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 25 · Glossary -->
+    <section class="slide era-now">
+      <div class="decor" data-kind="clouds" style="right:1%;top:2%;width:12rem;height:5rem;"></div>
+      <div class="slide-content">
+        <div class="hdr"><span class="tag"><b>Now</b>For the week</span><span class="hdr-r"><span class="ruler" data-era="now"></span></span></div>
+        <h2>Key words</h2>
+        <dl class="gloss">
+          <div><dt>Nostalgia</dt><dd>A social, self-relevant, bittersweet (mostly positive) emotion about the personal past.</dd></div>
+          <div><dt>Nostalgia proneness</dt><dd>A trait: how readily and strongly someone feels nostalgia.</dd></div>
+          <div><dt>Event reflection task</dt><dd>Standard induction: recall a nostalgic (vs ordinary) event and describe it.</dd></div>
+          <div><dt>Autobiographical memory</dt><dd>Memory for personal events and facts about one&rsquo;s life.</dd></div>
+          <div><dt>Encoding specificity</dt><dd>A cue works to the extent it matches what was encoded.</dd></div>
+          <div><dt>Involuntary memory</dt><dd>A memory that comes to mind without a deliberate search.</dd></div>
+          <div><dt>Reminiscence bump</dt><dd>Disproportionate recall of events from about ages 10&ndash;30.</dd></div>
+          <div><dt>Proust effect</dt><dd>The idea that odors evoke especially vivid, emotional, old memories.</dd></div>
+          <div><dt>MEAM</dt><dd>Music-evoked autobiographical memory.</dd></div>
+          <div><dt>Autobiographical Interview</dt><dd>Coding scheme for internal (episodic) vs external (semantic) details.</dd></div>
+          <div><dt>Self-continuity</dt><dd>A sense of connection between one&rsquo;s past and present self.</dd></div>
+          <div><dt>Confound</dt><dd>A second difference between conditions that could explain the result.</dd></div>
+        </dl>
+        <div class="explain">
+          <div class="ex-label">In plain words</div>
+          <p>Come back here whenever a term is unfamiliar. Each one appears in the slide where it is first used.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="modal" id="seedModal" hidden role="dialog" aria-modal="true" aria-labelledby="seedModalTitle">
+  <div class="modal-card" id="seedModalBody"></div>
+</div>
+
+<script src="evidence_data.js"></script>
+<script>
+(function () {
+  var html = document.documentElement;
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var total = slides.length, current = 0;
+  var container = document.getElementById("slidesContainer");
+  var counter = document.getElementById("slideCounter");
+  var dotsBox = document.getElementById("navDots");
+  var modeBtn = document.getElementById("modeBtn");
+  var D = window.WS4;
+
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function isRef() { return html.classList.contains("ref"); }
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function svgEl(name, attrs) { var n = document.createElementNS(SVGNS, name); for (var a in attrs) n.setAttribute(a, attrs[a]); return n; }
+
+  // ---------- nav ----------
+  slides.forEach(function (_, i) {
+    var dot = document.createElement("button");
+    dot.className = "nav-dot";
+    dot.setAttribute("aria-label", "Go to slide " + (i + 1));
+    dot.addEventListener("click", function () { go(i); });
+    dotsBox.appendChild(dot);
+  });
+  var dots = dotsBox.querySelectorAll(".nav-dot");
+  function update() {
+    if (!isRef()) container.style.transform = "translateY(-" + current * 100 + "vh)";
+    counter.textContent = pad(current + 1) + " / " + pad(total);
+    dots.forEach(function (d, i) { d.classList.toggle("active", i === current); });
+    if (location.hash !== "#" + (current + 1)) history.replaceState(null, "", "#" + (current + 1));
+  }
+  function go(i) { if (i < 0 || i >= total) return; current = i; update(); if (isRef()) slides[i].scrollIntoView(); }
+  function applyMode(ref) {
+    html.classList.toggle("ref", ref);
+    modeBtn.textContent = ref ? "Slide view (R)" : "Reference view (R)";
+    container.style.transition = "none"; update(); container.offsetHeight; container.style.transition = "";
+    if (ref) slides[current].scrollIntoView(); else window.scrollTo(0, 0);
+  }
+  var userMode = load("ws4-mode");
+  function wantRef() { var w = window.innerWidth; return (w > 0 && w <= 760) || userMode === "ref"; }
+  function toggleMode() { userMode = isRef() ? "slides" : "ref"; store("ws4-mode", userMode); applyMode(wantRef()); }
+  modeBtn.addEventListener("click", toggleMode);
+  function modalOpen() { return !$("seedModal").hidden; }
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (modalOpen()) { if (e.key === "Escape") closeModal(); return; }
+    var t = e.target, tag = t && t.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+    var k = e.key;
+    if (k === "r" || k === "R") { toggleMode(); return; }
+    if (k === "f" || k === "F") { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {}); else document.exitFullscreen(); return; }
+    if (isRef()) return;
+    if (tag === "BUTTON" && (k === " " || k === "Enter")) return;
+    if (k === "ArrowDown" || k === "ArrowRight" || k === " " || k === "PageDown") { e.preventDefault(); go(current + 1); }
+    else if (k === "ArrowUp" || k === "ArrowLeft" || k === "PageUp") { e.preventDefault(); go(current - 1); }
+    else if (k === "Home") { e.preventDefault(); go(0); }
+    else if (k === "End") { e.preventDefault(); go(total - 1); }
+  });
+  document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("button"); if (b && e.detail > 0 && !b.classList.contains("mode-btn")) b.blur(); });
+  var y0 = null;
+  document.addEventListener("touchstart", function (e) { y0 = e.target.closest && e.target.closest("input, button, .emap-panel, .modal") ? null : e.touches[0].clientY; }, { passive: true });
+  document.addEventListener("touchend", function (e) { if (y0 === null || isRef()) return; var dy = y0 - e.changedTouches[0].clientY; if (Math.abs(dy) > 50) go(current + (dy > 0 ? 1 : -1)); y0 = null; });
+  var wheelLock = false;
+  document.addEventListener("wheel", function (e) {
+    if (wheelLock || isRef() || Math.abs(e.deltaY) < 10 || modalOpen()) return;
+    if (e.target.closest && e.target.closest(".emap-panel, .modal")) return;
+    wheelLock = true; go(current + (e.deltaY > 0 ? 1 : -1)); setTimeout(function () { wheelLock = false; }, 800);
+  }, { passive: true });
+  window.addEventListener("hashchange", function () { var n = parseInt(location.hash.slice(1), 10); if (n >= 1 && n <= total && n - 1 !== current) go(n - 1); });
+  var scrollRaf = 0;
+  window.addEventListener("scroll", function () {
+    if (!isRef() || scrollRaf) return;
+    scrollRaf = requestAnimationFrame(function () {
+      scrollRaf = 0; var best = 0;
+      for (var i = 0; i < slides.length; i++) if (slides[i].getBoundingClientRect().top <= window.innerHeight * 0.35) best = i;
+      if (best !== current) { current = best; update(); }
+    });
+  }, { passive: true });
+  var resizeTimer;
+  window.addEventListener("resize", function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(function () { var want = wantRef(); if (want !== isRef()) applyMode(want); }, 200); });
+
+  // ---------- five senses icons (drawn on a 48x48 grid) ----------
+  var INK = "#33305A";
+  var SENSES = {
+    eye:    { bg: "#FFB3B8", svg: '<path d="M5 24c5-8 11-12 19-12s14 4 19 12c-5 8-11 12-19 12S10 32 5 24z" fill="#fff"/><circle cx="24" cy="24" r="7" fill="#6B74C9"/><circle cx="24" cy="24" r="3" fill="' + INK + '"/><circle cx="26" cy="22" r="1.2" fill="#fff" stroke="none"/>' },
+    ear:    { bg: "#FFD7BA", svg: '<path d="M15 35c3 6 12 7 15-1 2-5 7-7 7-14 0-8-6-12-13-12S11 14 11 22" fill="#fff"/><path d="M19 23c0-4 3-6 6-6s5 3 4 6c-1 3-4 4-4 9" fill="none"/>' },
+    hand:   { bg: "#B5EAD7", svg: '<rect x="12" y="16" width="5.5" height="17" rx="2.75" fill="#fff"/><rect x="18" y="9" width="5.5" height="22" rx="2.75" fill="#fff"/><rect x="24" y="8" width="5.5" height="23" rx="2.75" fill="#fff"/><rect x="30" y="12" width="5.5" height="20" rx="2.75" fill="#fff"/><path d="M12 29h23.5v5c0 6-5 9-11 9-6 0-9-3-11-8l-3-6c-1-2 2-3 3-1z" fill="#fff" stroke="none"/><path d="M12 29v5c0 1 0 1 2 5M35.5 29v5c0 6-5 9-11 9-6 0-9-3-11-8" fill="none"/>' },
+    tongue: { bg: "#A9C4F5", svg: '<path d="M18 27v9a6 6 0 0 0 12 0v-9z" fill="#FF7F8A"/><path d="M24 30v6" fill="none"/><path d="M5 22c6-7 12-3 19-3s13-4 19 3c-6 9-13 10-19 10S11 31 5 22z" fill="#fff"/><path d="M7 23h34" fill="none"/>' },
+    nose:   { bg: "#D9C7F0", svg: '<path d="M25 7c-1 10 1 18 8 24 3 3 1 7-3 8-4 1-7-1-9-3-3 3-9 2-9-2 0-3 3-4 5-3 1-5 5-11 7-24z" fill="#fff"/><circle cx="19" cy="36" r="1.5" fill="' + INK + '" stroke="none"/>' }
+  };
+  var SENSE_ORDER = ["eye", "ear", "hand", "tongue", "nose"];
+  function senseCircle(id, on) {
+    var s = SENSES[id], d = document.createElement("span");
+    d.className = "sb" + (on ? " on" : ""); d.style.background = s.bg; d.title = id;
+    d.innerHTML = '<svg viewBox="0 0 48 48" fill="none" stroke="' + INK + '" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + s.svg + "</svg>";
+    return d;
+  }
+  document.querySelectorAll(".sensebar").forEach(function (box) {
+    var hi = (box.dataset.hi || "").split(",");
+    SENSE_ORDER.forEach(function (id) { box.appendChild(senseCircle(id, hi.indexOf(id) >= 0)); });
+  });
+  (function () { var c = $("coverSenses"); SENSE_ORDER.forEach(function (id) { c.appendChild(senseCircle(id, true)); }); })();
+
+  // ---------- decade ruler ----------
+  var ERAS = [["70", "70s"], ["80", "80s"], ["90", "90s"], ["now", "now"]];
+  document.querySelectorAll(".ruler").forEach(function (box) {
+    ERAS.forEach(function (e) { var s = document.createElement("span"); s.textContent = e[1]; if (e[0] === box.dataset.era) s.className = "on"; box.appendChild(s); });
+  });
+
+  // ---------- decorations: clouds, sparkles, arcs, sun, blobs, hopscotch, bars, slide, ribbons ----------
+  function P(tag, a) { var s = "<" + tag; for (var k in a) s += " " + k + '="' + a[k] + '"'; return s + "/>"; }
+  var DECOR = {
+    clouds: function () {
+      var c = function (x, y, s, f) { return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path d="M10 40 a14 14 0 0 1 4-27 a18 18 0 0 1 34-3 a15 15 0 0 1 22 14 a12 12 0 0 1 -2 16z" fill="' + f + '" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/></g>'; };
+      return '<svg viewBox="0 0 170 70">' + c(0, 5, 0.85, "#C5CAE9") + c(85, 0, 1, "#FFFFFF") + "</svg>";
+    },
+    sparkles: function () {
+      var st = function (x, y, r, f) { return '<path d="M' + x + " " + (y - r) + " Q" + x + " " + y + " " + (x + r) + " " + y + " Q" + x + " " + y + " " + x + " " + (y + r) + " Q" + x + " " + y + " " + (x - r) + " " + y + " Q" + x + " " + y + " " + x + " " + (y - r) + 'z" fill="' + f + '" stroke="' + INK + '" stroke-width="2.5" stroke-linejoin="round"/>'; };
+      return '<svg viewBox="0 0 120 80">' + st(30, 28, 22, "#FF9AA2") + st(78, 20, 13, "#B5EAD7") + st(92, 56, 18, "#C5CAE9") + st(46, 62, 9, "#FFD7BA") + "</svg>";
+    },
+    arcs: function () {
+      var cols = ["#B7410E", "#DA9100", "#699022", "#4F7C6D", "#7B3F00"], s = "";
+      cols.forEach(function (c, i) { var r = 100 - i * 17; s += '<path d="M' + (100 - r) + " 110 A" + r + " " + r + " 0 0 1 " + (100 + r) + ' 110" fill="none" stroke="' + c + '" stroke-width="17"/>'; });
+      return '<svg viewBox="0 0 200 110" preserveAspectRatio="xMaxYMax meet">' + s + "</svg>";
+    },
+    sun: function () {
+      var s = "", i;
+      for (i = 0; i < 16; i++) { var a = i * Math.PI / 8, b = a + Math.PI / 16, r1 = 22, r2 = 56; s += '<path d="M' + (60 + r1 * Math.cos(a)).toFixed(1) + " " + (60 + r1 * Math.sin(a)).toFixed(1) + " L" + (60 + r2 * Math.cos((a + b) / 2)).toFixed(1) + " " + (60 + r2 * Math.sin((a + b) / 2)).toFixed(1) + " L" + (60 + r1 * Math.cos(b)).toFixed(1) + " " + (60 + r1 * Math.sin(b)).toFixed(1) + 'z" fill="' + (i % 2 ? "#B7410E" : "#DA9100") + '"/>'; }
+      return '<svg viewBox="0 0 120 120">' + s + '<circle cx="60" cy="60" r="21" fill="#F6E7C8" stroke="#3A2210" stroke-width="3"/><circle cx="60" cy="60" r="11" fill="#DA9100" stroke="#3A2210" stroke-width="3"/></svg>';
+    },
+    blobs: function () {
+      var d = [[24, 24, 18, "#DA9100"], [66, 20, 15, "#4F7C6D"], [104, 26, 17, "#B7410E"], [140, 20, 13, "#699022"], [40, 62, 16, "#F0D79A"], [82, 62, 19, "#B7410E"], [124, 64, 15, "#DA9100"], [148, 56, 11, "#4F7C6D"]], s = "";
+      d.forEach(function (b) { s += '<ellipse cx="' + b[0] + '" cy="' + b[1] + '" rx="' + b[2] + '" ry="' + (b[2] * 0.92) + '" fill="' + b[3] + '" stroke="#3A2210" stroke-width="2.5"/><path d="M' + (b[0] - b[2] * 0.55) + " " + (b[1] - b[2] * 0.1) + " a" + b[2] * 0.6 + " " + b[2] * 0.6 + ' 0 0 1 ' + b[2] * 0.5 + ' -' + b[2] * 0.5 + '" fill="none" stroke="#FFF6DE" stroke-width="2.2" stroke-linecap="round"/>'; });
+      return '<svg viewBox="0 0 170 84">' + s + "</svg>";
+    },
+    hop: function () {
+      var cols = ["#E63946", "#FFC914", "#1D6FD6", "#2FA05A"], s = "", y = 392, n = 1, rows = [1, 2, 1, 2, 1, 2, 1], ci = 0, i, j;
+      for (i = 0; i < rows.length; i++) {
+        var w = rows[i] === 1 ? 52 : 26;
+        for (j = 0; j < rows[i]; j++) {
+          var x = rows[i] === 1 ? 4 : 4 + j * 26; y = y;
+          s += '<rect x="' + x + '" y="' + (y - 52) + '" width="' + w + '" height="52" rx="6" fill="' + cols[ci++ % 4] + '" stroke="#14284F" stroke-width="3"/><text x="' + (x + w / 2) + '" y="' + (y - 18) + '" text-anchor="middle" font-family="Bungee, sans-serif" font-size="' + (rows[i] === 1 ? 24 : 18) + '" fill="' + ((ci - 1) % 4 === 1 ? "#14284F" : "#fff") + '">' + n++ + "</text>";
+        }
+        y -= 56;
+      }
+      return '<svg viewBox="0 0 60 400" preserveAspectRatio="xMidYMid meet">' + s + "</svg>";
+    },
+    bars: function () {
+      var s = '<rect x="6" y="20" width="8" height="84" rx="3" fill="#1D6FD6" stroke="#14284F" stroke-width="3"/><rect x="206" y="20" width="8" height="84" rx="3" fill="#1D6FD6" stroke="#14284F" stroke-width="3"/><rect x="4" y="18" width="212" height="8" rx="4" fill="#E63946" stroke="#14284F" stroke-width="3"/>', i, cols = ["#FFC914", "#2FA05A", "#E63946"];
+      for (i = 0; i < 8; i++) { var x = 26 + i * 24; s += '<rect x="' + x + '" y="26" width="7" height="46" rx="3" fill="' + cols[i % 3] + '" stroke="#14284F" stroke-width="2.5"/>'; }
+      return '<svg viewBox="0 0 220 110" preserveAspectRatio="xMinYMax meet">' + s + "</svg>";
+    },
+    slide: function () {
+      return '<svg viewBox="0 0 200 134" preserveAspectRatio="xMaxYMin meet"><rect x="146" y="14" width="40" height="8" rx="3" fill="#FFC914" stroke="#14284F" stroke-width="3"/><rect x="150" y="22" width="6" height="104" rx="2" fill="#1D6FD6" stroke="#14284F" stroke-width="2.5"/><rect x="176" y="22" width="6" height="104" rx="2" fill="#1D6FD6" stroke="#14284F" stroke-width="2.5"/><path d="M148 22 C 90 40, 120 90, 40 120" fill="none" stroke="#14284F" stroke-width="22" stroke-linecap="round"/><path d="M148 22 C 90 40, 120 90, 40 120" fill="none" stroke="#E63946" stroke-width="15" stroke-linecap="round"/><path d="M148 22 C 90 40, 120 90, 40 120" fill="none" stroke="#FF8A92" stroke-width="3.5" stroke-linecap="round" transform="translate(-2 -3)"/><circle cx="168" cy="8" r="6" fill="#FFC914" stroke="#14284F" stroke-width="2.5"/></svg>';
+    },
+    ribbons: function () {
+      var cols = ["#C4405A", "#E08A3C", "#C9A400", "#2E9B7A", "#5560B5"], s = "";
+      cols.forEach(function (c, i) { var y = 14 + i * 14; s += '<path d="M0 ' + y + " C 30 " + (y - 14) + ", 50 " + (y + 14) + ", 80 " + y + " S 130 " + (y - 12) + ", 160 " + y + " S 200 " + (y + 10) + ', 220 ' + (y - 6) + '" fill="none" stroke="' + c + '" stroke-width="5" stroke-linecap="round" opacity="0.8"/>'; });
+      return '<svg viewBox="0 0 220 80" preserveAspectRatio="xMaxYMax meet">' + s + "</svg>";
+    }
+  };
+  document.querySelectorAll(".decor").forEach(function (box) { var f = DECOR[box.dataset.kind]; if (f) box.innerHTML = f(); });
+
+  // ---------- brain slide: schematic head with four numbered regions ----------
+  (function () {
+    var box = $("headSvg"); if (!box) return;
+    box.innerHTML = '<svg viewBox="0 0 200 230" role="img" aria-label="Schematic head with four numbered brain regions">' +
+      '<path d="M58 214c0-26-20-34-24-62C29 112 54 52 104 46c46-5 74 25 72 62-1 16-7 26-5 36 2 9-9 13-20 13v20c0 14-14 37-36 37z" fill="#FFFFFF" stroke="' + INK + '" stroke-width="4" stroke-linejoin="round"/>' +
+      '<ellipse cx="108" cy="92" rx="56" ry="42" fill="#FFD7BA" stroke="' + INK + '" stroke-width="4"/>' +
+      '<path d="M70 80c10-12 24-10 30 0M100 70c12-12 30-8 36 4M80 104c8-10 22-8 28 0M112 100c10-8 24-4 28 6" fill="none" stroke="' + INK + '" stroke-width="2.6" stroke-linecap="round" opacity="0.55"/>' +
+      '<circle cx="80" cy="74" r="12" fill="#C5CAE9" stroke="' + INK + '" stroke-width="3"/><text x="80" y="79" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="14" fill="' + INK + '">1</text>' +
+      '<circle cx="104" cy="104" r="12" fill="#B5EAD7" stroke="' + INK + '" stroke-width="3"/><text x="104" y="109" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="14" fill="' + INK + '">2</text>' +
+      '<circle cx="132" cy="94" r="12" fill="#FFD7BA" stroke="' + INK + '" stroke-width="3"/><text x="132" y="99" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="14" fill="' + INK + '">3</text>' +
+      '<circle cx="124" cy="64" r="12" fill="#FFF3B0" stroke="' + INK + '" stroke-width="3"/><text x="124" y="69" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="14" fill="' + INK + '">4</text>' +
+      '<circle cx="150" cy="128" r="3" fill="' + INK + '"/><path d="M144 146q8 6 16 0" fill="none" stroke="' + INK + '" stroke-width="3" stroke-linecap="round"/></svg>';
+  })();
+
+  // =====================================================================
+  // 2 · TRY IT: cue tally
+  // =====================================================================
+  (function () {
+    var CUES = [
+      { id: "smell", label: "Smell", color: "#8C93E0" },
+      { id: "music", label: "Music", color: "#FF7F8A" },
+      { id: "photo", label: "Photo / video", color: "#F2C14E" },
+      { id: "food", label: "Taste / food", color: "#F29B6B" },
+      { id: "place", label: "Place / object", color: "#5FB89A" },
+      { id: "person", label: "Person / talk", color: "#8FB5E8" },
+      { id: "other", label: "Other", color: "#BDB7D6" }
+    ];
+    var BINS = ["0–9", "10–19", "20–29", "30–39", "40+"];
+    var items = [];
+    try { items = JSON.parse(load("ws4-tally") || "[]"); } catch (e) { items = []; }
+    var sel = "smell", box = $("tallyCues");
+    CUES.forEach(function (c) {
+      var b = document.createElement("button");
+      b.className = "tog"; b.type = "button"; b.dataset.id = c.id; b.setAttribute("aria-pressed", c.id === sel ? "true" : "false");
+      b.innerHTML = '<i style="background:' + c.color + '"></i>' + c.label;
+      b.addEventListener("click", function () { sel = c.id; box.querySelectorAll(".tog").forEach(function (t) { t.setAttribute("aria-pressed", t.dataset.id === sel ? "true" : "false"); }); });
+      box.appendChild(b);
+    });
+    var age = $("tallyAge"), ageVal = $("tallyAgeVal");
+    age.addEventListener("input", function () { ageVal.textContent = age.value; });
+    function save() { store("ws4-tally", JSON.stringify(items)); }
+    function median(a) { var s = a.slice().sort(function (x, y) { return x - y; }), n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; }
+    function render() {
+      var svg = $("tallySvg"); svg.innerHTML = "";
+      var W = 500, base = 200, bw = 96, left = 10, perRow = 5, s = 15, g = 3;
+      var perBin = [[], [], [], [], []];
+      items.forEach(function (it) { perBin[Math.min(4, Math.floor(it.age / 10))].push(it); });
+      var maxCount = Math.max.apply(null, perBin.map(function (b) { return b.length; }).concat([1]));
+      var maxRows = Math.floor((base - 8) / (s + g));
+      if (Math.ceil(maxCount / perRow) > maxRows) perRow = Math.ceil(maxCount / maxRows);
+      svg.appendChild(svgEl("line", { "class": "axis", x1: 5, y1: base + 4, x2: W - 5, y2: base + 4 }));
+      perBin.forEach(function (arr, b) {
+        arr.sort(function (x, y) { return CUES.findIndex(function (c) { return c.id === x.cue; }) - CUES.findIndex(function (c) { return c.id === y.cue; }); });
+        arr.forEach(function (it, k) {
+          var row = Math.floor(k / perRow), col = k % perRow, c = CUES.filter(function (q) { return q.id === it.cue; })[0];
+          svg.appendChild(svgEl("circle", { cx: left + b * bw + 12 + col * (s + g), cy: base - (row + 0.5) * (s + g), r: s / 2, fill: c.color, stroke: "#33305A", "stroke-width": 1.8 }));
+        });
+        var t = svgEl("text", { x: left + b * bw + bw / 2 - 4, y: base + 24, "text-anchor": "middle" });
+        t.textContent = BINS[b] + (arr.length ? " (" + arr.length + ")" : ""); svg.appendChild(t);
+      });
+      var stats = $("tallyStats");
+      if (!items.length) { stats.textContent = "Add a memory to start the chart."; return; }
+      var parts = [];
+      CUES.forEach(function (c) {
+        var ages = items.filter(function (i) { return i.cue === c.id; }).map(function (i) { return i.age; });
+        if (ages.length) parts.push('<span style="color:' + c.color + '">●</span> ' + c.label + ": <b>" + median(ages) + "</b> (n=" + ages.length + ")");
+      });
+      stats.innerHTML = "n = <b>" + items.length + "</b> &middot; median age in memory by cue: " + parts.join(" &nbsp; ");
+    }
+    $("tallyAdd").addEventListener("click", function () { items.push({ cue: sel, age: parseInt(age.value, 10) }); save(); render(); });
+    $("tallyClear").addEventListener("click", function () { items = []; save(); render(); });
+    $("tallyDemo").addEventListener("click", function () {
+      function r(a, b) { return Math.round(a + Math.random() * (b - a)); }
+      var spec = [["smell", 8, 3, 9], ["smell", 3, 10, 20], ["music", 8, 11, 22], ["music", 2, 23, 35], ["photo", 6, 8, 24], ["food", 4, 4, 14], ["place", 4, 6, 20], ["person", 3, 12, 30], ["other", 2, 5, 40]];
+      spec.forEach(function (s) { for (var i = 0; i < s[1]; i++) items.push({ cue: s[0], age: r(s[2], s[3]) }); });
+      save(); render();
+    });
+    render();
+  })();
+
+  // =====================================================================
+  // 21 · Evidence map
+  // =====================================================================
+  (function () {
+    var rows = D.MODALITIES.concat([{ id: "general", label: "Not cue-specific" }]);
+    var SHORT = { trigger: "Trigger", content: "Content", age: "Age", emotion: "Emotion", "function": "Function", brain: "Brain", aging: "Aging", accuracy: "Accuracy" };
+    var table = $("emap"), panel = $("emapPanel");
+    function cell(r, c) { return D.STUDIES.filter(function (s) { return s.mod.indexOf(r) >= 0 && s.out.indexOf(c) >= 0; }); }
+    var head = "<thead><tr><th></th>" + D.OUTCOMES.map(function (o) { return "<th>" + SHORT[o.id] + "</th>"; }).join("") + "</tr></thead>";
+    var body = "<tbody>" + rows.map(function (r) {
+      return '<tr><th class="row">' + r.label + "</th>" + D.OUTCOMES.map(function (o) {
+        var n = cell(r.id, o.id).length, lvl = n === 0 ? "" : n === 1 ? "l1" : n <= 3 ? "l2" : "l3";
+        return '<td><button type="button" class="emap-cell ' + lvl + '" data-r="' + r.id + '" data-c="' + o.id + '" aria-label="' + r.label + ", " + SHORT[o.id] + ": " + n + ' studies">' + (n || "·") + "</button></td>";
+      }).join("") + "</tr>";
+    }).join("") + "</tbody>";
+    table.innerHTML = head + body;
+    table.addEventListener("click", function (e) {
+      var b = e.target.closest(".emap-cell"); if (!b) return;
+      table.querySelectorAll(".emap-cell.sel").forEach(function (x) { x.classList.remove("sel"); });
+      b.classList.add("sel");
+      var r = rows.filter(function (x) { return x.id === b.dataset.r; })[0];
+      var o = D.OUTCOMES.filter(function (x) { return x.id === b.dataset.c; })[0];
+      var list = cell(r.id, o.id);
+      var h = "<h3>" + esc(r.label) + " &times; " + esc(o.label) + " (" + list.length + ")</h3>";
+      if (!list.length) h += '<p class="hint">No study in this reading list. <b>Search before you claim it is a gap.</b></p>';
+      list.forEach(function (s) {
+        h += '<div class="study"><p><b>' + esc(s.cite) + '</b></p><p class="meta">' + esc(s.design) + " &middot; N: " + esc(s.n) + "</p><p>" + esc(s.finding) + '</p><p class="meta"><a href="https://doi.org/' + esc(s.doi) + '" target="_blank" rel="noopener">doi:' + esc(s.doi) + "</a></p></div>";
+      });
+      panel.innerHTML = h; panel.scrollTop = 0;
+    });
+  })();
+
+  // =====================================================================
+  // 22 · Seeds
+  // =====================================================================
+  var seedById = {};
+  D.SEEDS.forEach(function (s) { seedById[s.id] = s; });
+  function citeList(ids) { return ids.map(function (id) { var st = D.STUDIES.filter(function (x) { return x.id === id; })[0]; return st ? st.cite : id; }).join("; "); }
+  function seedHtml(s) {
+    return '<h3 id="seedModalTitle">' + esc(s.id.replace("q", "Seed ") + " · " + s.title) + "</h3>" +
+      '<p class="q">' + esc(s.q) + "</p><dl>" +
+      "<dt>Why this is a gap</dt><dd>" + esc(s.hook) + "</dd><dt>Design</dt><dd>" + esc(s.design) + "</dd><dt>Measures</dt><dd>" + esc(s.measures) + "</dd><dt>Pitfalls</dt><dd>" + esc(s.pitfalls) + "</dd><dt>Start reading</dt><dd>" + esc(citeList(s.refs)) + "</dd><dt>Difficulty</dt><dd>" + esc(s.level) + "</dd></dl>" +
+      '<button class="px-btn" type="button" id="seedClose">Close (Esc)</button>';
+  }
+  (function () {
+    var grid = $("seedGrid"), variants = ["", "c3", "c2", "c4", "featured", "c5", "c3", "c2"];
+    D.SEEDS.forEach(function (s, i) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "card seed " + variants[i % variants.length]; b.dataset.id = s.id;
+      b.innerHTML = '<div class="num">' + (i + 1) + "</div><h3>" + esc(s.title) + "</h3><p>" + esc(s.q.length > 92 ? s.q.slice(0, 89).replace(/\s+\S*$/, "") + "…" : s.q) + '</p><span class="lvl">' + esc(s.level) + "</span>";
+      b.addEventListener("click", function () { openModal(s.id); });
+      grid.appendChild(b);
+    });
+    var ex = $("seedExplain");
+    D.SEEDS.forEach(function (s) {
+      var d = document.createElement("div"); d.className = "seedfull";
+      d.innerHTML = "<p><b>" + esc(s.id.replace("q", "Seed ") + ". " + s.title) + "</b> (" + esc(s.level) + ")<br><i>" + esc(s.q) + "</i></p><ul><li><b>Gap:</b> " + esc(s.hook) + "</li><li><b>Design:</b> " + esc(s.design) + "</li><li><b>Measures:</b> " + esc(s.measures) + "</li><li><b>Pitfalls:</b> " + esc(s.pitfalls) + "</li><li><b>Start reading:</b> " + esc(citeList(s.refs)) + "</li></ul>";
+      ex.appendChild(d);
+    });
+  })();
+  function openModal(id) { $("seedModalBody").innerHTML = seedHtml(seedById[id]); $("seedModal").hidden = false; $("seedClose").addEventListener("click", closeModal); $("seedClose").focus(); }
+  function closeModal() { $("seedModal").hidden = true; }
+  $("seedModal").addEventListener("click", function (e) { if (e.target === $("seedModal")) closeModal(); });
+
+  // ---------- start ----------
+  var startHash = parseInt(location.hash.slice(1), 10);
+  if (startHash >= 1 && startHash <= total) current = startHash - 1;
+  applyMode(wantRef());
+  if (!isRef()) update();
+})();
+</script>
+</body>
+</html>

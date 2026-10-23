@@ -1,6 +1,6 @@
 # Nostalgia, memory and the senses: an annotated literature review
 
-**For:** Workshop 4 (Memory and Brain Lab, Haigh Lab) · **Written:** 2026-10-22 · **Companion files:** [slides](slides.html) · [homework workbook](workbook.html) · [reference list](REFERENCES.md) · [BibTeX](references.bib)
+**For:** Workshop 4 (Memory and Brain Lab) · **Written:** 2026-10-22 · **Companion files:** [slides](slides.html) · [homework workbook](workbook.html) · [reference list](REFERENCES.md) · [BibTeX](references.bib)
 
 Citations are author-year; full references with DOIs are in [`REFERENCES.md`](REFERENCES.md) (★ = suggested first reads).
 

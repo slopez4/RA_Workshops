@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nostalgia Workbook</title>
+<meta name="description" content="Homework workbook for Workshop 4 (Memory and Brain Lab): read like a scientist, run a nostalgia induction and a cue diary on yourself, spot design confounds, explore an evidence map, size a study, and build a one-page study brief.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,500&family=Shrikhand&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --f-body: 'Nunito', 'Segoe UI', sans-serif; --f-disp: 'Fredoka', 'Nunito', sans-serif; --f-70: 'Shrikhand', 'Fredoka', cursive; --f-mono: 'Space Mono', Consolas, monospace;
+  --paper: #FFFCE0; --card: #FFFFFF; --ink: #33305A; --muted: rgba(51,48,90,0.74); --line: #33305A;
+  --lav: #C5CAE9; --mint: #B5EAD7; --cream: #FFFFD1; --peach: #FFD7BA; --coral: #FF9AA2; --hit: #C4405A;
+  --mustard: #DA9100; --rust: #B7410E; --olive: #699022; --teal: #4F7C6D; --red: #E63946; --yellow: #FFC914; --blue: #1D6FD6; --green: #2FA05A;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { font-family: var(--f-body); background: var(--paper); color: var(--ink); line-height: 1.5; background-image: radial-gradient(rgba(51,48,90,0.08) 1.6px, transparent 2px); background-size: 26px 26px; }
+a { color: var(--ink); }
+b { font-weight: 800; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px solid var(--hit); outline-offset: 2px; }
+
+/* header */
+.hero { background: linear-gradient(90deg, var(--lav) 0 20%, var(--mint) 20% 40%, var(--cream) 40% 60%, var(--peach) 60% 80%, var(--coral) 80% 100%); border-bottom: 4px solid var(--line); padding: 1.6rem 1rem 1.7rem; }
+.hero-in { max-width: 70rem; margin: 0 auto; display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+.sticker { background: #fff; border: 4px solid var(--line); border-radius: 24px; box-shadow: 7px 7px 0 var(--line); padding: 1rem 1.6rem 1.1rem; flex: 1 1 24rem; }
+.sticker .sub { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--hit); font-weight: 700; }
+.sticker h1 { font-family: var(--f-70); font-weight: 400; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.05; text-shadow: 3px 3px 0 var(--coral), 6px 6px 0 var(--mint); margin: 0.2rem 0 0.3rem; }
+.sticker p { font-weight: 700; }
+.senses { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.sb { width: 3rem; height: 3rem; border-radius: 50%; border: 3px solid var(--line); display: grid; place-items: center; box-shadow: 3px 3px 0 var(--line); }
+.sb svg { width: 78%; height: 78%; }
+.hero-tools { display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-start; }
+.progress { width: 100%; max-width: 17rem; }
+.progress .bar { height: 1rem; border: 3px solid var(--line); border-radius: 999px; background: #fff; overflow: hidden; }
+.progress .fill { height: 100%; width: 0; background: var(--green); transition: width 0.3s; }
+.progress small { font-family: var(--f-mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* layout */
+.layout { max-width: 70rem; margin: 0 auto; padding: 1.4rem 1rem 4rem; display: grid; grid-template-columns: 14.5rem 1fr; gap: 1.8rem; align-items: start; }
+.toc { position: sticky; top: 1rem; background: #fff; border: 3px solid var(--line); border-radius: 18px; box-shadow: 5px 5px 0 var(--line); padding: 0.8rem; }
+.toc h2 { font-family: var(--f-mono); font-size: 0.64rem; letter-spacing: 0.16em; text-transform: uppercase; margin: 0.1rem 0.3rem 0.5rem; }
+.toc a { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.3rem 0.4rem; border-radius: 10px; font-family: var(--f-disp); font-weight: 600; font-size: 0.88rem; }
+.toc a:hover { background: var(--cream); }
+.toc a .n { width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 2.5px solid var(--line); display: grid; place-items: center; font-size: 0.75rem; flex: none; }
+.toc a.done .n::after { content: "\2713"; }
+.toc a.done .n { background: var(--green) !important; color: #fff !important; font-size: 0.8rem; }
+.toc a.done .n span { display: none; }
+
+.btn { font-family: var(--f-disp); font-weight: 600; font-size: 0.86rem; padding: 0.42rem 1rem; background: var(--coral); border: 3px solid var(--line); border-radius: 999px; cursor: pointer; box-shadow: 3px 3px 0 var(--line); text-decoration: none; display: inline-block; color: var(--ink); }
+.btn:hover { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--line); }
+.btn.ghost { background: #fff; }
+.btn.sm { font-size: 0.76rem; padding: 0.28rem 0.8rem; }
+.btn.good { background: var(--mint); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.7rem; }
+
+/* modules */
+.mod { background: #fff; border: 3px solid var(--line); border-radius: 22px; box-shadow: 6px 6px 0 var(--line); margin-bottom: 1.8rem; overflow: hidden; scroll-margin-top: 1rem; }
+.mod-h { display: flex; align-items: center; gap: 0.9rem; padding: 0.8rem 1.1rem; border-bottom: 3px solid var(--line); flex-wrap: wrap; }
+.mod-h .num { width: 2.8rem; height: 2.8rem; border-radius: 50%; border: 3px solid var(--line); background: #fff; display: grid; place-items: center; font-family: var(--f-disp); font-weight: 700; font-size: 1.4rem; box-shadow: 2px 2px 0 var(--line); flex: none; }
+.mod-h h2 { font-family: var(--f-disp); font-weight: 700; font-size: 1.45rem; line-height: 1.1; flex: 1 1 14rem; }
+.era { font-family: var(--f-mono); font-size: 0.64rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border: 2.5px solid var(--line); border-radius: 999px; padding: 0.15rem 0.6rem; background: #fff; }
+.mod-b { padding: 1.1rem 1.2rem 1.3rem; }
+.m1 .mod-h { background: var(--mustard); } .m2 .mod-h { background: var(--blue); color: #fff; } .m3 .mod-h { background: var(--red); color: #fff; } .m4 .mod-h { background: var(--green); color: #fff; }
+.m5 .mod-h { background: var(--mint); } .m6 .mod-h { background: var(--coral); } .m7 .mod-h { background: var(--lav); } .m8 .mod-h { background: var(--peach); } .m0 .mod-h { background: var(--cream); }
+.m1 .num { background: #FFF6DE; }
+.lead { font-size: 1.02rem; margin-bottom: 0.8rem; }
+.note { background: var(--cream); border: 2.5px dashed var(--line); border-radius: 14px; padding: 0.55rem 0.85rem; font-size: 0.9rem; margin: 0.7rem 0; }
+.note.warn { background: #FFE3E5; }
+.done-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 1.1rem; padding-top: 0.8rem; border-top: 2.5px dashed var(--line); font-weight: 700; }
+.done-row input { width: 1.3rem; height: 1.3rem; accent-color: var(--green); }
+h3 { font-family: var(--f-disp); font-weight: 600; font-size: 1.1rem; margin: 1rem 0 0.4rem; }
+h4 { font-family: var(--f-disp); font-weight: 600; font-size: 0.98rem; margin: 0.7rem 0 0.25rem; }
+.mono { font-family: var(--f-mono); font-size: 0.78rem; }
+.small { font-size: 0.84rem; color: var(--muted); }
+ul.plain { padding-left: 1.2rem; } ul.plain li { margin: 0.15rem 0; }
+
+/* forms */
+label.f { display: block; font-weight: 700; font-size: 0.88rem; margin: 0.6rem 0 0.2rem; }
+label.f small { font-weight: 400; color: var(--muted); }
+input[type=text], input[type=number], select, textarea { width: 100%; border: 2.5px solid var(--line); border-radius: 12px; padding: 0.4rem 0.6rem; background: #fff; }
+textarea { min-height: 4.5rem; resize: vertical; }
+input[type=range] { width: 100%; accent-color: var(--coral); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+.row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; }
+.row2 > *, .row3 > * { min-width: 0; }
+.sl { display: grid; grid-template-columns: 1fr 2.2rem; gap: 0.6rem; align-items: center; }
+.sl output { font-family: var(--f-disp); font-weight: 700; font-size: 1.1rem; color: var(--hit); text-align: right; }
+.chk { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0.25rem 0; font-size: 0.92rem; }
+.chk input { margin-top: 0.3rem; width: 1.05rem; height: 1.05rem; accent-color: var(--coral); flex: none; }
+
+/* cards inside modules */
+.pcard { border: 3px solid var(--line); border-radius: 16px; padding: 0.7rem 0.9rem; margin: 0.7rem 0; background: var(--cream); }
+.pcard.sel { background: #fff; box-shadow: 4px 4px 0 var(--mint); }
+.pcard h4 { margin-top: 0; }
+.pcard .topic { font-family: var(--f-mono); font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--hit); font-weight: 700; }
+.pform { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 2.5px dashed var(--line); }
+.tag { display: inline-block; font-family: var(--f-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border: 2px solid var(--line); border-radius: 999px; padding: 0.05rem 0.5rem; margin-right: 0.3rem; background: #fff; }
+
+table.t { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 0.5rem 0; }
+table.t th { text-align: left; background: var(--ink); color: var(--paper); font-family: var(--f-mono); font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.3rem 0.5rem; }
+table.t td { padding: 0.35rem 0.5rem; border-bottom: 2px dashed rgba(51,48,90,0.3); vertical-align: top; }
+.scroll { overflow-x: auto; }
+
+/* vignettes */
+.vig { border: 3px solid var(--line); border-radius: 16px; padding: 0.7rem 0.95rem; margin: 0.7rem 0; background: #fff; }
+.vig .vt { font-family: var(--f-disp); font-weight: 700; }
+.vig .vd { margin: 0.2rem 0 0.4rem; font-style: italic; }
+.vig label { display: flex; gap: 0.5rem; align-items: flex-start; padding: 0.3rem 0.5rem; border-radius: 10px; cursor: pointer; font-size: 0.93rem; }
+.vig label:hover { background: var(--cream); }
+.vig label.right { background: var(--mint); } .vig label.wrong { background: #FFE3E5; }
+.vig .fb { margin-top: 0.4rem; font-size: 0.9rem; padding: 0.4rem 0.7rem; border-radius: 10px; background: var(--cream); display: none; }
+.vig .fb.show { display: block; }
+
+/* evidence map */
+.emap-wrap { display: grid; grid-template-columns: 1.3fr 1fr; gap: 1rem; align-items: start; }
+.emap-wrap > * { min-width: 0; }
+.emap { border-collapse: separate; border-spacing: 3px; width: 100%; }
+.emap th { font-family: var(--f-mono); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; text-align: center; color: var(--muted); }
+.emap th.row { text-align: left; font-family: var(--f-disp); font-size: 0.78rem; color: var(--hit); text-transform: none; letter-spacing: 0; white-space: nowrap; padding-right: 0.3rem; }
+.emap td { padding: 0; }
+.emap-cell { width: 100%; height: 2.2rem; border: 2px solid rgba(46,155,122,0.5); border-radius: 10px; background: repeating-linear-gradient(45deg, rgba(127,127,127,0.12) 0, rgba(127,127,127,0.12) 4px, transparent 4px, transparent 8px); color: var(--muted); font-family: var(--f-disp); font-weight: 700; cursor: pointer; }
+.emap-cell.l1 { background: rgba(46,155,122,0.25); color: var(--ink); } .emap-cell.l2 { background: rgba(46,155,122,0.55); color: var(--ink); } .emap-cell.l3 { background: var(--mint); border-color: var(--line); color: var(--ink); }
+.emap-cell.sel { outline: 3px solid var(--coral); outline-offset: 1px; }
+.emap-panel { max-height: 22rem; overflow-y: auto; border: 3px solid var(--line); border-radius: 16px; padding: 0.7rem 0.9rem; background: var(--cream); font-size: 0.88rem; }
+.emap-panel .study { border-top: 2px dashed rgba(51,48,90,0.35); padding: 0.45rem 0; } .emap-panel .study:first-of-type { border-top: none; }
+.emap-panel .meta { font-family: var(--f-mono); font-size: 0.64rem; color: var(--muted); }
+
+/* tally chart */
+.chart { border: 3px solid var(--line); border-radius: 16px; padding: 0.5rem; background: #fff; }
+.chart svg { width: 100%; height: auto; display: block; }
+.chart text { font-family: var(--f-mono); font-size: 12px; fill: var(--ink); }
+.legend { display: flex; flex-wrap: wrap; gap: 0.6rem; font-family: var(--f-mono); font-size: 0.64rem; margin-top: 0.4rem; }
+.legend i { display: inline-block; width: 0.8rem; height: 0.8rem; border-radius: 50%; border: 2px solid var(--line); margin-right: 0.25rem; vertical-align: -0.1rem; }
+.stat { display: inline-block; background: var(--cream); border: 2.5px solid var(--line); border-radius: 12px; padding: 0.2rem 0.65rem; margin: 0.15rem 0.3rem 0.15rem 0; font-size: 0.85rem; }
+.stat b { color: var(--hit); }
+
+.timer { font-family: var(--f-disp); font-weight: 700; font-size: 1.6rem; color: var(--hit); }
+pre.brief { white-space: pre-wrap; background: #fff; border: 3px solid var(--line); border-radius: 14px; padding: 0.8rem 1rem; font-family: var(--f-mono); font-size: 0.78rem; max-height: 30rem; overflow-y: auto; }
+
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc { position: static; display: flex; flex-wrap: wrap; gap: 0.2rem; }
+  .toc h2 { width: 100%; }
+  .row2, .row3, .emap-wrap { grid-template-columns: 1fr; }
+}
+@media print { .toc, .hero-tools, .btn-row { display: none; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-in">
+    <div class="sticker">
+      <div class="sub">Workshop 4 &middot; Memory and Brain Lab &middot; homework</div>
+      <h1>The Nostalgia Workbook</h1>
+      <p>Read it, try it on yourself, break it, size it, and turn it into a study.</p>
+      <div class="senses" id="heroSenses" style="margin-top:0.7rem"></div>
+    </div>
+    <div class="hero-tools">
+      <div class="progress"><small id="progText">0 of 8 modules done</small><div class="bar"><div class="fill" id="progFill"></div></div></div>
+      <a class="btn ghost sm" href="slides.html">&larr; Back to the slides</a>
+      <button class="btn sm" type="button" id="exportAll">Export my work (.md)</button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc" id="toc" aria-label="Modules"><h2>Modules</h2></nav>
+
+  <main>
+
+    <!-- 0 -->
+    <section class="mod m0" id="m0">
+      <div class="mod-h"><div class="num">0</div><h2>Start here</h2><span class="era">About 5 min</span></div>
+      <div class="mod-b">
+        <p class="lead">Eight short modules, about <b>3&ndash;4 hours</b> in total. Do them in lab hours across the week, in any order, but Modules 1&ndash;3 make the later ones easier. Your work is saved <b>in this browser only</b> (nothing is uploaded). Use the export buttons to keep a copy.</p>
+        <div class="scroll"><table class="t">
+          <tr><th>#</th><th>Module</th><th>Time</th><th>You will</th></tr>
+          <tr><td>1</td><td>Read like a scientist</td><td>60&ndash;90 min</td><td>Read 3 papers and fill a structured extraction form</td></tr>
+          <tr><td>2</td><td>Be a participant</td><td>30 min + 7 days</td><td>Run an event reflection task on yourself; keep a cue diary</td></tr>
+          <tr><td>3</td><td>Spot the confound</td><td>15 min</td><td>Eight design vignettes with feedback</td></tr>
+          <tr><td>4</td><td>Evidence map &amp; search</td><td>30&ndash;45 min</td><td>Pick an empty cell and search the literature</td></tr>
+          <tr><td>5</td><td>Power sandbox</td><td>20 min</td><td>Size a study for the typical nostalgia effect</td></tr>
+          <tr><td>6</td><td>Build your study</td><td>45&ndash;60 min</td><td>Fill a guided brief and export a one-page summary</td></tr>
+          <tr><td>7</td><td>Quiz</td><td>10 min</td><td>Retrieval practice on the key findings</td></tr>
+          <tr><td>8</td><td>Resources</td><td>5 min</td><td>Reference list, BibTeX, review</td></tr>
+        </table></div>
+        <div class="note"><b>Bring to the next meeting:</b> your Module 6 brief (one page), your Module 2 cue-diary CSV (if you kept one), and one thing from Module 1 that surprised you.</div>
+        <div class="note warn"><b>Checking facts.</b> Everything here comes from the literature review (<a href="LITERATURE_REVIEW.md">LITERATURE_REVIEW.md</a>) and the reference list (<a href="REFERENCES.md">REFERENCES.md</a>). Summaries were written from abstracts, so <b>open the paper before you cite a number</b>. The practice questionnaires below are <b>not validated instruments</b>: use published scales in a real study.</div>
+      </div>
+    </section>
+
+    <!-- 1 -->
+    <section class="mod m1" id="m1">
+      <div class="mod-h"><div class="num">1</div><h2>Read like a scientist</h2><span class="era">1970s &middot; 60&ndash;90 min</span></div>
+      <div class="mod-b">
+        <p class="lead">Pick <b>three</b> papers (tick &ldquo;I&rsquo;m reading this&rdquo;). For each, read the abstract, methods and one figure or table, then fill the form <i>in your own words</i>. The guiding questions point at what to look for. Pick at least one smell or music paper and one that is about design or ecological validity.</p>
+        <div id="papers"></div>
+        <div class="btn-row"><span class="small" id="paperCount"></span></div>
+        <div class="done-row"><input type="checkbox" data-done="m1" id="done-m1"><label for="done-m1">Mark Module 1 done</label></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="mod m2" id="m2">
+      <div class="mod-h"><div class="num">2</div><h2>Be a participant</h2><span class="era">1980s &middot; 30 min + a week</span></div>
+      <div class="mod-b">
+        <h3 style="margin-top:0">2a &middot; Event reflection task on yourself</h3>
+        <p class="lead">The standard nostalgia induction asks people to recall a <b>nostalgic</b> event or an <b>ordinary</b> event. Do both, on separate occasions (at least an hour apart), in the order the page gives you. This is <b>N = 1</b>: it cannot test anything, but it shows you what participants experience, and what a control condition is for.</p>
+        <div class="note">Wording is adapted for practice. The three state items and the other ratings are <b>my own practice items</b>, not a validated scale.</div>
+        <div id="ertBox"></div>
+        <div id="ertList"></div>
+
+        <h3>2b &middot; Seven-day cue diary</h3>
+        <p class="lead">Whenever you notice a nostalgic episode (a memory that comes with that bittersweet pull), log it. Aim for <b>5&ndash;10 entries over a week</b>. Note whether it came unprompted or you went looking for it. Diary methods like this are used for music- and food-evoked memories (Jakubowski et al., 2023).</p>
+        <form id="diaryForm" autocomplete="off">
+          <div class="row3">
+            <div><label class="f" for="d-sense">Which sense was the cue?</label>
+              <select id="d-sense"><option value="smell">Smell</option><option value="music">Music / sound</option><option value="visual">Photo / video / sight</option><option value="taste">Taste / food</option><option value="touch">Touch / temperature</option><option value="place">Place / object</option><option value="person">Person / conversation</option><option value="other">Other</option></select></div>
+            <div><label class="f" for="d-access">How did it arrive?</label>
+              <select id="d-access"><option value="involuntary">Unprompted (it just came)</option><option value="sought">I went looking for it</option></select></div>
+            <div><label class="f" for="d-age">Your age in the memory</label><input type="number" id="d-age" min="0" max="100" value="10"></div>
+          </div>
+          <label class="f" for="d-cue">What was the cue? <small>(a few words; keep it private if you like)</small></label><input type="text" id="d-cue" placeholder="e.g., freshly cut grass at a park">
+          <div class="row2">
+            <div><label class="f">Nostalgia felt (1&ndash;7)</label><div class="sl"><input type="range" id="d-nost" min="1" max="7" value="4"><output id="o-nost">4</output></div></div>
+            <div><label class="f">Vividness (1&ndash;7)</label><div class="sl"><input type="range" id="d-viv" min="1" max="7" value="4"><output id="o-viv">4</output></div></div>
+            <div><label class="f">Positive feeling (1&ndash;7)</label><div class="sl"><input type="range" id="d-pos" min="1" max="7" value="4"><output id="o-pos">4</output></div></div>
+            <div><label class="f">Negative / wistful feeling (1&ndash;7)</label><div class="sl"><input type="range" id="d-neg" min="1" max="7" value="3"><output id="o-neg">3</output></div></div>
+          </div>
+          <div class="row2">
+            <div><label class="f" for="d-social">Was someone else in the memory?</label><select id="d-social"><option value="yes">Yes</option><option value="no">No</option></select></div>
+            <div><label class="f" for="d-where">Where were you when it happened? <small>(optional)</small></label><input type="text" id="d-where" placeholder="e.g., walking to class"></div>
+          </div>
+          <div class="btn-row"><button class="btn" type="submit">Add diary entry</button><button class="btn ghost sm" type="button" id="diaryDemo">Add 12 demo entries</button><button class="btn ghost sm" type="button" id="diaryCsv">Download CSV</button><button class="btn ghost sm" type="button" id="diaryClear">Clear diary</button></div>
+        </form>
+        <div id="diaryOut" style="margin-top:0.9rem"></div>
+        <div class="note"><b>Think:</b> in the literature, odor-cued memories skew early in life (Willander &amp; Larsson, 2006), songs&rsquo; salience peaks in adolescence (Jakubowski et al., 2020), and music memories are often involuntary (Jakubowski et al., 2023). Does your chart look like that? What would you need to say anything with confidence? (More people, matched cues, better dating of memories.) Demo entries are made up to show the charts; clear them before you log real ones.</div>
+        <div class="done-row"><input type="checkbox" data-done="m2" id="done-m2"><label for="done-m2">Mark Module 2 done</label></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="mod m3" id="m3">
+      <div class="mod-h"><div class="num">3</div><h2>Spot the confound</h2><span class="era">1980s &middot; 15 min</span></div>
+      <div class="mod-b">
+        <p class="lead">Eight short designs. In each, pick what is really going on. The vignettes are written for teaching, built from design issues in the literature (cue familiarity, labels, matching, order, sample, accuracy).</p>
+        <div id="vigs"></div>
+        <div class="note" id="vigScore">Answer the vignettes to see your score.</div>
+        <div class="done-row"><input type="checkbox" data-done="m3" id="done-m3"><label for="done-m3">Mark Module 3 done</label></div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="mod m4" id="m4">
+      <div class="mod-h"><div class="num">4</div><h2>Evidence map &amp; search</h2><span class="era">1990s &middot; 30&ndash;45 min</span></div>
+      <div class="mod-b">
+        <p class="lead">The map shows how many studies <b>in our reading list</b> fall in each sense &times; outcome cell. It is <b>not</b> a systematic count. Click cells to read the studies. Then pick an empty or sparse cell and <b>search the literature</b> to see whether the gap is real.</p>
+        <div class="emap-wrap"><div class="scroll"><table class="emap" id="emap"></table></div><div class="emap-panel" id="emapPanel">Click a cell to list its studies.</div></div>
+        <h3>Search log</h3>
+        <div class="row2">
+          <div><label class="f" for="s-cell">Cell you chose</label><input type="text" id="s-cell" placeholder="e.g., Temperature / touch &times; Memory content"></div>
+          <div><label class="f" for="s-date">Date searched</label><input type="text" id="s-date" placeholder="e.g., 2026-10-26"></div>
+        </div>
+        <label class="f" for="s-q">The question that cell suggests</label><textarea id="s-q"></textarea>
+        <div class="row2">
+          <div><label class="f" for="s-db">Databases used</label><input type="text" id="s-db" placeholder="PsycINFO, Google Scholar, PubMed"></div>
+          <div><label class="f" for="s-str">Search strings</label><textarea id="s-str" placeholder="nostalgi* AND (odor OR olfact* OR scent)"></textarea></div>
+        </div>
+        <div class="row3">
+          <div><label class="f" for="s-hits">Hits screened</label><input type="number" id="s-hits" min="0"></div>
+          <div><label class="f" for="s-rel">Relevant studies found</label><input type="number" id="s-rel" min="0"></div>
+          <div><label class="f" for="s-gap">Verdict</label><select id="s-gap"><option value="">&mdash;</option><option>Real gap</option><option>Partly covered</option><option>Already covered</option></select></div>
+        </div>
+        <label class="f" for="s-cites">Two to three relevant citations (or why there are none)</label><textarea id="s-cites"></textarea>
+        <div class="note"><b>Starter strings:</b> <span class="mono">nostalgi* AND (odor OR olfact* OR scent OR smell)</span> &middot; <span class="mono">nostalgi* AND (music OR song*) AND autobiographical</span> &middot; <span class="mono">nostalgi* AND (vividness OR "episodic detail*" OR "Autobiographical Interview")</span> &middot; <span class="mono">nostalgi* AND (fMRI OR EEG OR neural)</span>. Try forward-citation search on Reid et al. (2015) and Hackl&auml;nder et al. (2019). Log what you tried even when it finds nothing.</div>
+        <div class="done-row"><input type="checkbox" data-done="m4" id="done-m4"><label for="done-m4">Mark Module 4 done</label></div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="mod m5" id="m5">
+      <div class="mod-h"><div class="num">5</div><h2>Power sandbox</h2><span class="era">1990s &middot; 20 min</span></div>
+      <div class="mod-b">
+        <p class="lead">How many people do you need? The 2026 meta-analysis reports an average benefit around <b>g &asymp; 0.39</b> (Weingarten et al., 2026, as reported in its repository abstract; verify in the paper). Try it, then see what happens when the effect you care about is an <b>interaction</b>. These are <b>normal-approximation</b> numbers for teaching; use G*Power or simulation for a real plan.</p>
+        <div class="row3">
+          <div><label class="f" for="p-design">Design</label><select id="p-design"><option value="between">Two groups (between subjects)</option><option value="within">Same people in both conditions (within)</option></select></div>
+          <div><label class="f" for="p-d">Effect size (<span id="p-dlabel">d</span>)</label><input type="number" id="p-d" step="0.01" min="0.05" max="2" value="0.39"></div>
+          <div><label class="f" for="p-alpha">Alpha (two-sided)</label><select id="p-alpha"><option value="1.96">.05</option><option value="2.576">.01</option><option value="1.645">.10</option></select></div>
+        </div>
+        <div class="row3">
+          <div><label class="f" for="p-pow">Target power</label><select id="p-pow"><option value="0.8416">80%</option><option value="1.2816">90%</option><option value="1.6449">95%</option></select></div>
+          <div><label class="f" for="p-drop">Expected dropout / exclusions (%)</label><input type="number" id="p-drop" min="0" max="60" value="10"></div>
+          <div class="btn-row" style="align-items:flex-end;margin-top:1.4rem"><button class="btn sm ghost" type="button" data-pd="0.39">g &asymp; 0.39 (meta)</button><button class="btn sm ghost" type="button" data-pd="0.2">0.2</button><button class="btn sm ghost" type="button" data-pd="0.5">0.5</button><button class="btn sm ghost" type="button" data-pd="0.8">0.8</button></div>
+        </div>
+        <div id="pOut" class="note"></div>
+        <div class="chart"><svg id="pSvg" viewBox="0 0 520 220" role="img" aria-label="Power curve"></svg></div>
+        <h3>An interaction (2 &times; 2) needs far more</h3>
+        <p class="small">Suppose you test a 2 &times; 2 between-subjects design (e.g., scent present/absent &times; music present/absent). If the interaction (difference of differences) is as large as the simple effect, you need about 4&times; the total sample; if it is half as large, about 16&times; (formula: n per cell = 4 &times; ((z&alpha; + z&beta;)/&delta;)&sup2; with &delta; in SD units).</p>
+        <div class="row3">
+          <div><label class="f" for="p-ratio">Interaction size relative to the simple effect</label><select id="p-ratio"><option value="1">Equal (1&times;)</option><option value="0.75">0.75&times;</option><option value="0.5">Half (0.5&times;)</option></select></div>
+          <div id="pInt" class="note" style="grid-column: span 2; margin: 1.4rem 0 0"></div>
+        </div>
+        <label class="f" for="p-plan">Your plan: which seed or design, and the N you would aim for (and why)</label><textarea id="p-plan"></textarea>
+        <div class="done-row"><input type="checkbox" data-done="m5" id="done-m5"><label for="done-m5">Mark Module 5 done</label></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="mod m6" id="m6">
+      <div class="mod-h"><div class="num">6</div><h2>Build your study</h2><span class="era">Now &middot; 45&ndash;60 min</span></div>
+      <div class="mod-b">
+        <p class="lead">Start from one of the eight seeds (or your own idea), edit everything, and export a one-page brief for the idea session. The seed fills in a literature hook, a design sketch, measures and pitfalls; <b>your job is to improve them</b>.</p>
+        <label class="f" for="b-seed">Start from</label>
+        <select id="b-seed"></select>
+        <div class="row2">
+          <div><label class="f" for="b-title">Working title</label><input type="text" id="b-title"></div>
+          <div><label class="f" for="b-pop">Population</label><input type="text" id="b-pop" placeholder="e.g., undergraduates 18&ndash;25; older adults 60+"></div>
+        </div>
+        <label class="f" for="b-q">Research question (one sentence)</label><textarea id="b-q"></textarea>
+        <label class="f" for="b-gap">Why it matters: what is known, and the gap <small>(cite 2&ndash;3 papers)</small></label><textarea id="b-gap"></textarea>
+        <label class="f" for="b-hyp">Hypothesis (direction and mechanism)</label><textarea id="b-hyp"></textarea>
+        <div class="row2">
+          <div><label class="f" for="b-design">Design <small>(cue sense and who chooses it; within/between; control; order)</small></label><textarea id="b-design"></textarea></div>
+          <div><label class="f" for="b-proc">Procedure in 5 steps</label><textarea id="b-proc"></textarea></div>
+        </div>
+        <h4>Measures</h4>
+        <div class="row2" id="b-measures"></div>
+        <label class="f" for="b-n">Sample size and justification <small>(use Module 5)</small></label><textarea id="b-n"></textarea>
+        <h4>Confound checklist</h4>
+        <div id="b-checks"></div>
+        <label class="f" for="b-risk">Biggest risks and how you would reduce them</label><textarea id="b-risk"></textarea>
+        <label class="f" for="b-eth">Ethics and practicalities <small>(scent allergies, distressing memories, debriefing, data privacy)</small></label><textarea id="b-eth"></textarea>
+        <div class="btn-row"><button class="btn" type="button" id="b-make">Generate one-page brief</button><button class="btn ghost sm" type="button" id="b-copy">Copy</button><button class="btn ghost sm" type="button" id="b-dl">Download .md</button></div>
+        <pre class="brief" id="b-brief" style="display:none"></pre>
+        <div class="done-row"><input type="checkbox" data-done="m6" id="done-m6"><label for="done-m6">Mark Module 6 done</label></div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="mod m7" id="m7">
+      <div class="mod-h"><div class="num">7</div><h2>Quiz</h2><span class="era">Now &middot; 10 min</span></div>
+      <div class="mod-b">
+        <p class="lead">Retrieval practice: answer from memory first, then check.</p>
+        <div id="quiz"></div>
+        <div class="btn-row"><button class="btn" type="button" id="quizCheck">Check answers</button><button class="btn ghost sm" type="button" id="quizReset">Reset</button></div>
+        <div class="note" id="quizScore" style="display:none"></div>
+        <div class="done-row"><input type="checkbox" data-done="m7" id="done-m7"><label for="done-m7">Mark Module 7 done</label></div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="mod m8" id="m8">
+      <div class="mod-h"><div class="num">8</div><h2>Resources</h2><span class="era">Now &middot; 5 min</span></div>
+      <div class="mod-b">
+        <ul class="plain">
+          <li><a href="slides.html">Slides</a> (press R for reference view)</li>
+          <li><a href="LITERATURE_REVIEW.md">LITERATURE_REVIEW.md</a>: the annotated review, methods toolkit and the eight seeds</li>
+          <li><a href="REFERENCES.md">REFERENCES.md</a>: all references with DOIs (&starf; = first reads) &middot; <a href="references.bib">references.bib</a> for Zotero</li>
+          <li><a href="HOMEWORK.md">HOMEWORK.md</a>: the same tasks as a checklist</li>
+        </ul>
+        <div class="note">Import <span class="mono">references.bib</span> into Zotero (File &rarr; Import) to get all references with DOIs. Titles are as deposited with Crossref, so let Zotero normalise the capitalisation.</div>
+        <div class="done-row"><input type="checkbox" data-done="m8" id="done-m8"><label for="done-m8">Mark Module 8 done</label></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="evidence_data.js"></script>
+<script>
+(function () {
+  var D = window.WS4;
+  var KEY = "ws4-workbook-v1";
+  var S = { done: {}, papers: {}, ert: [], diary: [], vig: {}, search: {}, power: {}, build: {}, quiz: {} };
+  try { var raw = localStorage.getItem(KEY); if (raw) { var o = JSON.parse(raw); for (var k in S) if (o[k] !== undefined) S[k] = o[k]; } } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function study(id) { return D.STUDIES.filter(function (x) { return x.id === id; })[0]; }
+  function download(name, text, type) {
+    var blob = new Blob([text], { type: type || "text/plain;charset=utf-8" }), a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  function median(a) { if (!a.length) return null; var s = a.slice().sort(function (x, y) { return x - y; }), n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; }
+  function mean(a) { return a.length ? a.reduce(function (x, y) { return x + y; }, 0) / a.length : null; }
+  function f1(x) { return x == null ? "–" : (Math.round(x * 10) / 10).toString(); }
+  function today() { return new Date().toISOString().slice(0, 10); }
+  function shuffled(n) { var a = [], i, j, x; for (i = 0; i < n; i++) a.push(i); for (i = n - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+  function bindField(id, store, key, after) {
+    var e = $(id); if (!e) return;
+    if (store[key] != null) e.value = store[key];
+    e.addEventListener("input", function () { store[key] = e.value; save(); if (after) after(); });
+  }
+
+  // ---------- header: sense icons ----------
+  var INK = "#33305A";
+  var SENSES = [
+    ["#FFB3B8", '<path d="M5 24c5-8 11-12 19-12s14 4 19 12c-5 8-11 12-19 12S10 32 5 24z" fill="#fff"/><circle cx="24" cy="24" r="7" fill="#6B74C9"/><circle cx="24" cy="24" r="3" fill="' + INK + '"/>'],
+    ["#FFD7BA", '<path d="M15 35c3 6 12 7 15-1 2-5 7-7 7-14 0-8-6-12-13-12S11 14 11 22" fill="#fff"/><path d="M19 23c0-4 3-6 6-6s5 3 4 6c-1 3-4 4-4 9" fill="none"/>'],
+    ["#B5EAD7", '<rect x="12" y="16" width="5.5" height="17" rx="2.75" fill="#fff"/><rect x="18" y="9" width="5.5" height="22" rx="2.75" fill="#fff"/><rect x="24" y="8" width="5.5" height="23" rx="2.75" fill="#fff"/><rect x="30" y="12" width="5.5" height="20" rx="2.75" fill="#fff"/><path d="M12 29h23.5v5c0 6-5 9-11 9-6 0-9-3-11-8l-3-6c-1-2 2-3 3-1z" fill="#fff" stroke="none"/><path d="M12 29v5c0 1 0 1 2 5M35.5 29v5c0 6-5 9-11 9-6 0-9-3-11-8" fill="none"/>'],
+    ["#A9C4F5", '<path d="M18 27v9a6 6 0 0 0 12 0v-9z" fill="#FF7F8A"/><path d="M24 30v6" fill="none"/><path d="M5 22c6-7 12-3 19-3s13-4 19 3c-6 9-13 10-19 10S11 31 5 22z" fill="#fff"/><path d="M7 23h34" fill="none"/>'],
+    ["#D9C7F0", '<path d="M25 7c-1 10 1 18 8 24 3 3 1 7-3 8-4 1-7-1-9-3-3 3-9 2-9-2 0-3 3-4 5-3 1-5 5-11 7-24z" fill="#fff"/><circle cx="19" cy="36" r="1.5" fill="' + INK + '" stroke="none"/>']
+  ];
+  SENSES.forEach(function (s) {
+    var d = document.createElement("span"); d.className = "sb"; d.style.background = s[0];
+    d.innerHTML = '<svg viewBox="0 0 48 48" fill="none" stroke="' + INK + '" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + s[1] + "</svg>";
+    $("heroSenses").appendChild(d);
+  });
+
+  // ---------- table of contents + progress ----------
+  var MODS = [["m0", "0", "Start here", "#FFFFD1"], ["m1", "1", "Read like a scientist", "#DA9100"], ["m2", "2", "Be a participant", "#1D6FD6"], ["m3", "3", "Spot the confound", "#E63946"], ["m4", "4", "Evidence map & search", "#2FA05A"], ["m5", "5", "Power sandbox", "#B5EAD7"], ["m6", "6", "Build your study", "#FF9AA2"], ["m7", "7", "Quiz", "#C5CAE9"], ["m8", "8", "Resources", "#FFD7BA"]];
+  var toc = $("toc");
+  MODS.forEach(function (m) {
+    var a = document.createElement("a"); a.href = "#" + m[0]; a.id = "toc-" + m[0];
+    a.innerHTML = '<span class="n" style="background:' + m[3] + (m[0] === "m2" || m[0] === "m3" || m[0] === "m4" ? ";color:#fff" : "") + '"><span>' + m[1] + "</span></span>" + esc(m[2]);
+    toc.appendChild(a);
+  });
+  function refreshProgress() {
+    var n = 0;
+    ["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8"].forEach(function (id) {
+      var d = !!S.done[id]; if (d) n++;
+      $("toc-" + id).classList.toggle("done", d);
+      var c = $("done-" + id); if (c) c.checked = d;
+    });
+    $("progText").textContent = n + " of 8 modules done";
+    $("progFill").style.width = (n / 8 * 100) + "%";
+  }
+  document.querySelectorAll("[data-done]").forEach(function (c) {
+    c.addEventListener("change", function () { S.done[c.dataset.done] = c.checked; save(); refreshProgress(); });
+  });
+
+  // =================================================================
+  // Module 1: papers
+  // =================================================================
+  var PAPERS = [
+    { id: "reid2015", topic: "Smell × nostalgia", why: "The most direct study of scent-evoked nostalgia.", qs: ["Which scent properties predicted nostalgia, and how were they measured?", "Why can this design not say whether smell beats music?", "What would you change about the scent set?"] },
+    { id: "herz2004", topic: "Same cue as odor, picture, sound", why: "A cleaner comparison across senses than most.", qs: ["Why is the same cue in three forms a stronger comparison than different cues per sense?", "Which outcomes differed and which did not?", "What limits come from only three cue items?"] },
+    { id: "willander2006", topic: "Age of memories by cue", why: "Source of the \"odors take you back to childhood\" result.", qs: ["What is the DV, and why is it a test of a bump-like pattern?", "What is confounded between cue types in a between-subjects design?", "Why might older adults show this more than students?"] },
+    { id: "hennessy2024", topic: "Music, matched controls, replication", why: "Good model for choosing control stimuli.", qs: ["How were control songs chosen, and which confound does this remove?", "What does \"conceptual replication\" mean here?", "How might online listening change the results?"] },
+    { id: "jakubowski2023", topic: "Diary study: music vs food", why: "The ecological counterpart to lab inductions.", qs: ["What are the advantages of diaries over lab induction?", "Which measures capture voluntary vs involuntary retrieval?", "What could bias self-recorded diaries?"] },
+    { id: "leboe2006", topic: "Is nostalgia a misattribution?", why: "The memory-accuracy angle.", qs: ["What was manipulated at encoding and what was measured?", "Why do word lists limit the claim about nostalgia?", "Sketch a personal-memory follow-up."] },
+    { id: "newman2020", topic: "Daily-life nostalgia", why: "The main challenge to lab findings.", qs: ["How does daily-life nostalgia relate to well-being?", "Why might induced nostalgia look more positive?", "What would you add to an event reflection study in response?"] },
+    { id: "oba2016", topic: "Brain: memory and reward", why: "A key fMRI study with visual cues.", qs: ["Which regions co-activated and what individual difference tracked it?", "How does the sample limit generalization?", "What would a modality comparison add?"] },
+    { id: "hacklander2019", topic: "Bonus: odor-memory review", why: "Methods and open questions for the Proust effect.", qs: ["Which findings does the review call most stable?", "What methods problems does it identify?", "Which hypotheses would you test first?"] }
+  ];
+  var PF = [["rq", "Research question", "What were they asking, in your words?"], ["design", "Design", "Within/between, conditions, order"], ["sample", "N and sample", "Who, how many"], ["cue", "Cue or induction", "What was the stimulus, who chose it?"], ["control", "Control or comparison", "What was held constant?"], ["measures", "Main measures", "DVs, how measured"], ["result", "Key result (one sentence)", "In your own words"], ["limit", "One limitation", "Not the authors' list: yours"], ["idea", "One follow-up you could run", "Concrete"]];
+  (function () {
+    var box = $("papers");
+    PAPERS.forEach(function (p) {
+      var s = study(p.id), st = S.papers[p.id] = S.papers[p.id] || { sel: false, f: {} };
+      var d = document.createElement("div"); d.className = "pcard" + (st.sel ? " sel" : ""); d.id = "paper-" + p.id;
+      var h = '<div class="topic">' + esc(p.topic) + "</div><h4>" + esc(s.cite) + '</h4><p class="small">' + esc(p.why) + ' <a href="https://doi.org/' + esc(s.doi) + '" target="_blank" rel="noopener">doi:' + esc(s.doi) + "</a></p>";
+      h += '<label class="chk"><input type="checkbox" data-sel="' + p.id + '"' + (st.sel ? " checked" : "") + "> <span>I&rsquo;m reading this</span></label>";
+      h += '<div class="pform"' + (st.sel ? "" : ' style="display:none"') + "><p class='small'><b>Look for:</b></p><ul class='plain small'>" + p.qs.map(function (q) { return "<li>" + esc(q) + "</li>"; }).join("") + "</ul>";
+      PF.forEach(function (f) { h += '<label class="f">' + f[1] + ' <small>' + f[2] + '</small></label><textarea data-p="' + p.id + '" data-k="' + f[0] + '" style="min-height:2.6rem">' + esc(st.f[f[0]] || "") + "</textarea>"; });
+      h += "</div>";
+      d.innerHTML = h; box.appendChild(d);
+    });
+    function count() { var n = PAPERS.filter(function (p) { return S.papers[p.id].sel; }).length; $("paperCount").textContent = n + " selected (aim for 3)"; }
+    box.addEventListener("change", function (e) {
+      var c = e.target.closest("[data-sel]"); if (!c) return;
+      var id = c.dataset.sel; S.papers[id].sel = c.checked; save();
+      var card = $("paper-" + id); card.classList.toggle("sel", c.checked); card.querySelector(".pform").style.display = c.checked ? "" : "none"; count();
+    });
+    box.addEventListener("input", function (e) {
+      var t = e.target.closest("textarea[data-p]"); if (!t) return;
+      S.papers[t.dataset.p].f[t.dataset.k] = t.value; save();
+    });
+    count();
+  })();
+
+  // =================================================================
+  // Module 2a: ERT
+  // =================================================================
+  var ITEMS = [["n1", "Right now, I am feeling quite nostalgic."], ["n2", "I feel a sentimental longing for the past right now."], ["n3", "My thoughts are drifting to a time in my past that I miss."], ["pos", "I feel happy right now."], ["neg", "I feel sad right now."], ["conn", "I feel connected to people who matter to me right now."], ["viv", "The memory I wrote about is vivid."]];
+  var ERT_TEXT = {
+    nostalgic: "Please think of a nostalgic event in your life. Specifically, try to think of an event that makes you feel most nostalgic. Bring to mind this event and let yourself reflect on it: what happened, who was there, and what you saw, heard, smelled, tasted or felt. How does it make you feel?",
+    ordinary: "Please think of an ordinary event in your life: an event that you might experience on any given week (for example, a typical class or an everyday errand). Bring to mind this event and let yourself reflect on it: what happened, who was there, and what you saw, heard, smelled, tasted or felt. How does it make you feel?"
+  };
+  var ertTimer = null;
+  function nextCond() {
+    if (!S.ert.length) return Math.random() < 0.5 ? "nostalgic" : "ordinary";
+    var last = S.ert[S.ert.length - 1].cond; return last === "nostalgic" ? "ordinary" : "nostalgic";
+  }
+  function renderErt() {
+    var box = $("ertBox");
+    var both = S.ert.some(function (e) { return e.cond === "nostalgic"; }) && S.ert.some(function (e) { return e.cond === "ordinary"; });
+    var cond = S.ertCond || (S.ertCond = nextCond());
+    var h = '<div class="pcard sel"><div class="topic">Condition for this round: ' + (cond === "nostalgic" ? "nostalgic event" : "ordinary event") + "</div>";
+    h += "<p>" + esc(ERT_TEXT[cond]) + "</p>";
+    h += '<label class="f" for="e-kw">Write four keywords for the event</label><input type="text" id="e-kw" placeholder="word, word, word, word">';
+    h += '<label class="f" for="e-text">Now write about it for a few minutes</label><textarea id="e-text" style="min-height:7rem"></textarea>';
+    h += '<div class="btn-row"><button class="btn sm ghost" type="button" id="e-timer">Start a 3-minute timer</button><span class="timer" id="e-time"></span></div>';
+    h += '<h4>Ratings (1 = not at all, 7 = very much)</h4><div class="row2">';
+    ITEMS.forEach(function (it) { h += '<div><label class="f" for="e-' + it[0] + '">' + esc(it[1]) + '</label><div class="sl"><input type="range" id="e-' + it[0] + '" min="1" max="7" value="4"><output>4</output></div></div>'; });
+    h += '</div><div class="row2"><div><label class="f" for="e-age">Your age in the memory</label><input type="number" id="e-age" min="0" max="100" value="12"></div><div><label class="f" for="e-persp">Did you see it through your own eyes or from outside?</label><select id="e-persp"><option value="first">Own eyes (first person)</option><option value="third">From outside (third person)</option><option value="mixed">Both / unsure</option></select></div></div>';
+    h += '<div class="btn-row"><button class="btn" type="button" id="e-save">Save this round</button></div></div>';
+    box.innerHTML = h;
+    box.querySelectorAll('input[type=range]').forEach(function (r) { r.addEventListener("input", function () { r.nextElementSibling.textContent = r.value; }); });
+    $("e-timer").addEventListener("click", function () {
+      clearInterval(ertTimer); var t = 180; $("e-time").textContent = "3:00";
+      ertTimer = setInterval(function () { t--; var m = Math.floor(t / 60), s = t % 60; $("e-time").textContent = m + ":" + (s < 10 ? "0" : "") + s; if (t <= 0) { clearInterval(ertTimer); $("e-time").textContent = "Time!"; } }, 1000);
+    });
+    $("e-save").addEventListener("click", function () {
+      var text = $("e-text").value.trim();
+      if (!text) { alert("Write a few sentences first: the writing is the manipulation."); return; }
+      var rec = { id: Date.now(), cond: cond, ts: new Date().toISOString(), kw: $("e-kw").value, text: text, words: text.split(/\s+/).filter(Boolean).length, age: parseInt($("e-age").value, 10), persp: $("e-persp").value, r: {} };
+      ITEMS.forEach(function (it) { rec.r[it[0]] = parseInt($("e-" + it[0]).value, 10); });
+      S.ert.push(rec); S.ertCond = null; save(); clearInterval(ertTimer); renderErt(); renderErtList();
+    });
+  }
+  function renderErtList() {
+    var box = $("ertList");
+    if (!S.ert.length) { box.innerHTML = ""; return; }
+    var h = "<h4>Your rounds</h4><div class='scroll'><table class='t'><tr><th>When</th><th>Condition</th><th>State nostalgia (mean of 3)</th><th>Happy</th><th>Sad</th><th>Connected</th><th>Vivid</th><th>Words</th><th>Age</th><th>View</th><th></th></tr>";
+    S.ert.forEach(function (e, i) {
+      var sn = (e.r.n1 + e.r.n2 + e.r.n3) / 3;
+      h += "<tr><td>" + esc(e.ts.slice(0, 16).replace("T", " ")) + "</td><td>" + esc(e.cond) + "</td><td>" + f1(sn) + "</td><td>" + e.r.pos + "</td><td>" + e.r.neg + "</td><td>" + e.r.conn + "</td><td>" + e.r.viv + "</td><td>" + e.words + "</td><td>" + e.age + "</td><td>" + esc(e.persp) + '</td><td><button class="btn sm ghost" type="button" data-edel="' + i + '">Delete</button></td></tr>';
+    });
+    h += "</table></div>";
+    var nos = S.ert.filter(function (e) { return e.cond === "nostalgic"; }), ord = S.ert.filter(function (e) { return e.cond === "ordinary"; });
+    if (nos.length && ord.length) {
+      var a = nos[nos.length - 1], b = ord[ord.length - 1], d = ((a.r.n1 + a.r.n2 + a.r.n3) - (b.r.n1 + b.r.n2 + b.r.n3)) / 3;
+      h += '<div class="note"><b>Your N = 1 contrast</b> (latest nostalgic minus latest ordinary): state nostalgia ' + (d >= 0 ? "+" : "") + f1(d) + ", happy " + (a.r.pos - b.r.pos >= 0 ? "+" : "") + (a.r.pos - b.r.pos) + ", sad " + (a.r.neg - b.r.neg >= 0 ? "+" : "") + (a.r.neg - b.r.neg) + ", connected " + (a.r.conn - b.r.conn >= 0 ? "+" : "") + (a.r.conn - b.r.conn) + ". Notice: did <i>sad</i> and <i>happy</i> both go up (bittersweet)? You knew which condition you were in, so demand characteristics could explain anything here. How would a real study guard against that?</div>";
+    }
+    box.innerHTML = h;
+    box.querySelectorAll("[data-edel]").forEach(function (b) { b.addEventListener("click", function () { S.ert.splice(parseInt(b.dataset.edel, 10), 1); save(); renderErtList(); }); });
+  }
+  renderErt(); renderErtList();
+
+  // =================================================================
+  // Module 2b: diary
+  // =================================================================
+  var SENSE_COL = { smell: "#8C93E0", music: "#FF7F8A", visual: "#F2C14E", taste: "#F29B6B", touch: "#7CE3C0", place: "#5FB89A", person: "#8FB5E8", other: "#BDB7D6" };
+  var SENSE_LABEL = { smell: "Smell", music: "Music / sound", visual: "Sight", taste: "Taste / food", touch: "Touch / temp.", place: "Place / object", person: "Person / talk", other: "Other" };
+  ["nost", "viv", "pos", "neg"].forEach(function (k) { var r = $("d-" + k); r.addEventListener("input", function () { $("o-" + k).textContent = r.value; }); });
+  $("diaryForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    S.diary.push({ ts: new Date().toISOString(), sense: $("d-sense").value, access: $("d-access").value, cue: $("d-cue").value, age: parseInt($("d-age").value, 10) || 0, nost: +$("d-nost").value, viv: +$("d-viv").value, pos: +$("d-pos").value, neg: +$("d-neg").value, social: $("d-social").value, where: $("d-where").value, demo: false });
+    $("d-cue").value = ""; $("d-where").value = ""; save(); renderDiary();
+  });
+  $("diaryDemo").addEventListener("click", function () {
+    function r(a, b) { return Math.round(a + Math.random() * (b - a)); }
+    var spec = [["smell", "involuntary", 3, 9, 5], ["smell", "involuntary", 4, 10, 5], ["smell", "sought", 6, 14, 4], ["music", "involuntary", 12, 20, 5], ["music", "involuntary", 13, 22, 6], ["music", "sought", 14, 24, 5], ["music", "involuntary", 11, 19, 5], ["visual", "sought", 8, 24, 4], ["food", "involuntary", 5, 14, 5], ["place", "involuntary", 7, 20, 4], ["person", "sought", 15, 28, 5], ["touch", "involuntary", 6, 15, 4]];
+    spec.forEach(function (s) { S.diary.push({ ts: new Date().toISOString(), sense: s[0] === "food" ? "taste" : s[0], access: s[1], cue: "(demo)", age: r(s[2], s[3]), nost: Math.min(7, Math.max(1, s[4] + r(-1, 1))), viv: r(3, 7), pos: r(4, 7), neg: r(2, 5), social: Math.random() < 0.7 ? "yes" : "no", where: "", demo: true }); });
+    save(); renderDiary();
+  });
+  $("diaryClear").addEventListener("click", function () { if (!S.diary.length || confirm("Delete all diary entries (including real ones)?")) { S.diary = []; save(); renderDiary(); } });
+  $("diaryCsv").addEventListener("click", function () {
+    var cols = ["ts", "sense", "access", "cue", "age", "nost", "viv", "pos", "neg", "social", "where", "demo"];
+    var rows = [cols.join(",")].concat(S.diary.map(function (d) { return cols.map(function (c) { var v = String(d[c] == null ? "" : d[c]); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(","); }));
+    download("cue_diary.csv", rows.join("\n"), "text/csv;charset=utf-8");
+  });
+  function renderDiary() {
+    var box = $("diaryOut"); if (!S.diary.length) { box.innerHTML = '<p class="small">No entries yet.</p>'; return; }
+    var senses = Object.keys(SENSE_LABEL), by = {};
+    senses.forEach(function (s) { by[s] = S.diary.filter(function (d) { return d.sense === s; }); });
+    var invol = S.diary.filter(function (d) { return d.access === "involuntary"; }).length;
+    var h = '<div><span class="stat">Entries <b>' + S.diary.length + '</b></span><span class="stat">Unprompted <b>' + Math.round(invol / S.diary.length * 100) + '%</b></span><span class="stat">Mean nostalgia <b>' + f1(mean(S.diary.map(function (d) { return d.nost; }))) + '</b></span><span class="stat">Mean positive <b>' + f1(mean(S.diary.map(function (d) { return d.pos; }))) + '</b> / negative <b>' + f1(mean(S.diary.map(function (d) { return d.neg; }))) + "</b></span></div>";
+    // chart: age bins
+    var BINS = ["0–9", "10–19", "20–29", "30–39", "40+"], W = 520, base = 170, bw = 100, per = 5, sz = 15, g = 3;
+    var bins = [[], [], [], [], []]; S.diary.forEach(function (d) { bins[Math.min(4, Math.floor(d.age / 10))].push(d); });
+    var maxc = Math.max.apply(null, bins.map(function (b) { return b.length; }).concat([1])), maxRows = Math.floor((base - 6) / (sz + g)); if (Math.ceil(maxc / per) > maxRows) per = Math.ceil(maxc / maxRows);
+    var svg = '<svg viewBox="0 0 ' + W + ' 200" role="img" aria-label="Diary entries by age in memory and sense"><line x1="5" y1="' + (base + 4) + '" x2="' + (W - 5) + '" y2="' + (base + 4) + '" stroke="#33305A" stroke-width="2.5"/>';
+    bins.forEach(function (arr, b) {
+      arr.sort(function (x, y) { return senses.indexOf(x.sense) - senses.indexOf(y.sense); });
+      arr.forEach(function (d, k) { svg += '<circle cx="' + (14 + b * bw + (k % per) * (sz + g)) + '" cy="' + (base - (Math.floor(k / per) + 0.5) * (sz + g)) + '" r="' + sz / 2 + '" fill="' + SENSE_COL[d.sense] + '" stroke="#33305A" stroke-width="1.8"/>'; });
+      svg += '<text x="' + (b * bw + 50) + '" y="' + (base + 22) + '" text-anchor="middle">' + BINS[b] + (arr.length ? " (" + arr.length + ")" : "") + "</text>";
+    });
+    svg += "</svg>";
+    var lg = '<div class="legend">' + senses.filter(function (s) { return by[s].length; }).map(function (s) { return '<span><i style="background:' + SENSE_COL[s] + '"></i>' + SENSE_LABEL[s] + " (" + by[s].length + ", median age " + median(by[s].map(function (d) { return d.age; })) + ")</span>"; }).join("") + "</div>";
+    h += '<div class="chart" style="margin-top:0.5rem">' + svg + lg + "</div>";
+    h += '<div class="scroll"><table class="t"><tr><th>When</th><th>Sense</th><th>Arrived</th><th>Cue</th><th>Age</th><th>Nost.</th><th>Viv.</th><th>+</th><th>&minus;</th><th>Social</th><th></th></tr>';
+    S.diary.slice().reverse().slice(0, 30).forEach(function (d) { var i = S.diary.indexOf(d); h += "<tr><td>" + esc(d.ts.slice(5, 16).replace("T", " ")) + "</td><td>" + esc(SENSE_LABEL[d.sense]) + "</td><td>" + esc(d.access) + "</td><td>" + esc(d.cue) + (d.demo ? ' <span class="tag">demo</span>' : "") + "</td><td>" + d.age + "</td><td>" + d.nost + "</td><td>" + d.viv + "</td><td>" + d.pos + "</td><td>" + d.neg + "</td><td>" + esc(d.social) + '</td><td><button class="btn sm ghost" type="button" data-ddel="' + i + '">Delete</button></td></tr>'; });
+    h += "</table></div>";
+    box.innerHTML = h;
+    box.querySelectorAll("[data-ddel]").forEach(function (b) { b.addEventListener("click", function () { S.diary.splice(parseInt(b.dataset.ddel, 10), 1); save(); renderDiary(); }); });
+  }
+  renderDiary();
+
+  // =================================================================
+  // Module 3: vignettes
+  // =================================================================
+  (function () {
+    var box = $("vigs");
+    D.VIGNETTES.forEach(function (v, i) {
+      var d = document.createElement("div"); d.className = "vig";
+      var h = '<div class="vt">' + (i + 1) + ". " + esc(v.t) + '</div><div class="vd">' + esc(v.d) + "</div>";
+      shuffled(v.opts.length).forEach(function (j) { h += '<label><input type="radio" name="v' + i + '" value="' + j + '"> <span>' + esc(v.opts[j]) + "</span></label>"; });
+      h += '<div class="fb" id="vfb' + i + '"></div>';
+      d.innerHTML = h; box.appendChild(d);
+    });
+    function show(i, j) {
+      var v = D.VIGNETTES[i], labels = box.querySelectorAll(".vig")[i].querySelectorAll("label"), fb = $("vfb" + i);
+      labels.forEach(function (l) { var k = parseInt(l.querySelector("input").value, 10); l.classList.remove("right", "wrong"); if (k === v.a) l.classList.add("right"); else if (k === j) l.classList.add("wrong"); });
+      fb.classList.add("show"); fb.innerHTML = (j === v.a ? "<b>Right.</b> " : "<b>Not quite.</b> ") + esc(v.why);
+    }
+    function score() {
+      var n = Object.keys(S.vig).length, ok = Object.keys(S.vig).filter(function (k) { return S.vig[k] === D.VIGNETTES[k].a; }).length;
+      $("vigScore").innerHTML = n ? "Answered <b>" + n + "</b> of " + D.VIGNETTES.length + "; correct on first pick: <b>" + ok + "</b>." : "Answer the vignettes to see your score.";
+    }
+    box.addEventListener("change", function (e) {
+      var r = e.target; if (r.type !== "radio") return;
+      var i = parseInt(r.name.slice(1), 10), j = parseInt(r.value, 10);
+      if (S.vig[i] === undefined) S.vig[i] = j;   // the first pick is what counts
+      save(); show(i, j); score();
+    });
+    Object.keys(S.vig).forEach(function (i) { var r = box.querySelector('input[name="v' + i + '"][value="' + S.vig[i] + '"]'); if (r) { r.checked = true; show(parseInt(i, 10), S.vig[i]); } });
+    score();
+  })();
+
+  // =================================================================
+  // Module 4: evidence map + search log
+  // =================================================================
+  (function () {
+    var rows = D.MODALITIES.concat([{ id: "general", label: "Not cue-specific" }]);
+    var SHORT = { trigger: "Trigger", content: "Content", age: "Age", emotion: "Emotion", "function": "Function", brain: "Brain", aging: "Aging", accuracy: "Accuracy" };
+    var table = $("emap"), panel = $("emapPanel");
+    function cell(r, c) { return D.STUDIES.filter(function (s) { return s.mod.indexOf(r) >= 0 && s.out.indexOf(c) >= 0; }); }
+    table.innerHTML = "<thead><tr><th></th>" + D.OUTCOMES.map(function (o) { return "<th>" + SHORT[o.id] + "</th>"; }).join("") + "</tr></thead><tbody>" + rows.map(function (r) {
+      return '<tr><th class="row">' + r.label + "</th>" + D.OUTCOMES.map(function (o) {
+        var n = cell(r.id, o.id).length, l = n === 0 ? "" : n === 1 ? "l1" : n <= 3 ? "l2" : "l3";
+        return '<td><button type="button" class="emap-cell ' + l + '" data-r="' + r.id + '" data-c="' + o.id + '" aria-label="' + r.label + ", " + SHORT[o.id] + ": " + n + ' studies">' + (n || "·") + "</button></td>";
+      }).join("") + "</tr>";
+    }).join("") + "</tbody>";
+    table.addEventListener("click", function (e) {
+      var b = e.target.closest(".emap-cell"); if (!b) return;
+      table.querySelectorAll(".emap-cell.sel").forEach(function (x) { x.classList.remove("sel"); }); b.classList.add("sel");
+      var r = rows.filter(function (x) { return x.id === b.dataset.r; })[0], o = D.OUTCOMES.filter(function (x) { return x.id === b.dataset.c; })[0], list = cell(r.id, o.id);
+      var h = "<b>" + esc(r.label) + " × " + esc(o.label) + " (" + list.length + ")</b>";
+      if (!list.length) h += "<p>No study in this reading list. <b>Search before you claim it is a gap.</b></p>";
+      list.forEach(function (s) { h += '<div class="study"><b>' + esc(s.cite) + '</b><div class="meta">' + esc(s.design) + " &middot; N: " + esc(s.n) + "</div><div>" + esc(s.finding) + '</div><div class="meta"><a href="https://doi.org/' + esc(s.doi) + '" target="_blank" rel="noopener">doi:' + esc(s.doi) + "</a></div></div>"; });
+      panel.innerHTML = h; panel.scrollTop = 0;
+      if (!$("s-cell").value) { $("s-cell").value = r.label + " × " + o.label; S.search.cell = $("s-cell").value; save(); }
+    });
+    ["cell", "date", "q", "db", "str", "hits", "rel", "gap", "cites"].forEach(function (k) { bindField("s-" + k, S.search, k); });
+  })();
+
+  // =================================================================
+  // Module 5: power
+  // =================================================================
+  (function () {
+    function Phi(x) { var t = 1 / (1 + 0.2316419 * Math.abs(x)), d = 0.3989423 * Math.exp(-x * x / 2), p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return x > 0 ? 1 - p : p; }
+    var ids = ["design", "d", "alpha", "pow", "drop", "ratio", "plan"];
+    ids.forEach(function (k) { bindField("p-" + k, S.power, k, calc); });
+    document.querySelectorAll("[data-pd]").forEach(function (b) { b.addEventListener("click", function () { $("p-d").value = b.dataset.pd; S.power.d = b.dataset.pd; save(); calc(); }); });
+    function nNeeded(d, za, zb, within) { return within ? Math.ceil(Math.pow((za + zb) / d, 2) + za * za / 2) : Math.ceil(2 * Math.pow((za + zb) / d, 2) + za * za / 4); }
+    function power(n, d, za, within) { var nc = within ? d * Math.sqrt(n) : d * Math.sqrt(n / 2); return Phi(nc - za) + Phi(-nc - za); }
+    function calc() {
+      var within = $("p-design").value === "within", d = parseFloat($("p-d").value) || 0.39, za = parseFloat($("p-alpha").value), zb = parseFloat($("p-pow").value), drop = Math.min(60, parseFloat($("p-drop").value) || 0) / 100;
+      $("p-dlabel").textContent = within ? "d₂ (within-subject)" : "d (between-subject)";
+      var n = nNeeded(d, za, zb, within), nIn = Math.ceil(n / (1 - drop));
+      $("pOut").innerHTML = within ? "Approx. <b>" + n + "</b> participants (each does both conditions); recruit about <b>" + nIn + "</b> with " + Math.round(drop * 100) + "% dropout." : "Approx. <b>" + n + "</b> per group (<b>" + 2 * n + "</b> total); recruit about <b>" + Math.ceil(nIn) + "</b> per group (<b>" + 2 * Math.ceil(nIn) + "</b> total) with " + Math.round(drop * 100) + "% dropout.";
+      // curve
+      var W = 520, H = 220, L = 38, B = 190, maxN = Math.max(60, Math.ceil(n * 1.8 / 10) * 10), pts = [], i;
+      for (i = 2; i <= maxN; i += 2) pts.push([L + (i / maxN) * (W - L - 10), B - power(i, d, za, within) * (B - 12), i]);
+      var s = '<line x1="' + L + '" y1="' + B + '" x2="' + (W - 8) + '" y2="' + B + '" stroke="#33305A" stroke-width="2.5"/><line x1="' + L + '" y1="12" x2="' + L + '" y2="' + B + '" stroke="#33305A" stroke-width="2.5"/>';
+      [0.25, 0.5, 0.8, 1].forEach(function (p) { var y = B - p * (B - 12); s += '<line x1="' + L + '" x2="' + (W - 8) + '" y1="' + y + '" y2="' + y + '" stroke="#33305A" stroke-opacity="' + (p === 0.8 ? 0.6 : 0.15) + '" stroke-dasharray="' + (p === 0.8 ? "6 4" : "2 4") + '"/><text x="' + (L - 6) + '" y="' + (y + 4) + '" text-anchor="end">' + Math.round(p * 100) + "%</text>"; });
+      s += '<polyline fill="none" stroke="#C4405A" stroke-width="4" stroke-linejoin="round" points="' + pts.map(function (p) { return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" ") + '"/>';
+      var xn = L + (n / maxN) * (W - L - 10); s += '<line x1="' + xn + '" x2="' + xn + '" y1="12" y2="' + B + '" stroke="#2FA05A" stroke-width="3"/><text x="' + xn + '" y="' + (B + 16) + '" text-anchor="middle" font-weight="700">' + n + "</text><text x=\"" + (W / 2) + "\" y=\"" + (H - 2) + "\" text-anchor=\"middle\">" + (within ? "participants" : "participants per group") + " &#8594; power</text>";
+      $("pSvg").innerHTML = s;
+      // interaction
+      var ratio = parseFloat($("p-ratio").value), delta = d * ratio, nCell = Math.ceil(4 * Math.pow((za + zb) / delta, 2)), nSimple = nNeeded(d, za, zb, false);
+      $("pInt").innerHTML = "2 × 2 interaction at δ = " + f1(delta * 100) / 100 + ": about <b>" + nCell + "</b> per cell (<b>" + 4 * nCell + "</b> total), versus <b>" + 2 * nSimple + "</b> total for the simple two-group effect: about <b>" + f1(4 * nCell / (2 * nSimple)) + "×</b> more people.";
+    }
+    calc();
+  })();
+
+  // =================================================================
+  // Module 6: study builder
+  // =================================================================
+  var MEASURES = ["State nostalgia (manipulation check)", "Trait nostalgia (e.g., Southampton Nostalgia Scale)", "Mixed emotion / bittersweetness ratings", "Vividness and reliving ratings", "Autobiographical Interview internal details (blind coded)", "Age of the memory", "Rehearsal (how often thought or talked about)", "Social connectedness", "Familiarity and personal relevance of each cue", "Olfactory identification / ability screen", "Imagery vividness questionnaire", "Diary entries (cue, voluntary or not)"];
+  var CHECKS = ["Order of conditions counterbalanced (e.g., Latin square)", "Control cues matched on familiarity (and musical/perceptual features where possible)", "Familiarity and personal relevance measured and modeled", "Odor labels controlled (odor-only vs named conditions)", "Ordinary-event or matched control plus a manipulation check", "Coders blind to condition; word count controlled", "Sample matches the claim (age, population)", "Detail is not equated with accuracy (external record if claiming accuracy)", "Power analysis done and N justified", "Hypotheses, exclusions and analysis plan written before data collection"];
+  (function () {
+    var sel = $("b-seed"), B = S.build; B.f = B.f || {}; B.meas = B.meas || {}; B.chk = B.chk || {};
+    sel.innerHTML = '<option value="">My own idea (blank)</option>' + D.SEEDS.map(function (s, i) { return '<option value="' + s.id + '">Seed ' + (i + 1) + " · " + esc(s.title) + " (" + esc(s.level) + ")</option>"; }).join("");
+    if (B.seed) sel.value = B.seed;
+    var FIELDS = { title: "b-title", pop: "b-pop", q: "b-q", gap: "b-gap", hyp: "b-hyp", design: "b-design", proc: "b-proc", n: "b-n", risk: "b-risk", eth: "b-eth" };
+    Object.keys(FIELDS).forEach(function (k) { var e = $(FIELDS[k]); if (B.f[k] != null) e.value = B.f[k]; e.addEventListener("input", function () { B.f[k] = e.value; save(); }); });
+    var mb = $("b-measures"), cb = $("b-checks");
+    mb.innerHTML = MEASURES.map(function (m, i) { return '<label class="chk"><input type="checkbox" data-m="' + i + '"' + (B.meas[i] ? " checked" : "") + "><span>" + esc(m) + "</span></label>"; }).join("");
+    cb.innerHTML = CHECKS.map(function (m, i) { return '<label class="chk"><input type="checkbox" data-c="' + i + '"' + (B.chk[i] ? " checked" : "") + "><span>" + esc(m) + "</span></label>"; }).join("");
+    mb.addEventListener("change", function (e) { var c = e.target.closest("[data-m]"); if (c) { B.meas[c.dataset.m] = c.checked; save(); } });
+    cb.addEventListener("change", function (e) { var c = e.target.closest("[data-c]"); if (c) { B.chk[c.dataset.c] = c.checked; save(); } });
+    sel.addEventListener("change", function () {
+      B.seed = sel.value; var s = D.SEEDS.filter(function (x) { return x.id === sel.value; })[0];
+      if (s && (!B.f.q || confirm("Replace your current fields with this seed's starting text?"))) {
+        B.f.title = s.title; B.f.q = s.q; B.f.gap = s.hook; B.f.design = s.design; B.f.risk = s.pitfalls;
+        $("b-title").value = B.f.title; $("b-q").value = B.f.q; $("b-gap").value = B.f.gap; $("b-design").value = B.f.design; $("b-risk").value = B.f.risk;
+        var want = s.measures.toLowerCase();
+        MEASURES.forEach(function (m, i) { var key = m.toLowerCase().split(/[ (\/]/)[0]; B.meas[i] = want.indexOf(key) >= 0 && key.length > 3; });
+        mb.querySelectorAll("[data-m]").forEach(function (c) { c.checked = !!B.meas[c.dataset.m]; });
+      }
+      save();
+    });
+    function brief() {
+      var s = D.SEEDS.filter(function (x) { return x.id === B.seed; })[0], g = function (k) { return (B.f[k] || "").trim() || "(to do)"; };
+      var ms = MEASURES.filter(function (m, i) { return B.meas[i]; }), cs = CHECKS.map(function (m, i) { return "- [" + (B.chk[i] ? "x" : " ") + "] " + m; });
+      var md = "# " + g("title") + "\n\n*Memory and Brain Lab · Workshop 4 study brief · " + today() + "*" + (s ? "  \n*Started from seed: " + s.title + "*" : "") + "\n\n";
+      md += "**Research question.** " + g("q") + "\n\n**Population.** " + g("pop") + "\n\n## Why it matters\n" + g("gap") + "\n\n## Hypothesis\n" + g("hyp") + "\n\n## Design\n" + g("design") + "\n\n## Procedure\n" + g("proc") + "\n\n## Measures\n" + (ms.length ? ms.map(function (m) { return "- " + m; }).join("\n") : "(to do)") + "\n\n## Sample size\n" + g("n") + "\n\n## Confound checklist\n" + cs.join("\n") + "\n\n## Risks and how to reduce them\n" + g("risk") + "\n\n## Ethics and practicalities\n" + g("eth") + "\n";
+      if (s) md += "\n## Start reading\n" + s.refs.map(function (id) { var st = study(id); return st ? "- " + st.cite + " (doi:" + st.doi + ")" : ""; }).join("\n") + "\n";
+      if (S.search.cell) md += "\n## Gap check\nCell: " + S.search.cell + " · verdict: " + (S.search.gap || "not logged") + (S.search.rel ? " · relevant studies found: " + S.search.rel : "") + "\n";
+      return md;
+    }
+    $("b-make").addEventListener("click", function () { var p = $("b-brief"); p.style.display = "block"; p.textContent = brief(); p.scrollIntoView({ block: "nearest" }); });
+    $("b-copy").addEventListener("click", function () { var t = brief(); if (navigator.clipboard) navigator.clipboard.writeText(t).then(function () { $("b-copy").textContent = "Copied"; setTimeout(function () { $("b-copy").textContent = "Copy"; }, 1500); }); else { var p = $("b-brief"); p.style.display = "block"; p.textContent = t; } });
+    $("b-dl").addEventListener("click", function () { download("study_brief.md", brief(), "text/markdown;charset=utf-8"); });
+    window.__brief = brief;
+  })();
+
+  // =================================================================
+  // Module 7: quiz
+  // =================================================================
+  (function () {
+    var box = $("quiz");
+    box.innerHTML = D.QUIZ.map(function (q, i) {
+      return '<div class="vig"><div class="vt">' + (i + 1) + ". " + esc(q.q) + "</div>" + shuffled(q.opts.length).map(function (j) { return '<label><input type="radio" name="q' + i + '" value="' + j + '"' + (S.quiz[i] === j ? " checked" : "") + "> <span>" + esc(q.opts[j]) + "</span></label>"; }).join("") + '<div class="fb" id="qfb' + i + '"></div></div>';
+    }).join("");
+    box.addEventListener("change", function (e) { var r = e.target; if (r.type === "radio") { S.quiz[parseInt(r.name.slice(1), 10)] = parseInt(r.value, 10); save(); } });
+    $("quizCheck").addEventListener("click", function () {
+      var ok = 0, answered = 0;
+      D.QUIZ.forEach(function (q, i) {
+        var card = box.querySelectorAll(".vig")[i], fb = $("qfb" + i), a = S.quiz[i];
+        card.querySelectorAll("label").forEach(function (l) { var k = parseInt(l.querySelector("input").value, 10); l.classList.remove("right", "wrong"); if (a !== undefined && k === q.a) l.classList.add("right"); else if (k === a) l.classList.add("wrong"); });
+        if (a !== undefined) { answered++; if (a === q.a) ok++; fb.classList.add("show"); fb.innerHTML = (a === q.a ? "<b>Right.</b> " : "<b>Not quite.</b> ") + esc(q.why); }
+      });
+      var sc = $("quizScore"); sc.style.display = "block"; sc.innerHTML = "Score: <b>" + ok + " / " + D.QUIZ.length + "</b> (" + answered + " answered). Re-read the slide or paper for any you missed.";
+      S.quizScore = ok; save();
+    });
+    $("quizReset").addEventListener("click", function () { S.quiz = {}; save(); box.querySelectorAll("input").forEach(function (i) { i.checked = false; }); box.querySelectorAll(".fb").forEach(function (f) { f.classList.remove("show"); }); box.querySelectorAll("label").forEach(function (l) { l.classList.remove("right", "wrong"); }); $("quizScore").style.display = "none"; });
+  })();
+
+  // =================================================================
+  // Export everything
+  // =================================================================
+  $("exportAll").addEventListener("click", function () {
+    var md = "# Workshop 4 workbook export\n\n*Exported " + new Date().toISOString().slice(0, 16).replace("T", " ") + ". Stored only in my browser; may contain personal memories, so check before sharing.*\n\n";
+    md += "## Modules done\n" + ["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8"].map(function (id) { return "- [" + (S.done[id] ? "x" : " ") + "] Module " + id.slice(1); }).join("\n") + "\n\n";
+    md += "## Module 1: papers\n";
+    PAPERS.forEach(function (p) {
+      var st = S.papers[p.id]; if (!st || !st.sel) return; var s = study(p.id);
+      md += "\n### " + s.cite + " (doi:" + s.doi + ")\n" + PF.map(function (f) { return "- **" + f[1] + ":** " + ((st.f[f[0]] || "").trim() || "(blank)"); }).join("\n") + "\n";
+    });
+    md += "\n## Module 2a: event reflection rounds\n";
+    S.ert.forEach(function (e) { md += "\n### " + e.cond + " (" + e.ts.slice(0, 16).replace("T", " ") + ")\nState nostalgia (mean of 3): " + f1((e.r.n1 + e.r.n2 + e.r.n3) / 3) + "; happy " + e.r.pos + "; sad " + e.r.neg + "; connected " + e.r.conn + "; vivid " + e.r.viv + "; age " + e.age + "; view " + e.persp + "; words " + e.words + "\n"; });
+    md += "\n## Module 2b: diary summary\nEntries: " + S.diary.length + (S.diary.some(function (d) { return d.demo; }) ? " (includes demo entries)" : "") + ". Download the CSV for details.\n";
+    md += "\n## Module 3: spot the confound\nAnswered " + Object.keys(S.vig).length + "; correct on first pick: " + Object.keys(S.vig).filter(function (k) { return S.vig[k] === D.VIGNETTES[k].a; }).length + " / " + D.VIGNETTES.length + "\n";
+    md += "\n## Module 4: search log\n" + ["cell", "date", "q", "db", "str", "hits", "rel", "gap", "cites"].map(function (k) { return "- " + k + ": " + (S.search[k] || ""); }).join("\n") + "\n";
+    md += "\n## Module 5: power\n" + $("pOut").textContent + "\nPlan: " + (S.power.plan || "") + "\n";
+    md += "\n## Module 6: study brief\n" + (window.__brief ? window.__brief() : "") + "\n";
+    md += "\n## Module 7: quiz\nScore: " + (S.quizScore != null ? S.quizScore + " / " + D.QUIZ.length : "not taken") + "\n";
+    download("workshop4_workbook_export.md", md, "text/markdown;charset=utf-8");
+  });
+
+  refreshProgress();
+})();
+</script>
+</body>
+</html>
