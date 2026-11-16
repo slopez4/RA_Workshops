@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analysis Scripts, Real Data</title>
+<meta name="description" content="Slides and reference for Workshop 5: reading and writing Python analysis scripts with real data from the lab's gestalt grouping study.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;750&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --ink: #1d2230;
+  --muted: #5d6475;
+  --line: #e3e0d8;
+  --accent: #2f6fdf;
+  --accent-soft: #e6eefc;
+  --think: #fff5d6;
+  --think-line: #e9c85a;
+  --code-bg: #f3f1ec;
+  --c-comment: #7a8091;
+  --c-string: #1f7a4d;
+  --c-keyword: #8a3ab9;
+  --c-number: #b3541e;
+  --c-blank: #d9432f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161c;
+    --surface: #1b1e26;
+    --ink: #e8e9ee;
+    --muted: #a0a6b5;
+    --line: #2d313c;
+    --accent: #7fa8ff;
+    --accent-soft: #1f2a42;
+    --think: #2c2715;
+    --think-line: #8c7427;
+    --code-bg: #20232c;
+    --c-comment: #8990a1;
+    --c-string: #7fd1a3;
+    --c-keyword: #d19bf2;
+    --c-number: #f0a36e;
+    --c-blank: #ff7a66;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14161c;
+  --surface: #1b1e26;
+  --ink: #e8e9ee;
+  --muted: #a0a6b5;
+  --line: #2d313c;
+  --accent: #7fa8ff;
+  --accent-soft: #1f2a42;
+  --think: #2c2715;
+  --think-line: #8c7427;
+  --code-bg: #20232c;
+  --c-comment: #8990a1;
+  --c-string: #7fd1a3;
+  --c-keyword: #d19bf2;
+  --c-number: #f0a36e;
+  --c-blank: #ff7a66;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.45;
+}
+a { color: var(--accent); }
+h1, h2, h3 { line-height: 1.15; margin: 0 0 0.5em; letter-spacing: -0.01em; }
+h1 { font-size: 2.6em; font-weight: 750; }
+h2 { font-size: 1.75em; font-weight: 750; }
+h3 { font-size: 1.1em; font-weight: 600; color: var(--muted); margin-top: 0.8em; }
+p, ul, ol { margin: 0 0 0.7em; }
+li { margin: 0.2em 0; }
+.kicker {
+  font-size: 0.72em; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.6em;
+}
+.muted { color: var(--muted); }
+.big { font-size: 1.25em; }
+
+code, pre { font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; font-variant-ligatures: none; }
+:not(pre) > code {
+  background: var(--code-bg); padding: 0.08em 0.35em; border-radius: 4px; font-size: 0.9em;
+}
+pre {
+  background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+  padding: 0.85em 1.1em; margin: 0 0 0.8em; font-size: 0.8em; line-height: 1.55;
+  overflow-x: auto; white-space: pre;
+}
+.tok-c { color: var(--c-comment); font-style: italic; }
+.tok-s { color: var(--c-string); }
+.tok-k { color: var(--c-keyword); font-weight: 600; }
+.tok-n { color: var(--c-number); }
+.tok-b { color: var(--c-blank); font-weight: 600; background: color-mix(in srgb, var(--c-blank) 14%, transparent); border-radius: 3px; }
+
+table { border-collapse: collapse; width: 100%; margin: 0 0 0.8em; font-size: 0.82em; }
+th, td { text-align: left; padding: 0.4em 0.7em; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.think {
+  background: var(--think); border-left: 4px solid var(--think-line);
+  border-radius: 8px; padding: 0.7em 1em; margin: 0 0 0.8em;
+}
+.think::before { content: "🤔 Think"; display: block; font-weight: 600; font-size: 0.8em; margin-bottom: 0.25em; }
+.think p:last-child, .think ul:last-child, .think ol:last-child { margin-bottom: 0; }
+
+details.reveal {
+  border: 1px dashed var(--line); border-radius: 8px; padding: 0.5em 0.9em; margin: 0 0 0.8em;
+}
+details.reveal summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+details.reveal[open] summary { margin-bottom: 0.5em; }
+
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6em; align-items: start; }
+.btn {
+  display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+  padding: 0.55em 1.1em; border-radius: 8px; font-weight: 600;
+}
+:root[data-theme="dark"] .btn { color: #0d1220; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn { color: #0d1220; } }
+.steps { counter-reset: s; list-style: none; padding: 0; }
+.steps li { counter-increment: s; padding-left: 2.2em; position: relative; margin: 0.45em 0; }
+.steps li::before {
+  content: counter(s); position: absolute; left: 0; top: 0.05em;
+  width: 1.5em; height: 1.5em; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+  display: grid; place-items: center; font-weight: 700; font-size: 0.85em;
+}
+.pill {
+  display: inline-block; font-size: 0.72em; font-weight: 600; padding: 0.15em 0.6em; border-radius: 99px;
+  background: var(--accent-soft); color: var(--accent); vertical-align: middle;
+}
+
+/* ---------- Top bar ---------- */
+.bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 1rem;
+  font-size: 14px; background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(6px); border-bottom: 1px solid var(--line);
+}
+.bar .title { font-weight: 600; margin-right: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar button {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 6px; padding: 0.3rem 0.7rem; cursor: pointer;
+}
+.bar button:hover { border-color: var(--accent); }
+.progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 11; transition: width .2s; }
+
+/* ---------- Slide mode ---------- */
+body.mode-slides { overflow: hidden; }
+body.mode-slides .slide {
+  display: none; position: fixed; inset: 0; padding: 7vh 7vw 7vh;
+  font-size: min(1.75vw, 2.85vh); overflow-y: auto;
+  flex-direction: column;
+}
+body.mode-slides .slide.active { display: flex; }
+body.mode-slides .slide > .inner { max-width: 56em; width: 100%; margin: auto; }
+body.mode-slides .toc, body.mode-slides .ref-only { display: none; }
+body.mode-slides .bar { opacity: 0.25; transition: opacity .2s; }
+body.mode-slides .bar:hover, body.mode-slides .bar:focus-within { opacity: 1; }
+.slide-num { position: fixed; right: 1.2rem; bottom: 0.9rem; font-size: 13px; color: var(--muted); }
+body.mode-ref .slide-num, body.mode-ref .nav { display: none; }
+.nav { position: fixed; bottom: 0.7rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.4rem; }
+.nav button {
+  font-size: 18px; width: 2.2rem; height: 2.2rem; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); opacity: 0.5;
+}
+.nav button:hover { opacity: 1; }
+
+/* ---------- Reference mode ---------- */
+body.mode-ref { font-size: 17px; }
+body.mode-ref main { max-width: 880px; margin: 0 auto; padding: 4.2rem 16px 4rem; }
+body.mode-ref .slide {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 1.6em 1.8em; margin: 0 0 1.2rem; scroll-margin-top: 4rem;
+}
+body.mode-ref h1 { font-size: 2.1em; }
+body.mode-ref h2 { font-size: 1.45em; }
+.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.2em 1.6em; margin: 0 0 1.2rem; }
+.toc h2 { font-size: 1.1em; }
+.toc ol { columns: 2; column-gap: 2em; padding-left: 1.3em; margin: 0; font-size: 0.92em; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+
+@media (max-width: 700px) {
+  body.mode-ref .slide { padding: 1.1em 1em; }
+  .cols { grid-template-columns: 1fr; gap: 0; }
+  .toc ol { columns: 1; }
+  pre { font-size: 0.74em; }
+  table { font-size: 0.78em; }
+  th, td { padding: 0.35em 0.4em; }
+  .bar .title { font-size: 13px; }
+}
+
+img { display: block; height: auto; }
+.warn {
+  background: color-mix(in srgb, var(--c-blank) 10%, var(--surface)); border-left: 4px solid var(--c-blank);
+  border-radius: 8px; padding: 0.7em 1em; margin: 0 0 0.8em;
+}
+.warn::before { content: "⚠ Data loss"; display: block; font-weight: 600; font-size: 0.8em; margin-bottom: 0.25em; }
+.warn p:last-child, .warn ul:last-child { margin-bottom: 0; }
+.ok {
+  background: var(--accent-soft); border-left: 4px solid var(--accent);
+  border-radius: 8px; padding: 0.7em 1em; margin: 0 0 0.8em;
+}
+.ok p:last-child, .ok ul:last-child { margin-bottom: 0; }
+pre.m { border-left: 4px solid var(--think-line); }
+pre .label { display: block; font-size: 0.8em; color: var(--muted); margin-bottom: 0.3em; font-style: normal; }
+@media print {
+  .bar, .nav, .slide-num, .progress { display: none !important; }
+}
+</style>
+</head>
+<body class="mode-slides">
+<div class="progress" id="progress"></div>
+<div class="bar">
+  <span class="title">Workshop 5 · Analysis Scripts with Real Data</span>
+  <button id="modeBtn" title="Switch view (R)">📖 Reference view</button>
+  <button id="themeBtn" title="Toggle light/dark">◐</button>
+</div>
+
+<main id="deck">
+
+<nav class="toc ref-only" id="toc">
+  <h2>Contents</h2>
+  <ol id="tocList"></ol>
+</nav>
+
+<!-- 1 -->
+<section class="slide" data-title="Title">
+<div class="inner">
+  <div class="kicker">RA Workshop 5</div>
+  <h1>Reading &amp; Writing Analysis Scripts with Real Data</h1>
+  <p class="big muted">Do grouping cues change how fast people see a repeated shape?<br>25 real participants from the lab's GGP study.</p>
+  <p style="margin-top:1.4em">
+    <a class="btn" href="https://colab.research.google.com/github/slopez4/RA_Workshops/blob/main/05_analysis_scripts_ggp/notebooks/workshop_student.ipynb" target="_blank" rel="noopener">Open the notebook in Colab →</a>
+  </p>
+  <p class="muted" style="font-size:0.8em">Keys: <code>→</code> next · <code>←</code> back · <code>R</code> reference view · <code>F</code> fullscreen</p>
+</div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Today's plan">
+<div class="inner">
+  <div class="kicker">Agenda · ~55 min</div>
+  <h2>Today's plan</h2>
+  <table>
+    <tr><th>Time</th><th>What</th></tr>
+    <tr><td>0:00</td><td>Set up in Colab</td></tr>
+    <tr><td>0:03</td><td><b>Part 0</b> · The study in 3 minutes</td></tr>
+    <tr><td>0:06</td><td><b>Part 1</b> · Reading code: predict, then run</td></tr>
+    <tr><td>0:13</td><td><b>Part 2</b> · Bring in many files</td></tr>
+    <tr><td>0:20</td><td><b>Part 3</b> · Look before you analyze</td></tr>
+    <tr><td>0:28</td><td><b>Part 4</b> · Clean the data, and keep a log</td></tr>
+    <tr><td>0:33</td><td><b>Part 5</b> · The grouping effect, one participant at a time</td></tr>
+    <tr><td>0:41</td><td><b>Part 6</b> · Find the bugs</td></tr>
+    <tr><td>0:49</td><td><b>Part 7</b> · From notebook to script; how robust is the answer?</td></tr>
+  </table>
+  <p class="muted">Workshop 1 was fake data with planted problems. Today the problems are <b>real</b>, and nobody planted them.</p>
+</div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-title="Get set up">
+<div class="inner">
+  <div class="kicker">Setup · 3 min</div>
+  <h2>Get set up</h2>
+  <ol class="steps">
+    <li>Open the notebook: <a href="https://colab.research.google.com/github/slopez4/RA_Workshops/blob/main/05_analysis_scripts_ggp/notebooks/workshop_student.ipynb" target="_blank" rel="noopener">Colab link</a> → <b>Run anyway</b> if asked.</li>
+    <li><b>File → Save a copy in Drive.</b> The tab should say <i>"Copy of…"</i></li>
+    <li>Run the <b>SETUP</b> cell. It downloads the data (~10 s). 👍 when it prints <code>Data folder: …</code></li>
+  </ol>
+  <div class="think"><p><b>These are real people's data.</b> IDs are new random codes, age and sex were removed. Keep the files inside the workshop: don't share or post them.</p></div>
+  <p class="muted" style="font-size:0.85em">New today: 🔮 <b>Predict</b> cells. Write your guess in the comment <i>before</i> running. Being wrong is useful: it shows you which line you misread.</p>
+</div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-title="Part 0 · The task">
+<div class="inner">
+  <div class="kicker">Part 0 · The study</div>
+  <h2>The Repetition Discrimination Task</h2>
+  <img src="img/rdt_displays.png" alt="Rows of nine alternating squares and circles with one repeated pair, grouped by proximity, color, or boxes" style="width:100%; border-radius:8px; margin-bottom:0.6em">
+  <p>9 shapes alternate, except <b>one pair repeats</b>. Which shape repeated? Press a key, fast.</p>
+</div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-title="Part 0 · The prediction">
+<div class="inner">
+  <div class="kicker">Part 0 · The study</div>
+  <h2>The prediction</h2>
+  <div class="cols">
+    <div>
+      <p>A <b>grouping cue</b> splits the row into pairs:</p>
+      <ul>
+        <li><b>PROX</b> closer together · <b>SIM</b> same color</li>
+        <li><b>CR</b> inside a box · <b>EC</b> joined by a bar</li>
+        <li><b>COMMONFATE</b> move together · <b>SYNCHRONY</b> flicker together</li>
+        <li><b>IPG</b> shared flankers · <b>NEUTRAL</b> no cue</li>
+      </ul>
+    </div>
+    <div>
+      <p><b>WITHIN</b>: repeated pair inside one group.<br><b>BETWEEN</b>: split across two groups.</p>
+      <p>Repetitions are easier to see inside a group, so:</p>
+      <p class="big"><b>effect = RT<sub>BETWEEN</sub> − RT<sub>WITHIN</sub> &gt; 0</b></p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-title="Part 1 · Predict, then run">
+<div class="inner">
+  <div class="kicker">Part 1 · Reading code</div>
+  <h2>Predict, then run</h2>
+<pre><code class="py">trials = [
+    {"cue": "PROX", "wbn": "WITHIN",  "correct": 1, "rt": 0.81},
+    {"cue": "PROX", "wbn": "BETWEEN", "correct": 1, "rt": 1.20},
+    {"cue": "PROX", "wbn": "WITHIN",  "correct": 0, "rt": 0.65},
+    {"cue": "PROX", "wbn": "BETWEEN", "correct": 1, "rt": 1.05},
+]
+within, between = [], []
+for trial in trials:
+    if trial["correct"] == 0:
+        continue                  # skip to the next trial
+    if trial["wbn"] == "WITHIN":
+        within.append(trial["rt"])
+    else:
+        between.append(trial["rt"])</code></pre>
+  <div class="think"><p>Before running: what is in <code>within</code>? In <code>between</code>?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p><code>within = [0.81]</code>, <code>between = [1.2, 1.05]</code>. The third trial was an error, so <code>continue</code> skipped it.</p>
+  </details>
+</div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="Part 1 · Functions">
+<div class="inner">
+  <div class="kicker">Part 1 · Reading code</div>
+  <h2>Functions: inputs → output</h2>
+<pre><code class="py">def mean(values):
+    """Average of a list of numbers."""
+    return sum(values) / len(values)
+
+effect = mean(between) - mean(within)        # TODO
+print(f"Grouping effect: {effect * 1000:.0f} ms")</code></pre>
+  <ul>
+    <li><code>def</code> names a recipe; <code>values</code> is its input; <code>return</code> hands back the result.</li>
+    <li>Real analysis scripts are a handful of functions called in order.</li>
+  </ul>
+  <div class="think"><p>The answer is <b>315 ms</b>, not 395 ms. Why? Why do we leave errors out of an RT analysis?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>395 ms would include the error trial (0.65 s) in WITHIN. An error RT measures something else (a guess, a slip), not how fast the repetition was <i>seen</i>.</p>
+  </details>
+</div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-title="Part 2 · Many files">
+<div class="inner">
+  <div class="kicker">Part 2 · Bring in many files</div>
+  <h2>One file per participant → one table</h2>
+<pre><code class="py">files = sorted(DATA_DIR.glob("RDTdata_*.csv"))   # every file that fits the pattern
+
+tables = []
+for path in files:
+    one = pd.read_csv(path, dtype={"subjectId": str})
+    subject = path.stem.split("_")[1]             # "RDTdata_102" -> "102"
+    if subject == "999" or len(one) == 0:         # debug ID, or an empty file
+        continue
+    tables.append(one)
+
+df = pd.concat(tables, ignore_index=True)         # stack them</code></pre>
+  <div class="think"><p>There are 26 files for 25 participants. Which one is extra, and what is it for?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p><code>RDTdata_999.csv</code>: ID 999 is reserved for <b>debugging</b> (lab rule: 1–100 pilots, 999 debug, 101+ real). It has 0 trials. Analysis code drops 999 <i>by ID</i>, so a test run can never sneak into a result.</p>
+  </details>
+</div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="Part 2 · IDs are text">
+<div class="inner">
+  <div class="kicker">Part 2 · Bring in many files</div>
+  <h2>IDs are text, not numbers</h2>
+<pre><code class="py">pd.Series(["007", "101"]).astype(int).tolist()    # -> [7, 101]</code></pre>
+  <ul>
+    <li>Read as a number, <code>"007"</code> becomes <code>7</code>, and no longer matches its file name.</li>
+    <li><code>dtype={"subjectId": str}</code> keeps IDs exactly as typed.</li>
+    <li>Excel does the same thing silently when it saves a CSV. Don't open data files in Excel and save them.</li>
+  </ul>
+  <div class="think"><p><code>path.stem.split("_")[1]</code> is three steps. What does each give for <code>RDTdata_102.csv</code>?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p><code>.stem</code> → <code>"RDTdata_102"</code> (name without <code>.csv</code>) · <code>.split("_")</code> → <code>["RDTdata", "102"]</code> · <code>[1]</code> → <code>"102"</code>.</p>
+  </details>
+</div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-title="Part 3 · Count first">
+<div class="inner">
+  <div class="kicker">Part 3 · Look before you analyze</div>
+  <h2>Count before you compute</h2>
+<pre><code class="py">n_trials = df.groupby("subjectId").size()
+n_trials.value_counts()          # 720 trials: 22 people · 1200 trials: 3 people
+n_trials[n_trials &gt; 720]          # TODO: who are they?</code></pre>
+  <div class="think"><p>Three participants ran <b>5 blocks</b> instead of 3 (early pilots, before the task was shortened). Options: keep everything? Drop them? Keep their first 3 blocks?</p></div>
+  <details class="reveal"><summary>What the lab does</summary>
+    <p><b>Keep blocks 1–3 for everyone.</b> Then everyone did the same task, with the same amount of practice and fatigue. Dropping them wastes good data; keeping all 5 blocks gives them more weight and more practice than everyone else.</p>
+  </details>
+</div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-title="Part 3 · Impossible values">
+<div class="inner">
+  <div class="kicker">Part 3 · Look before you analyze</div>
+  <h2>Look at the extremes</h2>
+<pre><code class="py">df["rt"].describe()        # min -1.152 s ... max 64.785 s
+df[df["rt"] &lt; 0.2]          # five very fast trials</code></pre>
+  <table>
+    <tr><th>subjectId</th><th class="num">block</th><th class="num">trial</th><th>cueType</th><th class="num">ac</th><th class="num">rt</th></tr>
+    <tr><td>768</td><td class="num">3</td><td class="num">1</td><td>PROX</td><td class="num">0</td><td class="num">−0.9357</td></tr>
+    <tr><td>921</td><td class="num">3</td><td class="num">121</td><td>SIM</td><td class="num">0</td><td class="num">−1.1520</td></tr>
+  </table>
+  <div class="think"><p>A <b>negative</b> RT? Both are right after a "press space" screen (trial 1, and trial 121 = after the halfway break). What happened?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>The participant pressed a response key (<code>n</code>/<code>m</code>) <i>while the break screen was up</i>. The experiment never emptied the key buffer, so that old press became the answer to the next trial, timestamped before the trial's clock started. <b>It's a bug in the experiment, not in the person.</b> Workshop 6 fixes it. And 65 s? Someone looked away from the screen for a minute.</p>
+  </details>
+</div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-title="Part 3 · People">
+<div class="inner">
+  <div class="kicker">Part 3 · Look before you analyze</div>
+  <h2>Check each person</h2>
+<pre><code class="py">first3 = df[df["block"] &lt;= 3]
+per_person = pd.DataFrame({
+    "accuracy": first3.groupby("subjectId")["ac"].mean(),
+    "share_slower_than_5s": (first3["rt"] &gt; 5).groupby(first3["subjectId"]).mean(),
+})
+per_person.sort_values("accuracy").head()</code></pre>
+  <table style="max-width:28em">
+    <tr><th>subjectId</th><th class="num">accuracy</th><th class="num">slower than 5 s</th></tr>
+    <tr><td>726</td><td class="num">0.829</td><td class="num">0.240</td></tr>
+    <tr><td>768</td><td class="num">0.868</td><td class="num">0.039</td></tr>
+    <tr><td>370</td><td class="num">0.869</td><td class="num">0.000</td></tr>
+  </table>
+  <div class="think"><p>Exclude 726? Chance is 50%. <b>Decide your rule now</b>, before you see anyone's grouping effect.</p></div>
+</div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-title="Part 4 · Clean with a log">
+<div class="inner">
+  <div class="kicker">Part 4 · Clean the data</div>
+  <h2>Settings at the top, a log for every step</h2>
+  <div class="cols">
+<pre><code class="py">N_BLOCKS = 3
+MIN_ACCURACY = 0.80
+MIN_RT = 0.2     # seconds
+MAX_RT = 5.0     # seconds
+
+clean = clean[(clean["rt"] &gt;= MIN_RT)
+              &amp; (clean["rt"] &lt;= MAX_RT)]
+log.append(("RT window", len(clean),
+            clean["subjectId"].nunique()))</code></pre>
+    <div>
+      <table>
+        <tr><th>step</th><th class="num">trials left</th><th class="num">people</th></tr>
+        <tr><td>blocks 1–3</td><td class="num">18,000</td><td class="num">25</td></tr>
+        <tr><td>accuracy rule</td><td class="num">18,000</td><td class="num">25</td></tr>
+        <tr><td>correct trials</td><td class="num">17,148</td><td class="num">25</td></tr>
+        <tr><td>RT window</td><td class="num">16,726</td><td class="num">25</td></tr>
+      </table>
+      <p class="muted" style="font-size:0.85em"><code>&amp;</code> = AND, <code>|</code> = OR, <code>~</code> = NOT. Each condition needs its own brackets.</p>
+    </div>
+  </div>
+  <div class="think"><p>What share of trials did we lose (7.1%)? Which step removed the most? Would one person losing far more than the others worry you?</p></div>
+</div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-title="Part 5 · groupby → unstack">
+<div class="inner">
+  <div class="kicker">Part 5 · The grouping effect</div>
+  <h2>groupby → unstack → subtract</h2>
+<pre><code class="py">means = clean.groupby(["subjectId", "cueType", "wbn"])["rt"].mean()  # person x cue x wbn
+means = means.unstack("wbn")                      # wbn values become columns
+means["effect_ms"] = (means["BETWEEN"] - means["WITHIN"]) * 1000
+effects = means["effect_ms"].unstack("cueType").dropna(axis=1, how="all")</code></pre>
+  <div class="cols">
+    <table>
+      <tr><th colspan="2"></th><th class="num">BETWEEN</th><th class="num">WITHIN</th></tr>
+      <tr><td>102</td><td>CR</td><td class="num">1.916</td><td class="num">1.508</td></tr>
+      <tr><td></td><td>PROX</td><td class="num">1.408</td><td class="num">1.227</td></tr>
+      <tr><td></td><td>SIM</td><td class="num">1.679</td><td class="num">1.278</td></tr>
+    </table>
+    <table>
+      <tr><th></th><th class="num">CR</th><th class="num">PROX</th><th class="num">SIM</th></tr>
+      <tr><td>102</td><td class="num">408</td><td class="num">181</td><td class="num">401</td></tr>
+      <tr><td>123</td><td class="num">197</td><td class="num">164</td><td class="num">379</td></tr>
+      <tr><td>…</td><td></td><td></td><td></td></tr>
+    </table>
+  </div>
+  <p class="muted">Left: means for one person. Right: <code>effects</code>, one row per person, one column per cue (ms).</p>
+</div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-title="Part 5 · Results">
+<div class="inner">
+  <div class="kicker">Part 5 · The grouping effect</div>
+  <h2>What we found</h2>
+  <img src="img/rdt_effects_by_cue.png" alt="Bar chart of grouping effect per cue with one dot per participant; SIM largest, EC smallest" style="max-width:100%; max-height:58vh; border-radius:8px">
+  <details class="reveal"><summary>Read it</summary>
+    <p>Every cue groups: all effects are above 0. <b>SIM</b> is strongest (559 ms, 25/25 participants). <b>EC</b> is weakest (111 ms) and only <b>18 of 25</b> people show it. The bar alone hides that.</p>
+  </details>
+</div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-title="Part 5 · Per person first">
+<div class="inner">
+  <div class="kicker">Part 5 · The grouping effect</div>
+  <h2>Why one number per person first?</h2>
+  <div class="think"><p>What would go wrong if we averaged all 16,726 trials at once?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <ul>
+      <li><b>Weights.</b> People with more kept trials (fast, accurate, or the 5-block pilots before trimming) would count more.</li>
+      <li><b>Error bars.</b> The SEM would pretend we have 16,726 independent observations. We have 25 people. The question is about people, so the sample is people.</li>
+    </ul>
+  </details>
+</div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-title="Part 6 · Find the bugs">
+<div class="inner">
+  <div class="kicker">Part 6 · Find the bugs</div>
+  <h2>It runs. It's wrong. Find 3 bugs.</h2>
+<pre><code class="py">def buggy_analysis(df):
+    keep = df[df["block"] &lt; 3]
+    keep = keep[keep["ac"] == 1]
+    keep = keep[(keep["rt"] &gt;= 0.2) | (keep["rt"] &lt;= 5.0)]
+    means = keep.groupby(["subjectId", "cueType", "wbn"])["rt"].mean().unstack("wbn")
+    means["effect_ms"] = (means["WITHIN"] - means["BETWEEN"]) * 1000
+    ...</code></pre>
+  <p>Don't hunt for "wrong-looking code". <b>Check what each step produces</b>: <code>len(keep)</code>, <code>keep["rt"].max()</code>, the sign of the result.</p>
+  <details class="reveal"><summary>The 3 bugs, and a check for each</summary>
+    <table>
+      <tr><th>Bug</th><th>Symptom</th><th>Check that catches it</th></tr>
+      <tr><td><code>&lt; 3</code> keeps blocks 1–2</td><td>11,322 trials, not 16,726</td><td><code>assert keep["block"].max() == 3</code></td></tr>
+      <tr><td><code>|</code> (OR) keeps every RT</td><td>slowest RT kept: 36 s</td><td><code>assert keep["rt"].between(0.2, 5).all()</code></td></tr>
+      <tr><td>WITHIN − BETWEEN</td><td>every effect negative</td><td>compare with the prediction</td></tr>
+    </table>
+    <p>Only bug 3 flips the conclusion. Bugs 1 and 2 change the numbers quietly, which is why they're worse: nobody looks twice.</p>
+  </details>
+</div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-title="Part 7 · Anatomy of a script">
+<div class="inner">
+  <div class="kicker">Part 7 · From notebook to script</div>
+  <h2>Anatomy of an analysis script</h2>
+  <div class="cols">
+    <ol class="steps">
+      <li><b>Header</b>: what it does, how to run it, what it reads and writes.</li>
+      <li><b>Settings</b>: every decision, with its unit and why.</li>
+      <li><b>One function per step</b>: load, clean, effects, summarize, plot. Each has a docstring.</li>
+      <li><b><code>main()</code></b> calls them in order and saves to <code>prettydata/</code> and <code>figtree/</code>.</li>
+    </ol>
+<pre><code class="py">MIN_RT = 0.2   # seconds; faster than this
+               # is a press before the display
+               # was seen
+MAX_RT = 5.0   # seconds; slower = attention
+               # wandered (the lab's cutoff)</code></pre>
+  </div>
+  <p>Open <a href="https://github.com/slopez4/RA_Workshops/blob/main/05_analysis_scripts_ggp/rdt_analysis.py" target="_blank" rel="noopener"><code>rdt_analysis.py</code></a> and find each Part of today in it.</p>
+</div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-title="Part 7 · Robustness">
+<div class="inner">
+  <div class="kicker">Part 7 · How robust is the answer?</div>
+  <h2>Same data, another reasonable cutoff</h2>
+<pre><code class="py">!python {SCRIPT}               # MAX_RT = 5 s
+!python {SCRIPT} --max-rt 2    # MAX_RT = 2 s</code></pre>
+  <table>
+    <tr><th>Cutoff</th><th class="num">SIM</th><th class="num">SYNCHRONY</th><th class="num">CR</th><th class="num">PROX</th><th class="num">COMMONFATE</th><th class="num">IPG</th><th class="num">EC</th></tr>
+    <tr><td>5 s</td><td class="num">559</td><td class="num">390</td><td class="num">364</td><td class="num">351</td><td class="num">215</td><td class="num">169</td><td class="num">111</td></tr>
+    <tr><td>2 s</td><td class="num">302</td><td class="num">200</td><td class="num">100</td><td class="num">229</td><td class="num">155</td><td class="num">114</td><td class="num">78</td></tr>
+  </table>
+  <div class="think"><p>Every effect shrinks, and <b>CR</b> drops from 3rd to 6th. Why would cutting slow trials shrink the effect? What should a paper report?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>Slow trials are mostly <b>BETWEEN</b> trials (the hard ones), (69% of the kept trials slower than 2 s), so cutting them removes the biggest differences. Both cutoffs are defensible. Choose it <b>before</b> seeing results, report it, and show that the main conclusion holds either way (here: every cue still groups; the ranking does not hold).</p>
+  </details>
+</div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-title="Five habits">
+<div class="inner">
+  <div class="kicker">Wrap-up</div>
+  <h2>Five habits</h2>
+  <ol class="steps">
+    <li><b>Count before you compute</b>: files, participants, trials, blocks.</li>
+    <li><b>Look at the extremes</b>: an impossible value is a clue about the experiment.</li>
+    <li><b>Decide rules before results</b>, and log what each one removes.</li>
+    <li><b>One number per person</b> first, then across people.</li>
+    <li><b>Bugs rarely crash.</b> Check what each step produces; write <code>assert</code>s.</li>
+  </ol>
+  <p class="muted">⭐ Stretch in the notebook: the effect in accuracy, split-half reliability, and a NEUTRAL baseline.</p>
+</div>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-title="Reference · Cheat sheet">
+<div class="inner">
+  <div class="kicker">Reference</div>
+  <h2>Cheat sheet</h2>
+  <table>
+    <tr><th>You want to…</th><th>Code</th></tr>
+    <tr><td>find files by pattern</td><td><code>sorted(folder.glob("RDTdata_*.csv"))</code></td></tr>
+    <tr><td>read a CSV, IDs as text</td><td><code>pd.read_csv(path, dtype={"subjectId": str})</code></td></tr>
+    <tr><td>stack tables</td><td><code>pd.concat(list_of_tables, ignore_index=True)</code></td></tr>
+    <tr><td>rows per group</td><td><code>df.groupby("subjectId").size()</code></td></tr>
+    <tr><td>how often each value</td><td><code>series.value_counts()</code></td></tr>
+    <tr><td>summary of a column</td><td><code>df["rt"].describe()</code></td></tr>
+    <tr><td>keep rows (AND / OR / NOT)</td><td><code>df[(a) &amp; (b)]</code> · <code>df[(a) | (b)]</code> · <code>df[~a]</code></td></tr>
+    <tr><td>in a list of values</td><td><code>df["subjectId"].isin(ids)</code></td></tr>
+    <tr><td>mean per person × condition</td><td><code>df.groupby(["subjectId", "wbn"])["rt"].mean()</code></td></tr>
+    <tr><td>a level into columns</td><td><code>.unstack("wbn")</code></td></tr>
+    <tr><td>drop all-empty columns</td><td><code>.dropna(axis=1, how="all")</code></td></tr>
+    <tr><td>mean, SEM, count</td><td><code>.mean()</code> · <code>.sem()</code> · <code>.count()</code></td></tr>
+    <tr><td>stop if something is wrong</td><td><code>assert condition, "message"</code></td></tr>
+    <tr><td>run a script from a notebook</td><td><code>!python script.py --max-rt 2</code></td></tr>
+  </table>
+</div>
+</section>
+
+<!-- 22 -->
+<section class="slide" data-title="Reference · Common errors">
+<div class="inner">
+  <div class="kicker">Reference</div>
+  <h2>Common errors</h2>
+  <table>
+    <tr><th>You see</th><th>Usually means</th></tr>
+    <tr><td><code>NameError: name 'df' is not defined</code></td><td>An earlier cell wasn't run. <b>Runtime → Run before</b>.</td></tr>
+    <tr><td><code>KeyError: 'rt '</code></td><td>The column name is spelled differently (spaces, capitals). Check <code>df.columns</code>.</td></tr>
+    <tr><td><code>TypeError: unsupported operand … 'str'</code></td><td>A blank <code>___</code> is still there, or a number column was read as text.</td></tr>
+    <tr><td><code>ValueError: The truth value of a Series is ambiguous</code></td><td>Used <code>and</code>/<code>or</code> on columns. Use <code>&amp;</code>/<code>|</code> and brackets.</td></tr>
+    <tr><td><code>ValueError: No objects to concatenate</code></td><td><code>files</code> is empty: wrong folder or pattern. Print <code>DATA_DIR</code>.</td></tr>
+    <tr><td>Numbers come out as <code>object</code>, maths fails</td><td>An empty file (like 999) was stacked with the others. Skip empty files before <code>concat</code>.</td></tr>
+    <tr><td>Setup cell: <code>git clone</code> fails</td><td>No internet in the runtime, or the repo isn't public yet. Tell the instructor.</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- 23 -->
+<section class="slide" data-title="Up next">
+<div class="inner">
+  <div class="kicker">Up next</div>
+  <h1>Workshop 6: the experiment side</h1>
+  <p class="big muted">Today's negative RTs came from the experiment code.<br>Next time: build trial matrices, time stimuli to the frame, and never lose data.</p>
+  <p style="margin-top:1.4em; font-size:0.85em">
+    Materials: <a href="https://github.com/slopez4/RA_Workshops/tree/main/05_analysis_scripts_ggp" target="_blank" rel="noopener">github.com/slopez4/RA_Workshops</a> ·
+    <a href="https://colab.research.google.com/github/slopez4/RA_Workshops/blob/main/05_analysis_scripts_ggp/notebooks/workshop_solutions.ipynb" target="_blank" rel="noopener">solutions notebook</a>
+  </p>
+</div>
+</section>
+
+</main>
+
+<div class="nav"><button id="prevBtn" aria-label="Previous slide">‹</button><button id="nextBtn" aria-label="Next slide">›</button></div>
+<div class="slide-num" id="slideNum"></div>
+
+<script>
+(function () {
+  // --- tiny Python highlighter -------------------------------------------
+  var KW = /^(import|from|as|for|in|if|elif|else|while|break|continue|def|return|class|try|except|finally|raise|with|is|None|True|False|and|or|not|print|len|max|min|assert|lambda)$/;
+  var TOKEN = /(#[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|(___)|\b([A-Za-z_]\w*)\b|\b(\d+(?:\.\d+)?)\b/g;
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  document.querySelectorAll("code.py").forEach(function (el) {
+    var src = el.textContent, out = "", last = 0, m;
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      var t = esc(m[0]);
+      if (m[1]) out += '<span class="tok-c">' + t + "</span>";
+      else if (m[2]) out += '<span class="tok-s">' + t + "</span>";
+      else if (m[3]) out += '<span class="tok-b">' + t + "</span>";
+      else if (m[4]) out += KW.test(m[4]) ? '<span class="tok-k">' + t + "</span>" : t;
+      else out += '<span class="tok-n">' + t + "</span>";
+      last = TOKEN.lastIndex;
+    }
+    el.innerHTML = out + esc(src.slice(last));
+  });
+
+  // --- slides / reference mode --------------------------------------------
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var body = document.body, cur = 0;
+  var progress = document.getElementById("progress");
+  var num = document.getElementById("slideNum");
+  var modeBtn = document.getElementById("modeBtn");
+
+  slides.forEach(function (s, i) {
+    s.id = "s" + (i + 1);
+    var li = document.createElement("li");
+    li.innerHTML = '<a href="#s' + (i + 1) + '">' + esc(s.dataset.title) + "</a>";
+    document.getElementById("tocList").appendChild(li);
+  });
+
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  function show(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, j) { s.classList.toggle("active", j === cur); });
+    num.textContent = (cur + 1) + " / " + slides.length;
+    progress.style.width = ((cur + 1) / slides.length * 100) + "%";
+    if (location.hash !== "#s" + (cur + 1)) history.replaceState(null, "", "#s" + (cur + 1));
+  }
+
+  function setMode(mode) {
+    body.classList.toggle("mode-slides", mode === "slides");
+    body.classList.toggle("mode-ref", mode === "ref");
+    modeBtn.textContent = mode === "slides" ? "📖 Reference view" : "▶ Slide view";
+    progress.style.display = mode === "slides" ? "" : "none";
+    store("ws5-mode", mode);
+    if (mode === "slides") show(cur);
+    else slides[cur].scrollIntoView({ block: "start" });
+  }
+
+  function hashIndex() {
+    var m = /^#s(\d+)$/.exec(location.hash);
+    return m ? parseInt(m[1], 10) - 1 : 0;
+  }
+
+  cur = hashIndex();
+  var saved = load("ws5-mode");
+  setMode(saved || (window.innerWidth < 760 ? "ref" : "slides"));
+
+  window.addEventListener("hashchange", function () {
+    cur = hashIndex();
+    if (body.classList.contains("mode-slides")) show(cur);
+  });
+
+  modeBtn.addEventListener("click", function () {
+    setMode(body.classList.contains("mode-slides") ? "ref" : "slides");
+  });
+  document.getElementById("prevBtn").addEventListener("click", function () { show(cur - 1); });
+  document.getElementById("nextBtn").addEventListener("click", function () { show(cur + 1); });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === "r" || k === "R") { modeBtn.click(); return; }
+    if (k === "f" || k === "F") {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {});
+      else document.exitFullscreen();
+      return;
+    }
+    if (!body.classList.contains("mode-slides")) return;
+    if (k === "ArrowRight" || k === "PageDown" || k === " ") { e.preventDefault(); show(cur + 1); }
+    else if (k === "ArrowLeft" || k === "PageUp") { e.preventDefault(); show(cur - 1); }
+    else if (k === "Home") show(0);
+    else if (k === "End") show(slides.length - 1);
+  });
+
+  // swipe on touch screens
+  var x0 = null;
+  document.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener("touchend", function (e) {
+    if (x0 === null || !body.classList.contains("mode-slides")) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+
+  // theme toggle (follows the system by default)
+  var root = document.documentElement;
+  var savedTheme = load("ws5-theme");
+  if (savedTheme) root.setAttribute("data-theme", savedTheme);
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme")
+      ? root.getAttribute("data-theme") === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    store("ws5-theme", next);
+  });
+})();
+</script>
+</body>
+</html>

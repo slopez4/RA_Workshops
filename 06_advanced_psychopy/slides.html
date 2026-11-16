@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Experiments That Don't Lose Data</title>
+<meta name="description" content="Slides and reference for Workshop 6: building trial matrices, frame-accurate timing, and data-loss prevention in PsychoPy.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;750&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --ink: #1d2230;
+  --muted: #5d6475;
+  --line: #e3e0d8;
+  --accent: #2f6fdf;
+  --accent-soft: #e6eefc;
+  --think: #fff5d6;
+  --think-line: #e9c85a;
+  --code-bg: #f3f1ec;
+  --c-comment: #7a8091;
+  --c-string: #1f7a4d;
+  --c-keyword: #8a3ab9;
+  --c-number: #b3541e;
+  --c-blank: #d9432f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161c;
+    --surface: #1b1e26;
+    --ink: #e8e9ee;
+    --muted: #a0a6b5;
+    --line: #2d313c;
+    --accent: #7fa8ff;
+    --accent-soft: #1f2a42;
+    --think: #2c2715;
+    --think-line: #8c7427;
+    --code-bg: #20232c;
+    --c-comment: #8990a1;
+    --c-string: #7fd1a3;
+    --c-keyword: #d19bf2;
+    --c-number: #f0a36e;
+    --c-blank: #ff7a66;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14161c;
+  --surface: #1b1e26;
+  --ink: #e8e9ee;
+  --muted: #a0a6b5;
+  --line: #2d313c;
+  --accent: #7fa8ff;
+  --accent-soft: #1f2a42;
+  --think: #2c2715;
+  --think-line: #8c7427;
+  --code-bg: #20232c;
+  --c-comment: #8990a1;
+  --c-string: #7fd1a3;
+  --c-keyword: #d19bf2;
+  --c-number: #f0a36e;
+  --c-blank: #ff7a66;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.45;
+}
+a { color: var(--accent); }
+h1, h2, h3 { line-height: 1.15; margin: 0 0 0.5em; letter-spacing: -0.01em; }
+h1 { font-size: 2.6em; font-weight: 750; }
+h2 { font-size: 1.75em; font-weight: 750; }
+h3 { font-size: 1.1em; font-weight: 600; color: var(--muted); margin-top: 0.8em; }
+p, ul, ol { margin: 0 0 0.7em; }
+li { margin: 0.2em 0; }
+.kicker {
+  font-size: 0.72em; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.6em;
+}
+.muted { color: var(--muted); }
+.big { font-size: 1.25em; }
+
+code, pre { font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; font-variant-ligatures: none; }
+:not(pre) > code {
+  background: var(--code-bg); padding: 0.08em 0.35em; border-radius: 4px; font-size: 0.9em;
+}
+pre {
+  background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+  padding: 0.85em 1.1em; margin: 0 0 0.8em; font-size: 0.8em; line-height: 1.55;
+  overflow-x: auto; white-space: pre;
+}
+.tok-c { color: var(--c-comment); font-style: italic; }
+.tok-s { color: var(--c-string); }
+.tok-k { color: var(--c-keyword); font-weight: 600; }
+.tok-n { color: var(--c-number); }
+.tok-b { color: var(--c-blank); font-weight: 600; background: color-mix(in srgb, var(--c-blank) 14%, transparent); border-radius: 3px; }
+
+table { border-collapse: collapse; width: 100%; margin: 0 0 0.8em; font-size: 0.82em; }
+th, td { text-align: left; padding: 0.4em 0.7em; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.think {
+  background: var(--think); border-left: 4px solid var(--think-line);
+  border-radius: 8px; padding: 0.7em 1em; margin: 0 0 0.8em;
+}
+.think::before { content: "🤔 Think"; display: block; font-weight: 600; font-size: 0.8em; margin-bottom: 0.25em; }
+.think p:last-child, .think ul:last-child, .think ol:last-child { margin-bottom: 0; }
+
+details.reveal {
+  border: 1px dashed var(--line); border-radius: 8px; padding: 0.5em 0.9em; margin: 0 0 0.8em;
+}
+details.reveal summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+details.reveal[open] summary { margin-bottom: 0.5em; }
+
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6em; align-items: start; }
+.btn {
+  display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+  padding: 0.55em 1.1em; border-radius: 8px; font-weight: 600;
+}
+:root[data-theme="dark"] .btn { color: #0d1220; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn { color: #0d1220; } }
+.steps { counter-reset: s; list-style: none; padding: 0; }
+.steps li { counter-increment: s; padding-left: 2.2em; position: relative; margin: 0.45em 0; }
+.steps li::before {
+  content: counter(s); position: absolute; left: 0; top: 0.05em;
+  width: 1.5em; height: 1.5em; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+  display: grid; place-items: center; font-weight: 700; font-size: 0.85em;
+}
+.pill {
+  display: inline-block; font-size: 0.72em; font-weight: 600; padding: 0.15em 0.6em; border-radius: 99px;
+  background: var(--accent-soft); color: var(--accent); vertical-align: middle;
+}
+
+/* ---------- Top bar ---------- */
+.bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 1rem;
+  font-size: 14px; background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(6px); border-bottom: 1px solid var(--line);
+}
+.bar .title { font-weight: 600; margin-right: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar button {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 6px; padding: 0.3rem 0.7rem; cursor: pointer;
+}
+.bar button:hover { border-color: var(--accent); }
+.progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 11; transition: width .2s; }
+
+/* ---------- Slide mode ---------- */
+body.mode-slides { overflow: hidden; }
+body.mode-slides .slide {
+  display: none; position: fixed; inset: 0; padding: 7vh 7vw 7vh;
+  font-size: min(1.75vw, 2.85vh); overflow-y: auto;
+  flex-direction: column;
+}
+body.mode-slides .slide.active { display: flex; }
+body.mode-slides .slide > .inner { max-width: 56em; width: 100%; margin: auto; }
+body.mode-slides .toc, body.mode-slides .ref-only { display: none; }
+body.mode-slides .bar { opacity: 0.25; transition: opacity .2s; }
+body.mode-slides .bar:hover, body.mode-slides .bar:focus-within { opacity: 1; }
+.slide-num { position: fixed; right: 1.2rem; bottom: 0.9rem; font-size: 13px; color: var(--muted); }
+body.mode-ref .slide-num, body.mode-ref .nav { display: none; }
+.nav { position: fixed; bottom: 0.7rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.4rem; }
+.nav button {
+  font-size: 18px; width: 2.2rem; height: 2.2rem; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); opacity: 0.5;
+}
+.nav button:hover { opacity: 1; }
+
+/* ---------- Reference mode ---------- */
+body.mode-ref { font-size: 17px; }
+body.mode-ref main { max-width: 880px; margin: 0 auto; padding: 4.2rem 16px 4rem; }
+body.mode-ref .slide {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 1.6em 1.8em; margin: 0 0 1.2rem; scroll-margin-top: 4rem;
+}
+body.mode-ref h1 { font-size: 2.1em; }
+body.mode-ref h2 { font-size: 1.45em; }
+.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.2em 1.6em; margin: 0 0 1.2rem; }
+.toc h2 { font-size: 1.1em; }
+.toc ol { columns: 2; column-gap: 2em; padding-left: 1.3em; margin: 0; font-size: 0.92em; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+
+@media (max-width: 700px) {
+  body.mode-ref .slide { padding: 1.1em 1em; }
+  .cols { grid-template-columns: 1fr; gap: 0; }
+  .toc ol { columns: 1; }
+  pre { font-size: 0.74em; }
+  table { font-size: 0.78em; }
+  th, td { padding: 0.35em 0.4em; }
+  .bar .title { font-size: 13px; }
+}
+
+img { display: block; height: auto; }
+.warn {
+  background: color-mix(in srgb, var(--c-blank) 10%, var(--surface)); border-left: 4px solid var(--c-blank);
+  border-radius: 8px; padding: 0.7em 1em; margin: 0 0 0.8em;
+}
+.warn::before { content: "⚠ Data loss"; display: block; font-weight: 600; font-size: 0.8em; margin-bottom: 0.25em; }
+.warn p:last-child, .warn ul:last-child { margin-bottom: 0; }
+.ok {
+  background: var(--accent-soft); border-left: 4px solid var(--accent);
+  border-radius: 8px; padding: 0.7em 1em; margin: 0 0 0.8em;
+}
+.ok p:last-child, .ok ul:last-child { margin-bottom: 0; }
+pre.m { border-left: 4px solid var(--think-line); }
+pre .label { display: block; font-size: 0.8em; color: var(--muted); margin-bottom: 0.3em; font-style: normal; }
+@media print {
+  .bar, .nav, .slide-num, .progress { display: none !important; }
+}
+</style>
+</head>
+<body class="mode-slides">
+<div class="progress" id="progress"></div>
+<div class="bar">
+  <span class="title">Workshop 6 · Experiments That Don't Lose Data</span>
+  <button id="modeBtn" title="Switch view (R)">📖 Reference view</button>
+  <button id="themeBtn" title="Toggle light/dark">◐</button>
+</div>
+
+<main id="deck">
+
+<nav class="toc ref-only" id="toc">
+  <h2>Contents</h2>
+  <ol id="tocList"></ol>
+</nav>
+
+<!-- 1 -->
+<section class="slide" data-title="Title">
+<div class="inner">
+  <div class="kicker">RA Workshop 6 · Advanced</div>
+  <h1>Experiments That Don't Lose Data</h1>
+  <p class="big muted">Trial matrices, frame-accurate timing, and escape hatches,<br>in Python and PsychoPy, using the lab's grouping task.</p>
+  <p class="muted" style="font-size:0.8em">Keys: <code>→</code> next · <code>←</code> back · <code>R</code> reference view · <code>F</code> fullscreen</p>
+</div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Today's plan">
+<div class="inner">
+  <div class="kicker">Agenda · ~75 min (or two sittings)</div>
+  <h2>Today's plan</h2>
+  <table>
+    <tr><th>Time</th><th>What</th></tr>
+    <tr><td>0:00</td><td>Setup: run the finished task once as ID 999</td></tr>
+    <tr><td>0:05</td><td><b>Part 1</b> · The trial matrix: design → table → file, before trial 1</td></tr>
+    <tr><td>0:25</td><td><b>Part 2</b> · Timing and efficiency: frames, flips, and the negative-RT bug</td></tr>
+    <tr><td>0:45</td><td><b>Part 3</b> · Never lose data: ESC, crashes, resume, overwrite, counterbalancing</td></tr>
+    <tr><td>1:05</td><td><b>Part 4</b> · Annotate: code someone else can trust</td></tr>
+    <tr><td>1:10</td><td>Hands-on: break it on purpose, then recover</td></tr>
+  </table>
+  <p class="muted">We'll compare three scripts: a lab MATLAB experiment (attentional blink, Psychtoolbox), the lab's PsychoPy RDT, and today's <code>grouping_task.py</code>.</p>
+</div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-title="Setup">
+<div class="inner">
+  <div class="kicker">Setup · 5 min</div>
+  <h2>Get the files and run it once</h2>
+  <ol class="steps">
+    <li><a href="https://github.com/slopez4/RA_Workshops" target="_blank" rel="noopener">The repo</a> → <b>Code → Download ZIP</b>, unzip.</li>
+    <li>PsychoPy → <b>View → Coder</b> → open <code>06_advanced_psychopy/grouping_task.py</code> → green <b>Run</b>.</li>
+    <li>Participant ID <b><code>999</code></b> (debug: small window, short blocks). Do the practice and one block.</li>
+    <li>Open <code>data/debug/</code>. You should see <code>999_trials.csv</code>, <code>999_behav.csv</code>, <code>999_info.csv</code>.</li>
+  </ol>
+  <div class="think"><p><code>999_trials.csv</code> already lists every trial of the session, including the ones you haven't run yet. Why would you want that?</p></div>
+  <p class="muted" style="font-size:0.85em">No PsychoPy handy? <code>python test_trial_matrix.py</code> and <code>python trial_matrix.py</code> run with plain Python + pandas.</p>
+</div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-title="The task">
+<div class="inner">
+  <div class="kicker">The task</div>
+  <h2>A mini Repetition Discrimination Task</h2>
+  <img src="img/rdt_displays.png" alt="Rows of nine alternating squares and circles with one repeated pair, grouped by proximity, color, or boxes" style="max-width:100%; max-height:52vh; border-radius:8px; margin-bottom:0.6em">
+  <p>3 cues (PROX, SIM, CR) × WITHIN/BETWEEN × 4 positions × 2 shapes + 8 NEUTRAL = <b>56 trials per block</b>. Press <code>n</code>/<code>m</code> for square/circle.</p>
+</div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-title="Three jobs">
+<div class="inner">
+  <div class="kicker">The big picture</div>
+  <h2>An experiment script has three jobs</h2>
+  <div class="cols">
+    <ol class="steps">
+      <li><b>Show the right thing</b>: every trial in the planned order, nothing missing, nothing repeated.</li>
+      <li><b>At the right time, and measure it</b>: durations to the frame; RTs from the moment the display appeared.</li>
+      <li><b>Never lose what happened</b>: an ESC, a crash or an experimenter mistake can't cost data or make anyone redo work.</li>
+    </ol>
+    <div class="ok"><p><b>The rule</b> (STUDY_CONVENTIONS.md, section 4): no crash, keypress or experimenter mistake should ever lose data or force a participant to redo work.</p></div>
+  </div>
+  <p class="muted">Job 3 is the one most lab scripts skip, because it only matters on the bad day.</p>
+</div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-title="Part 1 · A design is a table">
+<div class="inner">
+  <div class="kicker">Part 1 · The trial matrix</div>
+  <h2>A design is a table</h2>
+  <p>Every factor × every level = a <b>full factorial</b>. One row per combination.</p>
+<pre class="m"><code><span class="label">MATLAB (attentional blink): columns are numbers you must remember</span>Tmat = fullfact([nletters,3,2,3]);
+% column 1 is letter_num, column 2 is the stim type, column 3 is letter_color,
+% column 4 is the lag number, column 5 is probe 1 true 0- false
+Tmat(:, 2) = Tmat(:,3);
+Tmat(Tmat(:,4)==2, 4) = 7;</code></pre>
+<pre><code class="py">for cue, wbn, pos, shape in itertools.product(CUES, WBN_LEVELS, TARG_POSITIONS, TARG_TYPES):
+    rows.append({"Cue": cue, "WBN": wbn, "Targ_Pos": pos, "Targ_Type": shape})</code></pre>
+  <div class="think"><p>Six months later, what does <code>Tmat(:,4)==2</code> mean? What does <code>row["WBN"] == "WITHIN"</code> mean?</p></div>
+</div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="Part 1 · Named columns">
+<div class="inner">
+  <div class="kicker">Part 1 · The trial matrix</div>
+  <h2>Name things; don't number them</h2>
+  <div class="cols">
+    <ul>
+      <li><b>Names, not column numbers.</b> <code>row["Cue"]</code> can't silently point at the wrong column when someone inserts one.</li>
+      <li><b>Levels as words.</b> <code>"WITHIN"</code>, not <code>1</code>. The saved file is readable without a codebook.</li>
+      <li><b>No magic numbers.</b> <code>Dmat([11:2026],:)</code>: where does 2026 come from? Name it (<code>N_PADDING</code>) or compute it.</li>
+      <li><b>Every level of the design in one place</b>, at the top of <code>trial_matrix.py</code>.</li>
+    </ul>
+<pre><code class="py">CUES = ["PROX", "SIM", "CR"]
+WBN_LEVELS = ["WITHIN", "BETWEEN"]
+TARG_POSITIONS = [3, 4, 5, 6]
+TARG_TYPES = ["SQUARE", "CIRCLE"]
+N_ITEMS = 9</code></pre>
+  </div>
+</div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-title="Part 1 · Shuffle with rules">
+<div class="inner">
+  <div class="kicker">Part 1 · The trial matrix</div>
+  <h2>Shuffle, with rules and a seed</h2>
+<pre><code class="py">def shuffle_with_limit(rows, rng, max_run=MAX_RUN):
+    rows = list(rows)
+    for _ in range(MAX_SHUFFLES):
+        rng.shuffle(rows)
+        if longest_run([r["Cue"] for r in rows]) &lt;= max_run:
+            return rows
+    raise RuntimeError("Could not meet the run limit in %d shuffles." % MAX_SHUFFLES)</code></pre>
+  <ul>
+    <li><b>Constraint</b>: never more than 3 trials in a row with the same cue. Shuffle, check, repeat ("rejection sampling"). Simple, and every allowed order is equally likely.</li>
+    <li><b>A limit on tries</b>, so an impossible rule fails loudly instead of freezing the lab computer.</li>
+    <li><b><code>rng = random.Random(seed)</code></b>: the seed is saved in <code>_info.csv</code>. Same seed → the exact same session.</li>
+  </ul>
+</div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="Part 1 · Plan first, save first">
+<div class="inner">
+  <div class="kicker">Part 1 · The trial matrix</div>
+  <h2>Build the whole session, save it, <i>then</i> start</h2>
+  <div class="cols">
+    <div>
+      <p><b>Lab RDT (PsychoPy):</b> shuffles each block when it starts. <b>Lab AB (MATLAB):</b> builds each block's <code>trials</code> inside the block loop. Neither writes the plan anywhere.</p>
+      <div class="warn"><p>After a crash, the trials already shown can't be reconstructed, and a restarted block gets a <i>new</i> random order.</p></div>
+    </div>
+<pre><code class="py">seed = random.randrange(1, 10**6)
+trials = tm.build_session(N_BLOCKS, seed, debug=debug)
+trials = tm.add_response_keys(trials, keys["SQUARE"], keys["CIRCLE"])
+write_csv(trials, paths["trials"])</code></pre>
+  </div>
+  <p><code>&lt;subid&gt;_trials.csv</code> is <b>the plan</b>: every block, every trial, its correct key, before trial 1. <code>_behav.csv</code> is <b>what happened</b>. A resume replays the plan.</p>
+</div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-title="Part 1 · Debug mode">
+<div class="inner">
+  <div class="kicker">Part 1 · The trial matrix</div>
+  <h2>Debug mode: same code, fewer trials</h2>
+<pre><code class="py">blocks = [(0, one_per_cell(design, rng, 1))]                # practice: 7 trials
+for block in range(1, n_blocks + 1):
+    rows = one_per_cell(design, rng, 2) if debug else design   # debug 14, real 56
+    blocks.append((block, rows))</code></pre>
+  <ul>
+    <li>ID <code>999</code> switches debug on: <b>every trial type</b> still appears, so every code path runs, in 2 minutes instead of 10.</li>
+    <li>Debug files go to <code>data/debug/</code>, so they can never be mistaken for a participant.</li>
+    <li>The MATLAB AB script got half of this right: its "Practice Block" runs as subject 999. But it saves in the current folder, next to everything else.</li>
+  </ul>
+  <div class="think"><p>Why not a separate "test version" of the script with fewer trials?</p></div>
+  <details class="reveal"><summary>Answer</summary><p>Then you're testing a different program. A bug that only exists in the real version (a path, a block-count off by one) passes every test.</p></details>
+</div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-title="Part 1 · Test the design">
+<div class="inner">
+  <div class="kicker">Part 1 · The trial matrix</div>
+  <h2>Test the design without a screen</h2>
+  <div class="cols">
+<pre><code>$ python test_trial_matrix.py
+PASS: 56 conditions (48 cued + 8 neutral)
+PASS: every main block has every condition exactly once
+PASS: no cue appears more than MAX_RUN times in a row
+PASS: same seed -&gt; same session
+PASS: debug keeps every Cue x WBN cell in every block
+PASS: every display: exactly one repeated pair, of the
+      right shape, WITHIN or BETWEEN groups as labelled
+All checks passed.</code></pre>
+    <ul>
+      <li><code>trial_matrix.py</code> has <b>no PsychoPy</b> in it, so it runs on any laptop.</li>
+      <li>The last check reads each display back and confirms it shows what its label says. Swap WITHIN and BETWEEN in <code>layout()</code> and it fails.</li>
+      <li>Run it after every change to the design.</li>
+    </ul>
+  </div>
+  <div class="think"><p>In Workshop 5, how would you know if WITHIN and BETWEEN had been swapped in the experiment?</p></div>
+  <details class="reveal"><summary>Answer</summary><p>You wouldn't. Every effect would come out negative and look like a surprising finding. Only a check on the displays themselves catches it.</p></details>
+</div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-title="Part 2 · Frames">
+<div class="inner">
+  <div class="kicker">Part 2 · Timing and efficiency</div>
+  <h2>The screen is the clock</h2>
+  <div class="cols">
+    <ul>
+      <li>A monitor redraws every <b>frame</b> (60 Hz → 16.7 ms). <code>win.flip()</code> waits for the next one and returns its time.</li>
+      <li>You can only show things for <b>whole frames</b>. So count frames, not seconds.</li>
+      <li><b>Measure</b> the refresh rate, don't assume it. Save it in <code>_info.csv</code>.</li>
+    </ul>
+<pre><code class="py">hz = win.getActualFrameRate(nIdentical=20, nMaxFrames=120, threshold=1)
+
+def frames(seconds, hz):
+    return max(1, round(seconds * hz))
+
+show_frames(win, kb, [stims["fixation"]], frames(FIXATION_S, hz))</code></pre>
+  </div>
+  <p class="muted">MATLAB AB: <code>off_time = 0.033; % 50 ms</code>. The comment says 50, the code says 33. <b>Comments are claims</b>; check them like code.</p>
+</div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-title="Part 2 · Create once">
+<div class="inner">
+  <div class="kicker">Part 2 · Timing and efficiency</div>
+  <h2>Do the work before the flip</h2>
+  <div class="cols">
+<pre><code class="py"># once, before any trial: 9 squares, 9 circles, 4 boxes
+"SQUARE": [visual.Rect(win, width=ITEM_SIZE, height=ITEM_SIZE,
+                       lineWidth=0) for _ in range(tm.N_ITEMS)],
+
+# each trial, during the fixation: only move and recolor
+stim.pos = (display["x"][i] * SPACING, 0)
+stim.color = display["colors"][i]</code></pre>
+    <ul>
+      <li><b>Creating</b> a stimulus is slow (it builds textures). <b>Changing</b> one is fast.</li>
+      <li>Both lab scripts get this right: the AB script draws every letter × color into offscreen windows before the block; the RDT pre-creates its shapes.</li>
+      <li>Rule of thumb: <b>while a stimulus is on screen, only draw and flip.</b> Compute, load and save before or after.</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-title="Part 2 · The negative-RT bug">
+<div class="inner">
+  <div class="kicker">Part 2 · Timing and efficiency</div>
+  <h2>Remember the negative RTs?</h2>
+<pre><code class="py"># Lab RDT02_Lab.py, inside run_trial(), after the "press space" screen:
+trial_clock = core.Clock()                     # clock starts BEFORE the first flip
+...
+keys = event.getKeys(keyList=[square_key, circle_key, 'q', 'escape'],
+                     timeStamped=trial_clock)  # old presses are still in the buffer</code></pre>
+  <div class="warn"><p><code>event.waitKeys(keyList=['space'])</code> removes only the space press. An <code>n</code> pressed while the break screen was up stays in the buffer, becomes the next trial's answer, with a time <i>before</i> the clock started: RT = −0.94 s. The buffer was only cleared at the end of each trial.</p></div>
+<pre><code class="py"># grouping_task.py
+kb.clearEvents()                   # throw away anything pressed before the display
+win.callOnFlip(kb.clock.reset)     # RT = 0 at the flip that SHOWS the display</code></pre>
+</div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-title="Part 2 · The response loop">
+<div class="inner">
+  <div class="kicker">Part 2 · Timing and efficiency</div>
+  <h2>The response loop, frame by frame</h2>
+<pre><code class="py">for frame in range(frames(MAX_RESPONSE_S, hz)):
+    for stim in to_draw:
+        stim.draw()
+    flip_time = win.flip()
+    if frame == 0:
+        onset = flip_time                      # the display's real onset, from the flip
+    pressed = kb.getKeys(keyList=response_keys + [QUIT_KEY], waitRelease=False)
+    if any(k.name == QUIT_KEY for k in pressed):
+        raise QuitRequested
+    if pressed:
+        key, rt = pressed[0].name, pressed[0].rt
+        break</code></pre>
+  <ul>
+    <li><b>Onset</b> comes from the flip, not from <code>GetSecs()</code> before or after it.</li>
+    <li>The timeout is a frame count, so it's exact. ESC is checked on <b>every frame</b>.</li>
+    <li><code>win.recordFrameIntervals</code> counts <b>dropped frames</b> per block; they go in <code>_info.csv</code>.</li>
+  </ul>
+</div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-title="Part 2 · No disk during stimuli">
+<div class="inner">
+  <div class="kicker">Part 2 · Timing and efficiency</div>
+  <h2>When to touch the disk</h2>
+  <table>
+    <tr><th>Script</th><th>Writes data…</th><th>Risk</th></tr>
+    <tr><td>Lab AB (MATLAB)</td><td>once, at the end of each block</td><td>a crash loses the whole block</td></tr>
+    <tr><td>Lab RDT (PsychoPy)</td><td>after every trial (opens and appends to the CSV)</td><td>disk time inside the trial sequence; a half-written line if it dies mid-write</td></tr>
+    <tr><td><code>grouping_task.py</code></td><td>at every break screen, and on ESC / crash / end</td><td>a crash loses at most the trials since the last break, and those are re-run on resume</td></tr>
+  </table>
+<pre><code class="py">def write_csv(table, path):
+    tmp = path.with_suffix(".tmp")
+    table.to_csv(tmp, index=False)
+    os.replace(tmp, path)          # swap in one step: never a half-written file</code></pre>
+</div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-title="Part 3 · What does ESC do?">
+<div class="inner">
+  <div class="kicker">Part 3 · Never lose data</div>
+  <h2>What happens when someone presses ESC?</h2>
+<pre class="m"><code><span class="label">MATLAB AB, inside the response loop</span>if keyCode(escapeKey)
+    ...
+    ShowCursor;
+    sca;
+    return</code></pre>
+  <div class="warn"><p>The block's <code>trials</code> and <code>timing</code> only exist in memory until the block ends. <code>return</code> throws them away. Nothing says the session was aborted. And ESC is only checked on the response screen, not during the letter stream.</p></div>
+  <p><b>Lab RDT:</b> ESC returns <code>None</code>, the loop breaks, earlier trials are already in the file. Better, but the file looks like a normal, shorter session.</p>
+</div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-title="Part 3 · One exit path">
+<div class="inner">
+  <div class="kicker">Part 3 · Never lose data</div>
+  <h2>One way out, and it always saves</h2>
+  <div class="cols">
+<pre><code class="py">try:
+    run_blocks(win, kb, stims, state, hz, args.auto, args.crash_at)
+    finish(state, "complete")
+except QuitRequested:
+    finish(state, "aborted")                  # ESC: save first, then quit
+except Exception:
+    finish(state, "crashed")                  # anything else: save, then show the error
+    raise
+finally:
+    win.close()</code></pre>
+    <ul>
+      <li>ESC anywhere → <code>raise QuitRequested</code>. No screen has its own quitting code.</li>
+      <li><code>finish()</code> stamps <code>Status</code> and <code>Session_End</code>, then saves.</li>
+      <li>A real error is <b>saved and still shown</b> (<code>raise</code>), so nobody misses it.</li>
+      <li><code>finally</code> closes the window whatever happened.</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-title="Part 3 · Resume">
+<div class="inner">
+  <div class="kicker">Part 3 · Never lose data</div>
+  <h2>Resume: same trials, nothing deleted</h2>
+  <div class="cols">
+    <div>
+      <p><b>MATLAB AB:</b> "Restart Crashed Block" asks the RA to <i>type</i> the subject and block, then builds a <b>new random</b> block. And a typo (<code>exist('crashedinfo', 'Var')</code> vs <code>crashinfo</code>) means the "restarting" event code is never sent. No error, ever.</p>
+    </div>
+    <div>
+      <p><b>grouping_task.py:</b> enter the same ID → <i>Resume</i>.</p>
+      <ul>
+        <li>Reads <code>Last_Block_Completed</code> from <code>_info.csv</code>.</li>
+        <li>Replays <code>_trials.csv</code> from the next block.</li>
+        <li>Rows from the interrupted block stay, marked <code>Valid = False</code>.</li>
+        <li>New row in <code>_info.csv</code>: <code>Run = 2</code>, crash comments.</li>
+      </ul>
+    </div>
+  </div>
+  <table>
+    <tr><th>Run (debug: <code>--auto --crash-at 20</code>, then <code>--resume</code>)</th><th>Block</th><th>Valid</th><th class="num">rows</th></tr>
+    <tr><td>1</td><td>0 (practice)</td><td>True</td><td class="num">7</td></tr>
+    <tr><td>1</td><td>1 (crashed on trial 20)</td><td>False</td><td class="num">12</td></tr>
+    <tr><td>2</td><td>1, 2</td><td>True</td><td class="num">28</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-title="Part 3 · Overwrite">
+<div class="inner">
+  <div class="kicker">Part 3 · Never lose data</div>
+  <h2>Overwrite means <i>move</i>, never delete</h2>
+<pre><code class="py"># Lab RDT02_Lab.py: "File already exists" -> choose Overwrite, then:
+with open(out_filename, 'w') as f:          # 'w' empties the old file. It's gone.
+    f.write(','.join(csv_cols) + '\n')</code></pre>
+  <div class="warn"><p>One wrong ID typed by an RA (102 instead of 112) and choosing Overwrite destroys participant 102's session. No undo.</p></div>
+<pre><code class="py">def archive(paths, subid):
+    """Overwrite = MOVE the old files to overwritten/&lt;subid&gt;_&lt;timestamp&gt;/. Never delete."""</code></pre>
+  <p>Plus a <b>second confirmation</b> ("The old files will be MOVED…"). Two clicks and a folder you can restore from.</p>
+</div>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-title="Part 3 · Counterbalancing">
+<div class="inner">
+  <div class="kicker">Part 3 · Never lose data</div>
+  <h2>Counterbalancing: let the sheet decide</h2>
+<pre><code class="py"># Lab RDT02_Lab.py
+sub_number = int(sub_id_str) if sub_id_str.isdigit() else 0
+if sub_number % 2 == 1:  square_key, circle_key = 'm', 'n'
+else:                    square_key, circle_key = 'n', 'm'</code></pre>
+  <div class="think"><p>The pilots had IDs like <code>A12</code>, <code>A13</code>, … Which keys did they get?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p><code>"A12".isdigit()</code> is <code>False</code> → 0 → even → <b>every pilot got the same keys</b>. Nothing was counterbalanced, and nothing in the data says so.</p>
+  </details>
+  <ul>
+    <li><code>counterbalancing.py</code>: each new real participant takes the first <code>open</code> row of <code>counterbalancing.csv</code>. Pilots (1–100) and debug (999) take no slot.</li>
+    <li><code>crash_report.py</code>: a bad session is marked <code>excluded</code> with a reason, and a new slot with the same condition goes to the front of the queue.</li>
+  </ul>
+</div>
+</section>
+
+<!-- 22 -->
+<section class="slide" data-title="Part 3 · What's on disk, when">
+<div class="inner">
+  <div class="kicker">Part 3 · Never lose data</div>
+  <h2>What's on disk, and when</h2>
+  <table>
+    <tr><th>Moment</th><th><code>_trials.csv</code></th><th><code>_info.csv</code></th><th><code>_behav.csv</code></th></tr>
+    <tr><td>after the ID dialog</td><td>✔ whole plan</td><td>✔ <code>running</code></td><td>—</td></tr>
+    <tr><td>every break screen</td><td></td><td>✔ last block, dropped frames</td><td>✔ all trials so far</td></tr>
+    <tr><td>ESC</td><td></td><td>✔ <code>aborted</code></td><td>✔</td></tr>
+    <tr><td>crash</td><td></td><td>✔ <code>crashed</code></td><td>✔</td></tr>
+    <tr><td>power cut</td><td></td><td>last break</td><td>last break</td></tr>
+    <tr><td>end</td><td></td><td>✔ <code>complete</code> (+ sheet)</td><td>✔</td></tr>
+  </table>
+  <p class="muted">Even a power cut leaves who, when, which condition, the full plan and every completed block.</p>
+</div>
+</section>
+
+<!-- 23 -->
+<section class="slide" data-title="Part 4 · Annotate">
+<div class="inner">
+  <div class="kicker">Part 4 · Annotate</div>
+  <h2>Code someone else can trust</h2>
+  <div class="cols">
+<pre><code class="py">"""
+Project:       RA Workshops, Workshop 6
+Script:        06_advanced_psychopy/grouping_task.py
+Purpose:       A small version of the lab's RDT ...
+Usage:         python grouping_task.py --auto
+Dependencies:  psychopy (2026.1), pandas, ...
+Reads:         data/&lt;subid&gt;_info.csv, ...
+Writes:        data/&lt;subid&gt;_trials.csv ...
+"""
+FIXATION_S = 0.5     # seconds, fixation cross
+FALLBACK_HZ = 60     # used only if the refresh
+                     # rate can't be measured</code></pre>
+    <ul>
+      <li><b>Header</b>: what, how to run, what it reads and writes.</li>
+      <li><b>Every setting has its unit</b> and where the value came from.</li>
+      <li><b>Comment the why</b>: <code># clearEvents: a key pressed during the break must not count</code>, not <code># clear events</code>.</li>
+      <li><b>Name the workaround</b> and the problem it works around, so nobody "cleans it up".</li>
+      <li>No commented-out code (the AB script has dozens of lines of it). Git keeps old versions.</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- 24 -->
+<section class="slide" data-title="Hands-on · Break it">
+<div class="inner">
+  <div class="kicker">Hands-on · 15 min</div>
+  <h2>Break it on purpose, then recover</h2>
+  <ol class="steps">
+    <li><b>ESC.</b> Run as 999, press ESC in the middle of block 1. Open <code>999_info.csv</code>: what's the <code>Status</code>? How many rows in <code>_behav.csv</code>?</li>
+    <li><b>Crash.</b> <code>python grouping_task.py --auto --crash-at 20</code>, then <code>--auto --resume</code>. Find the <code>Valid = False</code> rows. Which trials were re-run?</li>
+    <li><b>Overwrite.</b> Run 999 again, choose <i>Overwrite</i>. Where did the old files go?</li>
+    <li><b>Design.</b> Add <code>"EC"</code> to <code>CUES</code> in <code>trial_matrix.py</code>. Run the tests. What breaks, and why? (Hint: <code>layout()</code> and the test's <code>groups()</code>.)</li>
+    <li><b>Code review.</b> Find one more way the RDT or AB script could lose or corrupt data that we didn't cover.</li>
+  </ol>
+</div>
+</section>
+
+<!-- 25 -->
+<section class="slide" data-title="Checklist">
+<div class="inner">
+  <div class="kicker">Wrap-up</div>
+  <h2>Before any real participant</h2>
+  <ul>
+    <li>☐ The whole trial sequence is generated and saved before trial 1 (with its seed).</li>
+    <li>☐ Design tests pass without a screen.</li>
+    <li>☐ Durations are frame counts from a <b>measured</b> refresh rate; onsets come from flips.</li>
+    <li>☐ Key buffer cleared before each display; RT clock reset on its flip.</li>
+    <li>☐ Files written only at breaks, through temp-file-then-swap.</li>
+    <li>☐ ESC and crashes go through one exit path that saves and records the status.</li>
+    <li>☐ Resume replays the saved plan; interrupted rows kept as <code>Valid = False</code>.</li>
+    <li>☐ Overwrite archives; it takes two confirmations.</li>
+    <li>☐ Counterbalancing comes from the sheet, not from the ID's digits.</li>
+    <li>☐ A debug run (ID 999) finished cleanly on the testing computer, and its files open in the Workshop 5 analysis.</li>
+  </ul>
+</div>
+</section>
+
+<!-- 26 -->
+<section class="slide" data-title="Reference · Cheat sheet">
+<div class="inner">
+  <div class="kicker">Reference</div>
+  <h2>Cheat sheet</h2>
+  <table>
+    <tr><th>You want to…</th><th>Code</th></tr>
+    <tr><td>every combination of factors</td><td><code>itertools.product(A, B, C)</code></td></tr>
+    <tr><td>reproducible randomness</td><td><code>rng = random.Random(seed)</code> · <code>rng.shuffle(x)</code> · <code>rng.sample(x, k)</code></td></tr>
+    <tr><td>measure the refresh rate</td><td><code>win.getActualFrameRate()</code> (can return <code>None</code>)</td></tr>
+    <tr><td>seconds → frames</td><td><code>round(seconds * hz)</code></td></tr>
+    <tr><td>onset of a display</td><td><code>t = win.flip()</code></td></tr>
+    <tr><td>RT from the flip</td><td><code>kb.clearEvents()</code>, <code>win.callOnFlip(kb.clock.reset)</code>, then <code>k.rt</code></td></tr>
+    <tr><td>check keys without waiting</td><td><code>kb.getKeys(keyList=[...], waitRelease=False)</code></td></tr>
+    <tr><td>count dropped frames</td><td><code>win.recordFrameIntervals = True</code> · <code>win.nDroppedFrames</code></td></tr>
+    <tr><td>save safely</td><td>write <code>file.tmp</code>, then <code>os.replace(tmp, path)</code></td></tr>
+    <tr><td>move instead of delete</td><td><code>shutil.move(src, dst)</code></td></tr>
+    <tr><td>quit from deep inside</td><td><code>raise QuitRequested</code>, caught once in <code>main()</code></td></tr>
+    <tr><td>simulated participant</td><td><code>python grouping_task.py --auto</code></td></tr>
+  </table>
+</div>
+</section>
+
+<!-- 27 -->
+<section class="slide" data-title="Reference · Common problems">
+<div class="inner">
+  <div class="kicker">Reference</div>
+  <h2>Common problems</h2>
+  <table>
+    <tr><th>Problem</th><th>Likely cause / fix</th></tr>
+    <tr><td>"could not measure the refresh rate"</td><td>Another app is busy, or the display is mirrored. The script uses 60 Hz and says so; check <code>Refresh_Hz</code> in <code>_info.csv</code>.</td></tr>
+    <tr><td>Many dropped frames</td><td>Close other programs; laptop on power; one screen only. Recheck with a debug run.</td></tr>
+    <tr><td>Next launch hangs after a crash</td><td>A leftover PsychoPy/ioHub process. Close PsychoPy fully (Task Manager) and restart.</td></tr>
+    <tr><td>Dialog hidden behind a fullscreen window</td><td>Dialogs come before the window opens; if one is stuck, Alt+Tab.</td></tr>
+    <tr><td><code>SheetError: No counterbalancing sheet</code></td><td>Make one: <code>python counterbalancing.py --new A B --n 40</code></td></tr>
+    <tr><td><code>Participant … was excluded in a crash report</code></td><td>By design: an excluded ID is never reused. Run the person under a new ID.</td></tr>
+    <tr><td>Mac: keys not detected</td><td>System Settings → Privacy &amp; Security → allow PsychoPy under Input Monitoring and Accessibility.</td></tr>
+  </table>
+</div>
+</section>
+
+<!-- 28 -->
+<section class="slide" data-title="Close the loop">
+<div class="inner">
+  <div class="kicker">Close the loop</div>
+  <h1>Experiment → file → analysis</h1>
+  <p class="big muted">Run a debug session, then point the Workshop 5 habits at your <code>_behav.csv</code>:<br>count, look at extremes, one number per person.</p>
+  <p class="muted">Every problem you found in the analysis last time had its cause in the experiment code.</p>
+  <p style="margin-top:1.4em; font-size:0.85em">Materials: <a href="https://github.com/slopez4/RA_Workshops/tree/main/06_advanced_psychopy" target="_blank" rel="noopener">github.com/slopez4/RA_Workshops</a></p>
+</div>
+</section>
+
+</main>
+
+<div class="nav"><button id="prevBtn" aria-label="Previous slide">‹</button><button id="nextBtn" aria-label="Next slide">›</button></div>
+<div class="slide-num" id="slideNum"></div>
+
+<script>
+(function () {
+  // --- tiny Python highlighter -------------------------------------------
+  var KW = /^(import|from|as|for|in|if|elif|else|while|break|continue|def|return|class|try|except|finally|raise|with|is|None|True|False|and|or|not|print|len|max|min|assert|lambda)$/;
+  var TOKEN = /(#[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|(___)|\b([A-Za-z_]\w*)\b|\b(\d+(?:\.\d+)?)\b/g;
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  document.querySelectorAll("code.py").forEach(function (el) {
+    var src = el.textContent, out = "", last = 0, m;
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      var t = esc(m[0]);
+      if (m[1]) out += '<span class="tok-c">' + t + "</span>";
+      else if (m[2]) out += '<span class="tok-s">' + t + "</span>";
+      else if (m[3]) out += '<span class="tok-b">' + t + "</span>";
+      else if (m[4]) out += KW.test(m[4]) ? '<span class="tok-k">' + t + "</span>" : t;
+      else out += '<span class="tok-n">' + t + "</span>";
+      last = TOKEN.lastIndex;
+    }
+    el.innerHTML = out + esc(src.slice(last));
+  });
+
+  // --- slides / reference mode --------------------------------------------
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var body = document.body, cur = 0;
+  var progress = document.getElementById("progress");
+  var num = document.getElementById("slideNum");
+  var modeBtn = document.getElementById("modeBtn");
+
+  slides.forEach(function (s, i) {
+    s.id = "s" + (i + 1);
+    var li = document.createElement("li");
+    li.innerHTML = '<a href="#s' + (i + 1) + '">' + esc(s.dataset.title) + "</a>";
+    document.getElementById("tocList").appendChild(li);
+  });
+
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  function show(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, j) { s.classList.toggle("active", j === cur); });
+    num.textContent = (cur + 1) + " / " + slides.length;
+    progress.style.width = ((cur + 1) / slides.length * 100) + "%";
+    if (location.hash !== "#s" + (cur + 1)) history.replaceState(null, "", "#s" + (cur + 1));
+  }
+
+  function setMode(mode) {
+    body.classList.toggle("mode-slides", mode === "slides");
+    body.classList.toggle("mode-ref", mode === "ref");
+    modeBtn.textContent = mode === "slides" ? "📖 Reference view" : "▶ Slide view";
+    progress.style.display = mode === "slides" ? "" : "none";
+    store("ws6-mode", mode);
+    if (mode === "slides") show(cur);
+    else slides[cur].scrollIntoView({ block: "start" });
+  }
+
+  function hashIndex() {
+    var m = /^#s(\d+)$/.exec(location.hash);
+    return m ? parseInt(m[1], 10) - 1 : 0;
+  }
+
+  cur = hashIndex();
+  var saved = load("ws6-mode");
+  setMode(saved || (window.innerWidth < 760 ? "ref" : "slides"));
+
+  window.addEventListener("hashchange", function () {
+    cur = hashIndex();
+    if (body.classList.contains("mode-slides")) show(cur);
+  });
+
+  modeBtn.addEventListener("click", function () {
+    setMode(body.classList.contains("mode-slides") ? "ref" : "slides");
+  });
+  document.getElementById("prevBtn").addEventListener("click", function () { show(cur - 1); });
+  document.getElementById("nextBtn").addEventListener("click", function () { show(cur + 1); });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === "r" || k === "R") { modeBtn.click(); return; }
+    if (k === "f" || k === "F") {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {});
+      else document.exitFullscreen();
+      return;
+    }
+    if (!body.classList.contains("mode-slides")) return;
+    if (k === "ArrowRight" || k === "PageDown" || k === " ") { e.preventDefault(); show(cur + 1); }
+    else if (k === "ArrowLeft" || k === "PageUp") { e.preventDefault(); show(cur - 1); }
+    else if (k === "Home") show(0);
+    else if (k === "End") show(slides.length - 1);
+  });
+
+  // swipe on touch screens
+  var x0 = null;
+  document.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener("touchend", function (e) {
+    if (x0 === null || !body.classList.contains("mode-slides")) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+
+  // theme toggle (follows the system by default)
+  var root = document.documentElement;
+  var savedTheme = load("ws6-theme");
+  if (savedTheme) root.setAttribute("data-theme", savedTheme);
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme")
+      ? root.getAttribute("data-theme") === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    store("ws6-theme", next);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build the SFV × VWM Experiment</title>
+<meta name="description" content="Slides and reference for Workshop 4: build the SFV reward × visual working memory experiment in PsychoPy, from a blank file to a full session.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;750&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --ink: #1d2230;
+  --muted: #5d6475;
+  --line: #e3e0d8;
+  --accent: #2f6fdf;
+  --accent-soft: #e6eefc;
+  --think: #fff5d6;
+  --think-line: #e9c85a;
+  --prov: #ffece0;
+  --prov-line: #e8873a;
+  --ok: #e2f4e8;
+  --ok-line: #4aa56d;
+  --warn: #fde7e4;
+  --warn-line: #d9584a;
+  --code-bg: #f3f1ec;
+  --c-comment: #7a8091;
+  --c-string: #1f7a4d;
+  --c-keyword: #8a3ab9;
+  --c-number: #b3541e;
+  --c-blank: #d9432f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161c;
+    --surface: #1b1e26;
+    --ink: #e8e9ee;
+    --muted: #a0a6b5;
+    --line: #2d313c;
+    --accent: #7fa8ff;
+    --accent-soft: #1f2a42;
+    --think: #2c2715;
+    --think-line: #8c7427;
+    --prov: #33220f;
+    --prov-line: #b8691f;
+    --ok: #14291d;
+    --ok-line: #3d8a5a;
+    --warn: #33181a;
+    --warn-line: #b4483c;
+    --code-bg: #20232c;
+    --c-comment: #8990a1;
+    --c-string: #7fd1a3;
+    --c-keyword: #d19bf2;
+    --c-number: #f0a36e;
+    --c-blank: #ff7a66;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14161c;
+  --surface: #1b1e26;
+  --ink: #e8e9ee;
+  --muted: #a0a6b5;
+  --line: #2d313c;
+  --accent: #7fa8ff;
+  --accent-soft: #1f2a42;
+  --think: #2c2715;
+  --think-line: #8c7427;
+  --prov: #33220f;
+  --prov-line: #b8691f;
+  --ok: #14291d;
+  --ok-line: #3d8a5a;
+  --warn: #33181a;
+  --warn-line: #b4483c;
+  --code-bg: #20232c;
+  --c-comment: #8990a1;
+  --c-string: #7fd1a3;
+  --c-keyword: #d19bf2;
+  --c-number: #f0a36e;
+  --c-blank: #ff7a66;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.45;
+}
+a { color: var(--accent); }
+h1, h2, h3 { line-height: 1.15; margin: 0 0 0.5em; letter-spacing: -0.01em; }
+h1 { font-size: 2.6em; font-weight: 750; }
+h2 { font-size: 1.75em; font-weight: 750; }
+h3 { font-size: 1.1em; font-weight: 600; color: var(--muted); margin-top: 0.8em; }
+p, ul, ol { margin: 0 0 0.55em; }
+li { margin: 0.12em 0; }
+.kicker {
+  font-size: 0.72em; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.6em;
+}
+.muted { color: var(--muted); }
+.big { font-size: 1.25em; }
+.small { font-size: 0.85em; }
+
+code, pre { font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; font-variant-ligatures: none; }
+:not(pre) > code {
+  background: var(--code-bg); padding: 0.08em 0.35em; border-radius: 4px; font-size: 0.9em;
+}
+pre {
+  background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+  padding: 0.6em 1em; margin: 0 0 0.6em; font-size: 0.76em; line-height: 1.42;
+  overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+pre.tree { font-size: 0.78em; }
+.tok-c { color: var(--c-comment); font-style: italic; }
+.tok-s { color: var(--c-string); }
+.tok-k { color: var(--c-keyword); font-weight: 600; }
+.tok-n { color: var(--c-number); }
+.tok-b { color: var(--c-blank); font-weight: 600; background: color-mix(in srgb, var(--c-blank) 14%, transparent); border-radius: 3px; }
+
+table { border-collapse: collapse; width: 100%; margin: 0 0 0.8em; font-size: 0.82em; }
+th, td { text-align: left; padding: 0.4em 0.7em; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---------- Callouts ---------- */
+.think, .prov, .check, .warn {
+  border-left: 4px solid var(--think-line); background: var(--think);
+  border-radius: 8px; padding: 0.7em 1em; margin: 0 0 0.8em;
+}
+.think::before, .prov::before, .check::before, .warn::before {
+  display: block; font-weight: 600; font-size: 0.8em; margin-bottom: 0.25em;
+}
+.think::before { content: "🤔 Think"; }
+.prov  { background: var(--prov); border-left-color: var(--prov-line); }
+.prov::before  { content: "🔶 Provisional: the lab hasn't decided this yet"; }
+.check { background: var(--ok); border-left-color: var(--ok-line); }
+.check::before { content: "✅ Checkpoint"; }
+.warn  { background: var(--warn); border-left-color: var(--warn-line); }
+.warn::before  { content: "⚠️ Gotcha"; }
+.think p:last-child, .think ul:last-child, .think ol:last-child,
+.prov p:last-child, .prov ul:last-child, .check p:last-child, .check ul:last-child, .check ol:last-child,
+.warn p:last-child { margin-bottom: 0; }
+
+details.reveal {
+  border: 1px dashed var(--line); border-radius: 8px; padding: 0.5em 0.9em; margin: 0 0 0.8em;
+}
+details.reveal summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+details.reveal[open] summary { margin-bottom: 0.5em; }
+details.reveal p:last-child, details.reveal pre:last-child { margin-bottom: 0; }
+
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6em; align-items: start; }
+.cols > * { min-width: 0; }
+.btn {
+  display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+  padding: 0.55em 1.1em; border-radius: 8px; font-weight: 600;
+}
+:root[data-theme="dark"] .btn { color: #0d1220; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn { color: #0d1220; } }
+.steps { counter-reset: s; list-style: none; padding: 0; }
+.steps li { counter-increment: s; padding-left: 2.2em; position: relative; margin: 0.45em 0; }
+.steps li::before {
+  content: counter(s); position: absolute; left: 0; top: 0.05em;
+  width: 1.5em; height: 1.5em; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+  display: grid; place-items: center; font-weight: 700; font-size: 0.85em;
+}
+.pill {
+  display: inline-block; font-size: 0.72em; font-weight: 600; padding: 0.15em 0.6em; border-radius: 99px;
+  background: var(--accent-soft); color: var(--accent); vertical-align: middle;
+}
+.pill.prov-pill { background: var(--prov); color: var(--prov-line); }
+
+/* ---------- Top bar ---------- */
+.bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 1rem;
+  font-size: 14px; background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(6px); border-bottom: 1px solid var(--line);
+}
+.bar .title { font-weight: 600; margin-right: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar button {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 6px; padding: 0.3rem 0.7rem; cursor: pointer;
+}
+.bar button:hover { border-color: var(--accent); }
+.progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 11; transition: width .2s; }
+
+/* ---------- Slide mode ---------- */
+body.mode-slides { overflow: hidden; }
+body.mode-slides .slide {
+  display: none; position: fixed; inset: 0; padding: 4.5vh 6vw 5vh;
+  font-size: min(1.75vw, 2.85vh); overflow-y: auto;
+  flex-direction: column;
+}
+body.mode-slides .slide.active { display: flex; }
+body.mode-slides .slide > .inner { max-width: 56em; width: 100%; margin: auto; }
+body.mode-slides .toc, body.mode-slides .ref-only { display: none; }
+body.mode-slides .bar { opacity: 0.25; transition: opacity .2s; }
+body.mode-slides .bar:hover, body.mode-slides .bar:focus-within { opacity: 1; }
+.slide-num { position: fixed; right: 1.2rem; bottom: 0.9rem; font-size: 13px; color: var(--muted); }
+body.mode-ref .slide-num, body.mode-ref .nav { display: none; }
+.nav { position: fixed; bottom: 0.7rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.4rem; }
+.nav button {
+  font-size: 18px; width: 2.2rem; height: 2.2rem; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); opacity: 0.5;
+}
+.nav button:hover { opacity: 1; }
+
+/* ---------- Reference mode ---------- */
+body.mode-ref { font-size: 17px; }
+body.mode-ref main { max-width: 880px; margin: 0 auto; padding: 4.2rem 16px 4rem; }
+body.mode-ref .slide {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 1.6em 1.8em; margin: 0 0 1.2rem; scroll-margin-top: 4rem;
+}
+body.mode-ref h1 { font-size: 2.1em; }
+body.mode-ref h2 { font-size: 1.45em; }
+.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.2em 1.6em; margin: 0 0 1.2rem; }
+.toc h2 { font-size: 1.1em; }
+.toc ol { columns: 2; column-gap: 2em; padding-left: 1.3em; margin: 0; font-size: 0.92em; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+
+kbd {
+  font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; font-size: 0.8em;
+  border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px;
+  padding: 0.05em 0.4em; background: var(--surface);
+}
+
+/* ---------- Mini screens (a trial, drawn with the real colors) ---------- */
+.timeline { display: flex; align-items: flex-start; justify-content: center; gap: 0.7em; margin: 1em 0 1.2em; }
+.tl-box { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.25em; }
+.tl-box > span { font-size: 0.8em; color: var(--muted); }
+.tl-screen {
+  width: 7.2em; height: 5.2em; border-radius: 8px; background: #808080; color: #111;
+  display: grid; place-items: center; font-weight: 600;
+  border: 4px solid var(--line); margin-bottom: 0.3em;
+}
+.tl-screen span { font-size: 1.15em; }
+.tl-screen .tl-small { font-size: 0.85em; }
+.tl-arrow { font-size: 1.5em; color: var(--muted); margin-top: 1.3em; }
+.arr { display: grid; grid-template-columns: repeat(3, 0.95em); grid-template-rows: repeat(3, 0.95em); gap: 0.22em; align-items: center; justify-items: center; }
+.arr i { display: block; width: 100%; height: 100%; border-radius: 2px; }
+.arr b { font-size: 0.9em; }
+
+/* ---------- Flow diagram ---------- */
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5em 0.4em; margin: 0.4em 0 1em; }
+.node {
+  background: var(--accent-soft); color: var(--accent); border-radius: 10px;
+  padding: 0.35em 0.75em; font-weight: 600; font-size: 0.9em; white-space: nowrap;
+}
+.node.reward { background: color-mix(in srgb, var(--c-keyword) 15%, transparent); color: var(--c-keyword); }
+.node.test   { background: color-mix(in srgb, var(--c-string) 15%, transparent); color: var(--c-string); }
+.node.plain  { background: var(--code-bg); color: var(--muted); }
+.arrow { color: var(--muted); }
+.flow-label { font-size: 0.8em; color: var(--muted); margin: 0.9em 0 0.1em; font-weight: 600; }
+
+.shot { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); display: block; }
+.shotcap { font-size: 0.78em; color: var(--muted); margin: 0.3em 0 0.8em; }
+
+@media (max-width: 700px) {
+  .timeline { flex-direction: column; gap: 0.4em; align-items: center; }
+  .tl-arrow { transform: rotate(90deg); margin-top: 0; }
+  body.mode-ref .slide { padding: 1.1em 1em; }
+  .cols { grid-template-columns: 1fr; gap: 0; }
+  .toc ol { columns: 1; }
+  pre { font-size: 0.74em; }
+  table { font-size: 0.78em; display: block; overflow-x: auto; }
+  th, td { padding: 0.35em 0.4em; }
+  .bar .title { font-size: 13px; }
+}
+@media print {
+  .bar, .nav, .slide-num, .progress { display: none !important; }
+}
+</style>
+</head>
+<body class="mode-slides">
+<div class="progress" id="progress"></div>
+<div class="bar">
+  <span class="title">Workshop 4 · Build the SFV × VWM Experiment</span>
+  <button id="modeBtn" title="Switch view (R)">📖 Reference view</button>
+  <button id="themeBtn" title="Toggle light/dark">◐</button>
+</div>
+
+<main id="deck">
+
+<nav class="toc ref-only" id="toc">
+  <h2>Contents</h2>
+  <ol id="tocList"></ol>
+</nav>
+
+<!-- ===================================================================== -->
+<!-- PART 0 · ORIENTATION                                                  -->
+<!-- ===================================================================== -->
+
+<section class="slide" data-title="Title">
+<div class="inner">
+  <div class="kicker">RA Workshop 4</div>
+  <h1>Build the SFV × VWM Experiment</h1>
+  <p class="big muted">From a blank file to a full session: a memory task, reward videos, and memory tests for the videos.</p>
+  <p style="margin-top:1.4em">
+    <a class="btn" href="https://github.com/slopez4/RA_Workshops/tree/main/04_svf_vwm_experiment" target="_blank" rel="noopener">Workshop files on GitHub →</a>
+  </p>
+  <p class="muted" style="font-size:0.8em">Keys: <kbd>→</kbd> next · <kbd>←</kbd> back · <kbd>R</kbd> reference view · <kbd>F</kbd> fullscreen</p>
+</div>
+</section>
+
+<section class="slide" data-title="What we're building">
+<div class="inner">
+  <div class="kicker">Part 0 · Orientation</div>
+  <h2>What we're building</h2>
+  <p class="big">Does watching <b>short-form video</b> (SFV: TikTok / Reels-style clips) change how well people <b>hold things in mind</b>, their <b>visual working memory (VWM)</b>?</p>
+  <div class="cols">
+    <div>
+      <h3>Two ways to vary "how much video"</h3>
+      <ul>
+        <li><b>Duration block:</b> one clip of 0 s (none), 5 s, 45 s or 120 s</li>
+        <li><b>Dose block:</b> the same 45 s as one long clip or as three short ones (or none)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What we record</h3>
+      <ul>
+        <li>Memory-task accuracy right after each video</li>
+        <li>Ratings: how much they <i>want</i> more, how much they <i>liked</i> it</li>
+        <li>What they remember <i>about the videos</i> afterwards</li>
+      </ul>
+    </div>
+  </div>
+  <div class="think"><p>Why include a <b>no-video control</b> condition in each block?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>It's the baseline. Without it we couldn't tell whether a video <i>helps</i>, <i>hurts</i>, or does nothing: we'd only know how the video conditions compare with each other.</p>
+  </details>
+  <p class="muted small">You don't need the full reasoning for today; the design document (<code>SFV_VWM_Design_Spec_Draft.md</code> in the project's <code>experiment/</code> folder) has it. Today is about <b>how to build it</b>.</p>
+</div>
+</section>
+
+<section class="slide" data-title="The session at a glance">
+<div class="inner">
+  <div class="kicker">Part 0 · Orientation</div>
+  <h2>One session, start to finish</h2>
+  <div class="flow">
+    <span class="node plain">Instructions</span><span class="arrow">→</span>
+    <span class="node">Practice</span><span class="arrow">→</span>
+    <span class="node reward">Block A</span><span class="arrow">→</span>
+    <span class="node plain">Break</span><span class="arrow">→</span>
+    <span class="node reward">Block B</span><span class="arrow">→</span>
+    <span class="node test">Memory tests</span><span class="arrow">→</span>
+    <span class="node plain">Save &amp; goodbye</span>
+  </div>
+  <div class="flow-label">Inside a block, repeated for each condition (random order)</div>
+  <div class="flow">
+    <span class="node reward">Reward video(s)</span><span class="arrow">→</span>
+    <span class="node reward">Ratings</span><span class="arrow">→</span>
+    <span class="node">Memory-task trials</span>
+  </div>
+  <div class="flow-label">Memory tests for the videos (at the very end)</div>
+  <div class="flow">
+    <span class="node test">Free recall</span><span class="arrow">→</span>
+    <span class="node test">Pick the images you remember</span><span class="arrow">→</span>
+    <span class="node test">One-by-one yes / no</span>
+  </div>
+  <p class="muted small"><b>Block A / B</b> = Duration and Dose, in an order that alternates between participants. The <span class="node" style="font-size:0.8em">blue</span> steps are the memory task, <span class="node reward" style="font-size:0.8em">purple</span> the reward, <span class="node test" style="font-size:0.8em">green</span> the memory tests.</p>
+</div>
+</section>
+
+<section class="slide" data-title="Today's plan">
+<div class="inner">
+  <div class="kicker">Part 0 · Orientation</div>
+  <h2>The plan: build it in five layers</h2>
+  <table>
+    <tr><th>Part</th><th>You build</th><th>It's working when…</th><th class="num">~min</th></tr>
+    <tr><td><b>1</b></td><td>The memory task: <b>one</b> change-detection trial</td><td>squares flash, you press a key, it prints your result</td><td class="num">45</td></tr>
+    <tr><td><b>2</b></td><td>Many trials, practice, <b>saved data</b></td><td>a CSV appears with one row per trial</td><td class="num">30</td></tr>
+    <tr><td><b>3</b></td><td><b>Reward videos</b>, conditions, blocks</td><td>a whole session runs, minus the memory tests</td><td class="num">45</td></tr>
+    <tr><td><b>4</b> <span class="pill prov-pill">draft</span></td><td><b>Memory tests</b> for the videos</td><td>recall, picking, and yes/no all run and save</td><td class="num">40</td></tr>
+    <tr><td><b>5</b></td><td>Test it; map it to the real project</td><td>you know what's left to decide</td><td class="num">15</td></tr>
+  </table>
+  <p class="muted small"><b>Suggested pacing:</b> three sittings of about an hour: (1) Parts 0–2, (2) Part 3, (3) Parts 4–5. Part 4 can wait until the lab settles the memory-test design.</p>
+</div>
+</section>
+
+<section class="slide" data-title="How we'll work">
+<div class="inner">
+  <div class="kicker">Part 0 · Orientation</div>
+  <h2>How we'll work</h2>
+  <ol class="steps">
+    <li><b>Start a blank file.</b> In PsychoPy <b>Coder</b>: <i>File → New</i>, save it as <code>my_svf_vwm.py</code> in the workshop folder.</li>
+    <li><b>Type the code yourself</b>, slide by slide. Typing slowly is the point; pasting teaches nothing.</li>
+    <li><b>Run after every checkpoint.</b> A small program that works beats a big one that doesn't.</li>
+    <li><b>Lost?</b> Open <code>svf_vwm_mini.py</code> (the finished script). Its sections are numbered like the slides.</li>
+  </ol>
+  <div class="cols">
+    <div>
+      <div class="check"><p>A stopping point: run your file, and it should do what the slide says.</p></div>
+      <div class="warn"><p>A trap that has caught people before.</p></div>
+    </div>
+    <div>
+      <div class="prov"><p>A choice the lab hasn't made. In the code it's a <b>setting</b> tagged <code>PROVISIONAL</code>, so changing it later is easy.</p></div>
+      <div class="think"><p>A question to answer before you reveal the answer.</p></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="slide" data-title="Python you already know">
+<div class="inner">
+  <div class="kicker">Part 0 · Orientation</div>
+  <h2>You already know most of this</h2>
+  <p>If you've worked through the w3schools Python course, you've met nearly everything in this script:</p>
+  <table>
+    <tr><th>Idea</th><th>Where you'll see it</th><th>w3schools section</th></tr>
+    <tr><td>Variables, UPPERCASE settings</td><td><code>SET_SIZE = 4</code></td><td>Variables</td></tr>
+    <tr><td>Strings and f-strings</td><td><code>f"{info['participant']}_{START_TIME}_{name}.csv"</code></td><td>Strings, String Formatting</td></tr>
+    <tr><td>Lists, list comprehensions</td><td><code>SLOTS</code>, <code>squares</code>, <code>trial_rows</code></td><td>Lists</td></tr>
+    <tr><td>Tuples</td><td><code>(220, 40, 40)</code> colors, <code>(0.25, 0)</code> positions</td><td>Tuples</td></tr>
+    <tr><td>Dictionaries</td><td><code>COLORS</code>, <code>CONDITIONS</code>, one row of data</td><td>Dictionaries</td></tr>
+    <tr><td>Sets</td><td><code>chosen</code>: the images clicked (Part 4)</td><td>Sets</td></tr>
+    <tr><td>if / elif / else</td><td>scoring a response</td><td>If…Else</td></tr>
+    <tr><td>for and while loops</td><td>looping over trials; playing a video until it ends</td><td>For Loops, While Loops</td></tr>
+    <tr><td>Functions</td><td><code>make_trial</code>, <code>run_trial</code>, …</td><td>Functions</td></tr>
+    <tr><td>Modules and <code>import</code></td><td><code>random</code>, <code>pandas</code>, <code>pathlib</code></td><td>Modules</td></tr>
+  </table>
+</div>
+</section>
+
+<section class="slide" data-title="One new idea: objects">
+<div class="inner">
+  <div class="kicker">Part 0 · Orientation</div>
+  <h2>The one new idea: things with dots</h2>
+  <p>PsychoPy gives you <b>objects</b>: a square, a window, a keyboard. You use them with a dot:</p>
+<pre><code class="py" data-nocheck>square = visual.Rect(win, width=0.1, height=0.1)   # make a square
+square.pos = (0.25, 0)       # attribute: a setting you can read or change
+square.draw()                # method: something it can DO (note the parentheses)
+win.flip()                   # the window is an object too</code></pre>
+  <ul>
+    <li><b>No parentheses</b> (<code>square.pos</code>): a value you can look at or set.</li>
+    <li><b>Parentheses</b> (<code>square.draw()</code>): an action. Do it now.</li>
+    <li>You never write the <code>class</code> yourself; PsychoPy already did. You just use the objects.</li>
+  </ul>
+  <div class="think"><p>In <code>square.pos = (0.25, 0)</code>, is <code>pos</code> an attribute or a method?</p></div>
+  <details class="reveal"><summary>Answer</summary><p>An attribute: no parentheses, and we're <i>setting</i> it, moving the square.</p></details>
+</div>
+</section>
+
+<section class="slide" data-title="Set up your folder">
+<div class="inner">
+  <div class="kicker">Part 0 · Setup · lab computers have PsychoPy installed</div>
+  <h2>Set up your folder</h2>
+  <div class="cols">
+<pre class="tree"><code>04_svf_vwm_experiment/
+├── slides.html
+├── svf_vwm_mini.py    ← finished script
+├── make_stills.py     ← used in Part 4
+├── my_svf_vwm.py      ← YOUR file
+├── videos/            ← you add this
+│   └── nature/
+│       ├── duration_5s/
+│       ├── duration_45s/ …
+├── stills/            ← made in Part 4
+└── data/              ← made automatically</code></pre>
+    <ol class="steps">
+      <li>Download the repo ZIP (<b>Code → Download ZIP</b>) and unzip it, as in Workshop 2.</li>
+      <li>Copy the <code>nature</code> folder from the project's <code>videos</code> folder into <code>videos/</code>. Copy to the computer first: playing straight from Box can stutter.</li>
+      <li>Open PsychoPy → <b>View → Coder</b> and make your blank file.</li>
+    </ol>
+  </div>
+  <div class="check"><p>Type this, save, and press Run. A grey window should appear for 2 seconds and close.</p></div>
+<pre><code class="py" data-nocheck>from psychopy import visual, core
+
+win = visual.Window(size=(600, 400), color="grey")
+core.wait(2)
+win.close()</code></pre>
+  <p class="muted small">No <code>videos</code> folder? Parts 1–2 don't need it, and in Part 3 the script shows a placeholder screen instead of each video. Installing PsychoPy at home: see the Workshop 2 reference slides.</p>
+</div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- PART 1 · THE MEMORY TASK                                              -->
+<!-- ===================================================================== -->
+
+<section class="slide" data-title="Change detection in one minute">
+<div class="inner">
+  <div class="kicker">Part 1 · The memory task</div>
+  <h2>Change detection in one minute</h2>
+  <div class="timeline">
+    <div class="tl-box"><div class="tl-screen"><span>+</span></div><b>Fixation</b><span>0.6 s</span></div>
+    <div class="tl-arrow">→</div>
+    <div class="tl-box"><div class="tl-screen"><div class="arr">
+      <i style="background:#dc2828"></i><b></b><i style="background:#28aa46"></i>
+      <b></b><b>+</b><b></b>
+      <i style="background:#325adc"></i><b></b><i style="background:#f0d228"></i></div></div><b>Sample</b><span>0.25 s</span></div>
+    <div class="tl-arrow">→</div>
+    <div class="tl-box"><div class="tl-screen"><span>+</span></div><b>Blank delay</b><span>1.0 s</span></div>
+    <div class="tl-arrow">→</div>
+    <div class="tl-box"><div class="tl-screen"><div class="arr">
+      <i style="background:#dc2828"></i><b></b><i style="background:#f0821e"></i>
+      <b></b><b>+</b><b></b>
+      <i style="background:#325adc"></i><b></b><i style="background:#f0d228"></i></div></div><b>Test</b><span>until <kbd>D</kbd> / <kbd>S</kbd><br>(max 3 s)</span></div>
+  </div>
+  <p class="big" style="text-align:center">Did anything change? <kbd>D</kbd> = different &nbsp;·&nbsp; <kbd>S</kbd> = same</p>
+  <p class="muted" style="text-align:center">On half the trials one square changes to a <b>new</b> color (above: green → orange). On the other half nothing changes.</p>
+  <div class="think"><p>Why is there a blank delay between the sample and the test?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>That's the "<b>working memory</b>" part: the colors have to be <i>held in mind</i> with nothing to look at. Without the delay it would just test whether you can see.</p>
+  </details>
+</div>
+</section>
+
+<section class="slide" data-title="1 · Settings: the squares">
+<div class="inner">
+  <div class="kicker">Part 1 · Section 1 · Settings</div>
+  <h2>Settings first: what the squares look like</h2>
+<pre><code class="py"># --- the memory task (change detection) ---
+SET_SIZE = 4                       # PROVISIONAL: squares per array
+COLORS = {                         # name -> (R, G, B), each 0-255
+    "red":     (220, 40, 40),
+    "green":   (40, 170, 70),
+    "blue":    (50, 90, 220),
+    "yellow":  (240, 210, 40),
+    "magenta": (200, 60, 190),
+    "cyan":    (40, 190, 200),
+    "orange":  (240, 130, 30),
+}
+SLOTS = [(-0.25, 0.25), (0, 0.25), (0.25, 0.25),      # places a square may appear
+         (-0.25, 0),               (0.25, 0),         # (3x3 grid without the center,
+         (-0.25, -0.25), (0, -0.25), (0.25, -0.25)]   #  which is where the + goes)
+SQUARE_SIZE = 0.1                  # fraction of screen height
+BACKGROUND = (128, 128, 128)       # mid-grey</code></pre>
+  <ul class="small">
+    <li>A <b>dictionary</b> maps each color's <i>name</i> to its (red, green, blue) amounts. We log names; PsychoPy draws numbers.</li>
+    <li>Positions are fractions of screen height: <code>(0, 0)</code> is the center, <code>(0.25, 0.25)</code> is up and right.</li>
+  </ul>
+  <div class="prov"><p><code>SET_SIZE</code>: the design doc says 3 squares, but 3 is probably too easy for change detection (everyone near 100%). We'll <b>pilot</b> to choose. It's a setting, so changing it is one number.</p></div>
+</div>
+</section>
+
+<section class="slide" data-title="1 · Settings: timing and keys">
+<div class="inner">
+  <div class="kicker">Part 1 · Section 1 · Settings</div>
+  <h2>Settings: timing, keys, and a test switch</h2>
+<pre><code class="py">DEV_MODE = True                    # True while building/testing. False for real participants.
+FIXATION_TIME = 0.6                # seconds (a little random jitter is added)
+ENCODING_TIME = 0.25               # PROVISIONAL: design doc says 250 ms, the old MATLAB task used 100 ms
+RETENTION_TIME = 1.0               # PROVISIONAL: design doc says 1000 ms, the old MATLAB task used 900 ms
+MAX_RESPONSE_TIME = 3.0            # seconds before a trial times out
+KEYS = {"s": "same", "d": "different"}
+N_PRACTICE = 6
+TRIALS_PER_CONDITION = 16          # design doc says ~15; 16 splits evenly into change / no-change
+
+if DEV_MODE:                       # shortcuts so a test run takes minutes, not an hour
+    TRIALS_PER_CONDITION = 4</code></pre>
+  <div class="prov"><p>Encoding and delay times: the design doc and the lab's older MATLAB task disagree (250 / 1000 ms vs 100 / 900 ms). Nobody has picked yet, so both are one-line changes.</p></div>
+  <p class="small"><b><code>DEV_MODE</code></b> overrides a few settings while you test, so a run takes minutes. Before real participants, set it to <code>False</code> (it also makes the window fullscreen).</p>
+</div>
+</section>
+
+<section class="slide" data-title="2 · Dialog and window">
+<div class="inner">
+  <div class="kicker">Part 1 · Sections 2–3 · Dialog and window</div>
+  <h2>Who is this, and where do we draw?</h2>
+<pre><code class="py">info = {"participant": ""}
+dialog = gui.DlgFromDict(info, title="SFV x VWM")
+if not dialog.OK or not info["participant"]:
+    core.quit()
+
+START_TIME = data.getDateStr()
+DATA_FOLDER = Path(__file__).parent / "data"
+DATA_FOLDER.mkdir(exist_ok=True)
+
+win = visual.Window(size=(1000, 700), color=BACKGROUND, colorSpace="rgb255",
+                    units="height", fullscr=not DEV_MODE)
+win.mouseVisible = False</code></pre>
+  <ul class="small">
+    <li>The pop-up box fills in <code>info</code>. We quit if they cancel <b>or</b> leave the ID blank.</li>
+    <li><code>Path(__file__).parent / "data"</code>: a <code>data</code> folder <b>next to this script</b>. <code>mkdir(exist_ok=True)</code> creates it if needed.</li>
+    <li><code>colorSpace="rgb255"</code>: colors are 0–255, like our <code>COLORS</code> dictionary. <code>units="height"</code>: sizes are fractions of screen height.</li>
+  </ul>
+  <p class="muted small">Add the imports at the very top of the file too (they're in <code>svf_vwm_mini.py</code>): <code>random</code>, <code>Path</code>, <code>pandas as pd</code>, <code>Image</code> from PIL, and <code>core, data, event, gui, visual</code> and <code>keyboard</code> from PsychoPy.</p>
+</div>
+</section>
+
+<section class="slide" data-title="3 · Things to draw">
+<div class="inner">
+  <div class="kicker">Part 1 · Section 3 · Set up</div>
+  <h2>Make the things we'll draw, once</h2>
+<pre><code class="py">fixation = visual.TextStim(win, text="+", height=0.08, color="black")
+message = visual.TextStim(win, text="", height=0.04, wrapWidth=1.2, color="black")
+squares = [visual.Rect(win, width=SQUARE_SIZE, height=SQUARE_SIZE, lineColor=None, colorSpace="rgb255")
+           for _ in range(SET_SIZE)]
+
+kb = keyboard.Keyboard()</code></pre>
+  <ul class="small">
+    <li>Creating a stimulus is slow; drawing it is fast. So we create <b>4 squares once</b> and later just <i>move and recolor</i> them.</li>
+    <li>The <code>[... for _ in range(SET_SIZE)]</code> is a <b>list comprehension</b>: a for-loop that builds a list. <code>_</code> means "I don't need the counter".</li>
+  </ul>
+  <div class="think"><p><b>Your turn.</b> Fill the blanks so ONE red square appears in the middle for 2 seconds. (Put it after the lines above, and close the window at the end.)</p></div>
+<pre><code class="py" data-nocheck>squares[0].pos = (___, ___)
+squares[0].fillColor = COLORS["___"]
+squares[0].draw()
+win.___()
+core.wait(2)</code></pre>
+  <details class="reveal"><summary>Answer</summary>
+<pre><code class="py" data-nocheck>squares[0].pos = (0, 0)
+squares[0].fillColor = COLORS["red"]
+squares[0].draw()
+win.flip()
+core.wait(2)</code></pre>
+    <p>Without <code>win.flip()</code> nothing would appear: <code>draw()</code> paints a hidden canvas, <code>flip()</code> shows it.</p>
+  </details>
+</div>
+</section>
+
+<section class="slide" data-title="4 · Data lists and a safe exit">
+<div class="inner">
+  <div class="kicker">Part 1 · Section 3 · Helpers</div>
+  <h2>Where data will live, and a safe way out</h2>
+<pre><code class="py">trial_rows = []        # one dictionary per memory-task trial
+reward_rows = []       # one per reward delivery
+memory_rows = []       # one per memory-test answer
+shown_in = {}          # each video file they watched -> the (block, condition) it was shown in
+
+
+def save_data():
+    """Write everything collected so far. Called after every trial, so a crash loses almost nothing."""
+    for name, rows in [("trials", trial_rows), ("rewards", reward_rows), ("memory", memory_rows)]:
+        if rows:
+            filename = DATA_FOLDER / f"{info['participant']}_{START_TIME}_{name}.csv"
+            pd.DataFrame(rows).to_csv(filename, index=False)
+
+
+def quit_experiment():
+    save_data()
+    win.close()
+    core.quit()</code></pre>
+  <ul class="small">
+    <li>Three CSVs per participant: <b>trials</b>, <b>rewards</b>, <b>memory</b> (each has different columns). They start empty; <code>if rows:</code> skips empty ones.</li>
+    <li><code>quit_experiment()</code> saves first, so pressing <kbd>Esc</kbd> never loses data.</li>
+  </ul>
+</div>
+</section>
+
+<section class="slide" data-title="5 · Reusable screens">
+<div class="inner">
+  <div class="kicker">Part 1 · Section 3 · Helpers</div>
+  <h2>Two screens we'll reuse everywhere</h2>
+<pre><code class="py">def show_message(text):
+    """Show a screen of text and wait for the space bar."""
+    message.text = text
+    message.draw()
+    win.flip()
+    keys = kb.waitKeys(keyList=["space", "escape"], waitRelease=False)
+    if keys[0].name == "escape":
+        quit_experiment()
+
+
+def show_for(text, seconds):
+    """Show a screen of text for a fixed time."""
+    message.text = text
+    message.draw()
+    win.flip()
+    core.wait(seconds)</code></pre>
+  <div class="warn"><p><code>waitRelease=False</code> means "react when the key goes <b>down</b>". PsychoPy's default waits for the key to be <b>released</b>, which can swallow a response that arrives right before a timeout.</p></div>
+  <p class="small">This is draw → flip from Workshop 2 wrapped in functions: write it once, use it for every instruction and break screen.</p>
+</div>
+</section>
+
+<section class="slide" data-title="6 · Decide a trial before showing it">
+<div class="inner">
+  <div class="kicker">Part 1 · Section 4 · The memory task</div>
+  <h2>Decide everything about a trial first</h2>
+<pre><code class="py">def make_trial(is_change):
+    """Decide everything about one trial before showing anything."""
+    slots = random.sample(SLOTS, SET_SIZE)             # which places are used
+    sample_colors = random.sample(list(COLORS), SET_SIZE)   # which colors (all different)
+    test_colors = sample_colors.copy()
+    changed_item = None
+    if is_change:
+        changed_item = random.randrange(SET_SIZE)      # which square will change
+        spare = [name for name in COLORS if name not in sample_colors]
+        test_colors[changed_item] = random.choice(spare)
+    return {"slots": slots, "sample_colors": sample_colors, "test_colors": test_colors,
+            "is_change": is_change, "changed_item": changed_item}</code></pre>
+  <ul class="small">
+    <li><code>random.sample(list, 4)</code> picks 4 <b>different</b> items. <code>list(COLORS)</code> is the list of color <i>names</i>.</li>
+    <li><code>spare</code> = colors <b>not in the array</b>, so the changed square becomes a genuinely new color.</li>
+  </ul>
+  <div class="think"><p>What would go wrong if we wrote <code>test_colors = sample_colors</code> (no <code>.copy()</code>)?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>Both names would point at the <b>same list</b>. Changing <code>test_colors</code> would also change <code>sample_colors</code>, so the "change" would appear in both arrays and nothing would ever look different.</p>
+  </details>
+</div>
+</section>
+
+<section class="slide" data-title="7 · Draw an array">
+<div class="inner">
+  <div class="kicker">Part 1 · Section 4 · The memory task</div>
+  <h2>Draw all the squares, then flip once</h2>
+<pre><code class="py">def draw_array(slots, color_names):
+    for square, slot, name in zip(squares, slots, color_names):
+        square.pos = slot
+        square.fillColor = COLORS[name]
+        square.draw()</code></pre>
+  <ul>
+    <li><code>zip(a, b, c)</code> walks through several lists <b>in step</b>: square 1 with slot 1 with color 1, then square 2 with slot 2 …</li>
+    <li>Inside the loop we only <i>move</i>, <i>recolor</i>, and <i>draw</i>. Nothing is on screen until the <code>win.flip()</code> that the <b>caller</b> makes.</li>
+  </ul>
+  <div class="think"><p>Why make the <b>caller</b> flip, instead of flipping inside <code>draw_array</code>?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>We also want the fixation cross on the <i>same</i> screen. If <code>draw_array</code> flipped by itself, the + would need a second flip: a different moment. One screen = one flip = one exact onset time.</p>
+  </details>
+</div>
+</section>
+
+<section class="slide" data-title="8 · A trial, part 1">
+<div class="inner">
+  <div class="kicker">Part 1 · Section 4 · The memory task</div>
+  <h2>One trial (1/2): fixation, sample, delay</h2>
+<pre><code class="py">def run_trial(trial, feedback=False):
+    # fixation, with a little random jitter so the start can't be predicted
+    fixation.draw()
+    win.flip()
+    core.wait(FIXATION_TIME + random.uniform(0, 0.1))
+
+    # the sample array
+    draw_array(trial["slots"], trial["sample_colors"])
+    fixation.draw()
+    win.flip()
+    core.wait(ENCODING_TIME)
+
+    # the blank delay: the participant has to HOLD the colors in memory
+    fixation.draw()
+    win.flip()
+    core.wait(RETENTION_TIME)</code></pre>
+  <p class="small">Same rhythm every time: <b>draw → flip → wait</b>. The <code>feedback=False</code> is an optional argument we'll use in Part 2.</p>
+  <div class="warn"><p><code>core.wait()</code> is accurate to about one screen refresh (≈ 17 ms on a 60 Hz screen). Fine for learning. For real data collection, labs usually count <b>frames</b> instead (e.g. 15 frames ≈ 250 ms). Worth doing before the real study.</p></div>
+</div>
+</section>
+
+<section class="slide" data-title="9 · A trial, part 2">
+<div class="inner">
+  <div class="kicker">Part 1 · Section 4 · The memory task</div>
+  <h2>One trial (2/2): the test and the response</h2>
+<pre><code class="py">    # the test array, and start the RT clock at the exact moment it appears
+    draw_array(trial["slots"], trial["test_colors"])
+    fixation.draw()
+    win.callOnFlip(kb.clock.reset)
+    kb.clearEvents()
+    win.flip()
+    keys = kb.waitKeys(maxWait=MAX_RESPONSE_TIME, keyList=list(KEYS) + ["escape"], waitRelease=False)
+
+    if keys is None:                                   # nothing pressed in time
+        response, rt, correct = None, None, 0
+    elif keys[0].name == "escape":
+        quit_experiment()
+    else:
+        response = KEYS[keys[0].name]                  # "s" -> "same", "d" -> "different"
+        rt = keys[0].rt
+        truth = "different" if trial["is_change"] else "same"
+        correct = int(response == truth)
+
+    return {"response": response, "correct": correct, "rt_s": rt}</code></pre>
+  <ul class="small">
+    <li><code>callOnFlip(kb.clock.reset)</code>: start the RT clock <b>on</b> the flip, when the test array really appears (as in Workshop 2).</li>
+    <li><code>truth = "different" if … else "same"</code>: what the <i>right</i> answer is. <code>correct</code> is 1 if the response matches it.</li>
+  </ul>
+</div>
+</section>
+
+<section class="slide" data-title="Checkpoint 1: one trial">
+<div class="inner">
+  <div class="kicker">Part 1 · Checkpoint</div>
+  <h2>Run one trial</h2>
+  <p>At the <b>bottom</b> of your file, add a test (you'll delete it in Part 2):</p>
+<pre><code class="py" data-nocheck>trial = make_trial(is_change=True)
+print(trial)
+result = run_trial(trial)
+print(result)
+win.close()
+core.quit()</code></pre>
+  <div class="cols">
+  <div class="check">
+    <ul>
+      <li>Type an ID in the box. A grey window opens with a <b>+</b>, then 4 colored squares flash, a blank pause, then the squares come back with <b>one a different color</b>.</li>
+      <li>Press <kbd>D</kbd>. Coder's <b>Output</b> pane prints your <code>result</code>, e.g. <code>{'response': 'different', 'correct': 1, 'rt_s': 0.61}</code>.</li>
+      <li>Run again with <code>is_change=False</code>. Pressing <kbd>S</kbd> should now be <code>correct: 1</code>.</li>
+    </ul>
+  </div>
+    <div>
+      <img class="shot" alt="Grey screen with a + in the middle and four colored squares: green, red, yellow, cyan" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5Ojf/2wBDAQoKCg0MDRoPDxo3JR8lNzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzf/wAARCAGIAjADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAIpPvU2nSfepteZUfvs+ZxLftperCiiiouzC7Cpk+6KhqVPuiunDfEz0ssb9q/T9R1FFFdp7YUUUUAFFFFABRRRQAUVDeXUNlayXNyxWKMZZgCcc46CnQTJcQRzRHMcihlOMZB6UASUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQBFJ96m06T71NrzKnxs+YxP8afqwoooqDAKlT7oqKpU+6K6cL8TPTyv+K/T9UOooortPbCiiigAooooAKKKKAOJ8Qa3qVzpN3BNoVxBEy4aZicKMjn7tWtE1vUvs9jbf2FceTtRPPycbeBu+7071va7ZSajpNzaQsqySqApfoOQf6VNp0DWun21vIQXiiVGK9CQMUAWKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAik+9TanormlhuZt3PNqZcpzcubfyIKKnoqfqq7mf9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AooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/9k=">
+      <p class="shotcap">What the squares look like for 0.25 s (real screenshot).</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="slide" data-title="Checkpoint 1: if it goes wrong">
+<div class="inner">
+  <div class="kicker">Part 1 · Checkpoint</div>
+  <h2>If it doesn't work</h2>
+  <table>
+    <tr><th>If you see…</th><th>It's probably…</th></tr>
+    <tr><td>Nothing but a grey window</td><td>a <code>draw()</code> after the <code>flip()</code>, or no <code>flip()</code> at all</td></tr>
+    <tr><td><code>NameError: name 'xyz' is not defined</code></td><td>a typo, or that line isn't above where it's used</td></tr>
+    <tr><td>Always <code>correct: 0</code></td><td>the key names in <code>KEYS</code>: must be lowercase <code>"s"</code> and <code>"d"</code></td></tr>
+    <tr><td>The window won't go away</td><td>press <kbd>Esc</kbd>: every wait in our script checks for it, and quits cleanly</td></tr>
+    <tr><td>The squares are there but they all look the same color</td><td><code>COLORS</code> or <code>trial["sample_colors"]</code>: print them and check they are different names</td></tr>
+  </table>
+  <p class="muted small">Change one thing, run again, and read the <b>last line</b> of any error message first.</p>
+</div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- PART 2 · MANY TRIALS, SAVED DATA                                      -->
+<!-- ===================================================================== -->
+
+<section class="slide" data-title="1 · A balanced trial list">
+<div class="inner">
+  <div class="kicker">Part 2 · Many trials</div>
+  <h2>Half change, half no-change</h2>
+<pre><code class="py">def balanced_trial_list(n):
+    """n True/False flags, half 'change' and half 'no change', in random order."""
+    flags = [True] * (n // 2) + [False] * (n - n // 2)
+    random.shuffle(flags)
+    return flags</code></pre>
+  <ul class="small">
+    <li><code>[True] * 8</code> is a list of eight <code>True</code>s. <code>n // 2</code> is division that drops the remainder (<code>7 // 2</code> is <code>3</code>).</li>
+    <li><code>random.shuffle(flags)</code> reorders the list <b>in place</b>, with no <code>=</code> needed.</li>
+  </ul>
+  <div class="think"><p>Why do we want equal numbers of change and no-change trials? And what does <code>balanced_trial_list(5)</code> give?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>If 80% of trials changed, pressing "different" every time would score 80% with <b>zero</b> memory. Balanced trials make guessing worth 50%.</p>
+    <p><code>balanced_trial_list(5)</code> → 2 <code>True</code> and 3 <code>False</code>, shuffled. An odd number can't split evenly, which is why we use 16 trials per condition and not 15.</p>
+  </details>
+</div>
+</section>
+
+<section class="slide" data-title="2 · Hits and false alarms">
+<div class="inner">
+  <div class="kicker">Part 2 · Many trials</div>
+  <h2>Why we save <i>what was true</i>, not just "correct"</h2>
+  <table>
+    <tr><th></th><th>They press <kbd>D</kbd> (different)</th><th>They press <kbd>S</kbd> (same)</th></tr>
+    <tr><td><b>Something changed</b></td><td><b>Hit</b> ✓</td><td>Miss ✗</td></tr>
+    <tr><td><b>Nothing changed</b></td><td><b>False alarm</b> ✗</td><td>Correct rejection ✓</td></tr>
+  </table>
+  <ul>
+    <li>Someone who says "same" to everything gets 50% right, but with <b>zero hits</b>. Accuracy alone hides that.</li>
+    <li>Hit rate and false-alarm rate <i>together</i> separate real memory from a habit of answering one way. This is the idea behind <b>signal detection theory</b>.</li>
+    <li>So every row saves <code>is_change</code> (the truth) <b>and</b> <code>response</code> (what they said). The analysis can work out everything else.</li>
+  </ul>
+  <p class="muted small">This is also how the memory tests for the videos (Part 4) are scored: pictures they saw are "changes" in the same sense, pictures they didn't see are "no change".</p>
+</div>
+</section>
+
+<section class="slide" data-title="3 · Practice and feedback">
+<div class="inner">
+  <div class="kicker">Part 2 · Many trials</div>
+  <h2>Practice trials, with feedback</h2>
+  <p>Add this <b>inside <code>run_trial</code></b>, just above the final <code>return</code>:</p>
+<pre><code class="py">    if feedback:
+        show_for("Too slow!" if response is None else ("Correct!" if correct else "Wrong"), 0.5)</code></pre>
+  <p>Then, below <code>run_trial</code>:</p>
+<pre><code class="py">def run_practice():
+    for is_change in balanced_trial_list(N_PRACTICE):
+        run_trial(make_trial(is_change), feedback=True)    # practice is not saved</code></pre>
+  <ul class="small">
+    <li><code>A if condition else B</code> picks one of two values on a single line. Here they're nested to choose between three messages.</li>
+    <li>Practice trials aren't added to <code>trial_rows</code>, so they're never saved.</li>
+  </ul>
+  <div class="prov"><p><b>Feedback in the real blocks.</b> We show it only in practice. Feedback is itself a kind of reward, which could blur what the videos are doing. The design doc calls feedback "optional", so the lab should decide.</p></div>
+</div>
+</section>
+
+<section class="slide" data-title="4 · One row per trial">
+<div class="inner">
+  <div class="kicker">Part 2 · Many trials</div>
+  <h2>Run a set of trials, save a row for each</h2>
+<pre><code class="py">def run_trials(block, condition):
+    for number, is_change in enumerate(balanced_trial_list(TRIALS_PER_CONDITION), start=1):
+        trial = make_trial(is_change)
+        result = run_trial(trial)
+        trial_rows.append({
+            "participant": info["participant"],
+            "block": block,
+            "condition": condition,
+            "trial": number,
+            "overall_trial": len(trial_rows) + 1,
+            "is_change": int(is_change),
+            "changed_item": trial["changed_item"],
+            "sample_colors": "-".join(trial["sample_colors"]),
+            "test_colors": "-".join(trial["test_colors"]),
+            "response": result["response"],
+            "correct": result["correct"],
+            "rt_s": result["rt_s"],
+        })
+        save_data()</code></pre>
+  <ul class="small">
+    <li><code>enumerate(..., start=1)</code> gives a counter (1, 2, 3, …) alongside each item.</li>
+    <li><code>"-".join(["red", "blue"])</code> → <code>"red-blue"</code>: a list squeezed into one CSV cell.</li>
+    <li>Everything an analysis could need goes in the row: <b>what was shown</b>, <b>what was right</b>, <b>what they did</b>, <b>how fast</b>. Saving after every trial means a crash costs at most one.</li>
+  </ul>
+</div>
+</section>
+
+<section class="slide" data-title="Checkpoint 2: a data file">
+<div class="inner">
+  <div class="kicker">Part 2 · Checkpoint</div>
+  <h2>Run it and open the data</h2>
+  <p>Replace the test lines at the bottom of your file with:</p>
+<pre><code class="py" data-nocheck>run_practice()
+run_trials("test", "test")
+win.close()
+core.quit()</code></pre>
+  <div class="check"><p>Six practice trials (with feedback), then four real ones. Open the new <code>data/</code> folder next to your script: you should find <code>…_trials.csv</code>. Example rows:</p></div>
+</div>
+</section>
+
+<section class="slide" data-title="Checkpoint 2: read the rows">
+<div class="inner">
+  <div class="kicker">Part 2 · Checkpoint</div>
+  <h2>Read your <code>_trials.csv</code></h2>
+  <p>Open it in Excel or as a table. Example rows:</p>
+  <table style="font-size:0.7em">
+    <tr><th class="num">overall_trial</th><th>condition</th><th class="num">is_change</th><th>sample_colors</th><th>test_colors</th><th>response</th><th class="num">correct</th><th class="num">rt_s</th></tr>
+    <tr><td class="num">1</td><td>control</td><td class="num">0</td><td>orange-magenta-green-yellow</td><td>orange-magenta-green-yellow</td><td>different</td><td class="num">0</td><td class="num">0.713</td></tr>
+    <tr><td class="num">3</td><td>control</td><td class="num">1</td><td>magenta-green-orange-yellow</td><td>magenta-green-orange-blue</td><td></td><td class="num">0</td><td class="num"></td></tr>
+    <tr><td class="num">4</td><td>control</td><td class="num">1</td><td>orange-green-cyan-magenta</td><td>yellow-green-cyan-magenta</td><td>different</td><td class="num">1</td><td class="num">0.329</td></tr>
+    <tr><td class="num">5</td><td>5s</td><td class="num">0</td><td>blue-orange-red-green</td><td>blue-orange-red-green</td><td>same</td><td class="num">1</td><td class="num">0.891</td></tr>
+  </table>
+  <p class="muted small" style="margin-top:-0.4em">(Example rows from a test run with a simulated participant, not real data.)</p>
+  <div class="think"><p>Row 3 has an empty <code>response</code> and <code>rt_s</code>. What happened? And row 1: is it a hit, miss, false alarm or correct rejection?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>Row 3: a <b>timeout</b>, no key within 3 s, scored 0. Row 1: nothing changed (<code>is_change</code> 0) but they said "different": a <b>false alarm</b>.</p>
+  </details>
+</div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- PART 3 · REWARD VIDEOS, CONDITIONS, BLOCKS                            -->
+<!-- ===================================================================== -->
+
+<section class="slide" data-title="1 · Conditions are data">
+<div class="inner">
+  <div class="kicker">Part 3 · Reward videos</div>
+  <h2>A condition is just a list of clips to play</h2>
+<pre><code class="py">GENRE = "nature"                   # PROVISIONAL: later set from calibration ratings
+VIDEO_ROOT = Path(__file__).parent / "videos"     # videos/&lt;genre&gt;/&lt;folder&gt;/clip_000.mp4
+CONDITIONS = {                     # condition = folders to play from, and seconds
+    "duration": {
+        "control": [],
+        "5s":      [("duration_5s", 5)],
+        "45s":     [("duration_45s", 45)],
+        "120s":    [("duration_120s", 120)],
+    },
+    "dose": {
+        "control": [],
+        "1x45s":   [("dose_45s_single", 45)],
+        "3x15s":   [("dose_15s_fragment", 15)] * 3,   # PROVISIONAL: 3 clips, or 1 clip x3?
+    },
+}</code></pre>
+  <ul class="small">
+    <li>A dictionary <b>inside</b> a dictionary: <code>CONDITIONS["dose"]["3x15s"]</code> is a list of three <code>(folder, seconds)</code> pairs.</li>
+    <li><b>Control = an empty list</b>: nothing to play. <b>3 × 15 s</b> = the same folder three times.</li>
+  </ul>
+  <div class="think"><p>How would you add a "7 × 6 s" dose condition?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+<pre><code class="py" data-nocheck>        "7x6s":    [("dose_6s_fragment", 6)] * 7,</code></pre>
+    <p>…plus a <code>dose_6s_fragment</code> folder with at least 7 clips of 6 s each. Because conditions are <i>data</i>, no other code changes.</p>
+  </details>
+</div>
+</section>
+
+<section class="slide" data-title="2 · Finding clips">
+<div class="inner">
+  <div class="kicker">Part 3 · Reward videos</div>
+  <h2>Find the clips, pick some</h2>
+<pre><code class="py">def find_clips(bucket):
+    return sorted((VIDEO_ROOT / GENRE / bucket).glob("*.mp4"))
+
+
+def choose_clips(plan):
+    """plan = [(bucket, seconds), ...]  -&gt;  [(clip file or None, seconds), ...]"""
+    used = []
+    picks = []
+    for bucket, seconds in plan:
+        options = [clip for clip in find_clips(bucket) if clip not in used]   # never repeat a clip
+        clip = random.choice(options) if options else None    # None = no file on this computer
+        used.append(clip)
+        picks.append((clip, seconds))
+    return picks</code></pre>
+  <ul class="small">
+    <li><code>Path / "folder"</code> joins paths. <code>.glob("*.mp4")</code> lists every matching file; <code>sorted</code> makes the order predictable.</li>
+    <li><code>for bucket, seconds in plan</code> unpacks each pair. <code>if clip not in used</code> keeps the three 15 s clips <b>different</b>.</li>
+    <li>If a folder is empty or missing, <code>options</code> is empty and we get <code>None</code>. The script then shows a stand-in screen instead of crashing, so you can build and test without the big video files.</li>
+  </ul>
+</div>
+</section>
+
+<section class="slide" data-title="3 · Play a video: fit it">
+<div class="inner">
+  <div class="kicker">Part 3 · Reward videos</div>
+  <h2>Play a video (1/3): fit it to the screen</h2>
+<pre><code class="py">def fit_in_box(width, height, box_width, box_height):
+    """Biggest size that fits inside the box without stretching the picture."""
+    scale = min(box_width / width, box_height / height)
+    return (width * scale, height * scale)</code></pre>
+  <p>Our clips are a mix: some <b>vertical</b> (1080 × 1920, like a phone), some <b>horizontal</b> (3840 × 2160). One rule handles both:</p>
+  <ul>
+    <li>Work out how much each side would have to shrink to fit, and take the <b>smaller</b> shrink (<code>min</code>). Both sides then fit, and the shape isn't distorted.</li>
+    <li>The screen is 1 unit tall and <code>win.size[0] / win.size[1]</code> units wide (≈ 1.43 in our test window).</li>
+  </ul>
+  <div class="think"><p>A 1080 × 1920 clip in a box 1.43 wide and 1 tall. Which side limits it: width or height?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>Height: <code>1 / 1920</code> is smaller than <code>1.43 / 1080</code>. The clip becomes 0.56 wide and 1.0 tall, with grey bars either side, like a phone video on a laptop.</p>
+  </details>
+</div>
+</section>
+
+<section class="slide" data-title="3 · Play a video: the loop">
+<div class="inner">
+  <div class="kicker">Part 3 · Reward videos</div>
+  <h2>Play a video (2/3): load, then loop until it ends</h2>
+<pre><code class="py">    message.text = "Get ready..."                       # long videos take a few seconds to load
+    message.draw()
+    win.flip()
+    movie = visual.MovieStim(win, str(clip), units="height")
+    movie.size = fit_in_box(*movie.frameSize, win.size[0] / win.size[1], 1)
+    timer = None
+    while not movie.isFinished:
+        movie.draw()
+        win.flip()
+        if timer is None:
+            timer = core.Clock()                       # start timing when the first frame is on screen
+        if kb.getKeys(["escape"], waitRelease=False):
+            quit_experiment()
+        if CLIP_CAP_S and timer.getTime() &gt; CLIP_CAP_S:
+            break</code></pre>
+  <ul class="small">
+    <li>A <code>while</code> loop: draw one frame, flip, repeat until <code>movie.isFinished</code>. Each pass is one screen refresh.</li>
+    <li><code>*movie.frameSize</code>: the <code>*</code> unpacks <code>(1080, 1920)</code> into two separate arguments.</li>
+    <li>"Get ready…" first, because the <b>load</b> can take a few seconds for a 120 s clip, and without it the participant stares at a frozen screen.</li>
+  </ul>
+  <div class="warn"><p>Many online examples (and older code) wait with <code>while movie.status != FINISHED</code>. In PsychoPy 2026.1 that value <b>never updates</b>, so the loop never ends. Use <code>movie.isFinished</code>.</p></div>
+</div>
+</section>
+
+<section class="slide" data-title="3 · Play a video: assemble it">
+<div class="inner">
+  <div class="kicker">Part 3 · Reward videos</div>
+  <h2>Play a video (3/3): no file? and what really happened</h2>
+  <p>The function's top: a stand-in screen when the file isn't there. Your <code>play_clip</code> starts like this, <b>then</b> the code from the last slide:</p>
+<pre><code class="py">def play_clip(clip, seconds):
+    """Play one video (or a stand-in screen if the file is missing). Returns (file_s, played_s)."""
+    if clip is None:
+        message.text = f"[a {seconds} s reward video would play here]"
+        message.draw()
+        win.flip()
+        timer = core.Clock()
+        limit = min(seconds, CLIP_CAP_S) if CLIP_CAP_S else seconds
+        while timer.getTime() &lt; limit:
+            if kb.getKeys(["escape"], waitRelease=False):
+                quit_experiment()
+            core.wait(0.01)
+        return None, round(timer.getTime(), 2)</code></pre>
+  <p>And its end, after the loop:</p>
+<pre><code class="py">    played = timer.getTime()                           # measure before any clean-up
+    if not movie.isFinished:                           # we cut it short (DEV cap): silence it
+        movie.pause()                                  # (stop() can take seconds on long clips)
+    return round(movie.duration, 2), round(played, 2)</code></pre>
+  <p class="small">Add <code>CLIP_CAP_S = None</code> to the settings, and <code>CLIP_CAP_S = 6</code> inside <code>if DEV_MODE:</code>. In dev mode every video stops after 6 s, so a test session doesn't take an hour.</p>
+</div>
+</section>
+
+<section class="slide" data-title="3 · What we log about each video">
+<div class="inner">
+  <div class="kicker">Part 3 · Reward videos</div>
+  <h2>Log what really happened, not just what we planned</h2>
+  <table>
+    <tr><th>Column</th><th>Meaning</th><th>Why we keep it</th></tr>
+    <tr><td><code>nominal_s</code></td><td>what the condition <i>says</i> (5, 45, 120)</td><td>the design</td></tr>
+    <tr><td><code>file_s</code></td><td>the video file's true length</td><td>did the "5 s" clip really last about 5 s?</td></tr>
+    <tr><td><code>played_s</code></td><td>how long it actually played</td><td>shorter than <code>file_s</code> if someone pressed Esc or the dev cap cut it</td></tr>
+  </table>
+  <ul>
+    <li>The whole study rests on "5 s vs 45 s vs 120 s". If a file is quietly 8 s, or got cut short, we need the data to say so.</li>
+    <li>We timed <code>played_s</code> from the <b>first frame on screen</b>, not from when the function started, so load time doesn't count as "watching".</li>
+  </ul>
+  <p class="muted small">A check on the lab's current clip library: every folder is within about 0.3 s of its label (5 s clips are 5.0–5.2 s, 45 s clips 45.0–45.2 s, 120 s clips 120.1–120.2 s).</p>
+</div>
+</section>
+
+<section class="slide" data-title="4 · Ratings and the reward row">
+<div class="inner">
+  <div class="kicker">Part 3 · Reward videos</div>
+  <h2>Ask for ratings, record the reward</h2>
+<pre><code class="py">def ask_rating(prompt):
+    message.text = f"{prompt}\n\n1 = not at all          7 = extremely"
+    message.draw()
+    win.flip()
+    keys = kb.waitKeys(keyList=["1", "2", "3", "4", "5", "6", "7", "escape"], waitRelease=False)
+    if keys[0].name == "escape":
+        quit_experiment()
+    return int(keys[0].name)</code></pre>
+<pre><code class="py">        for name, prompt in RATING_PROMPTS.items():
+            row[name] = ask_rating(prompt)</code></pre>
+  <ul class="small">
+    <li><code>RATING_PROMPTS.items()</code> gives each (key, value) pair of the dictionary: <code>"wanting"</code> with its question, then <code>"liking"</code> with its question. The answer goes into <code>row["wanting"]</code>, <code>row["liking"]</code>.</li>
+    <li>Add a third question by adding a line to the dictionary; the loop handles it.</li>
+  </ul>
+  <div class="prov"><p><b>Ratings.</b> We ask <i>wanting</i> and <i>liking</i> after every video (the design doc's version). The lab is also considering a "how satisfying was that?" rating, and whether to ask after every video or only sometimes.</p></div>
+  <p class="muted small">The full <code>deliver_reward</code> (picks clips, plays them, logs the row) is in <code>svf_vwm_mini.py</code>, section 5. Type it in from there; it's the glue between the last four slides.</p>
+</div>
+</section>
+
+<section class="slide" data-title="5 · A block: video first">
+<div class="inner">
+  <div class="kicker">Part 3 · Blocks</div>
+  <h2>A block: the video first, then the trials it should affect</h2>
+  <div class="flow">
+    <span class="node reward">Reward video(s)</span><span class="arrow">→</span>
+    <span class="node reward">Ratings</span><span class="arrow">→</span>
+    <span class="node plain">"Get ready" 2 s</span><span class="arrow">→</span>
+    <span class="node">16 memory trials</span><span class="arrow">→</span>
+    <span class="node plain">next condition…</span>
+  </div>
+<pre><code class="py">def run_block(block):
+    conditions = list(CONDITIONS[block])
+    random.shuffle(conditions)                         # random condition order for each participant
+    for condition in conditions:
+        deliver_reward(block, condition)
+        show_for("Memory task starting...\n\nKeep your eyes on the +", 2)
+        run_trials(block, condition)</code></pre>
+  <ul class="small">
+    <li><code>list(CONDITIONS[block])</code> is the list of condition names (<code>"control"</code>, <code>"5s"</code>, …). We shuffle it so every participant gets their own order.</li>
+    <li>A fixed 2-second pause keeps the gap between video and trials the same for everyone.</li>
+  </ul>
+  <div class="prov"><p><b>Order.</b> Here the video comes <i>first</i>, because the memory task is meant to measure what the video did. The older <code>run_session.py</code> runs each condition's trials <i>before</i> its video. The lab should confirm which is intended.</p></div>
+</div>
+</section>
+
+<section class="slide" data-title="6 · Which block goes first">
+<div class="inner">
+  <div class="kicker">Part 3 · Blocks</div>
+  <h2>Counterbalancing: alternate which block goes first</h2>
+<pre><code class="py">def block_order_for(participant):
+    """Even-numbered participants do Duration first, odd-numbered do Dose first."""
+    digits = "".join(ch for ch in participant if ch.isdigit())     # "P007" -&gt; "007"
+    number = int(digits) if digits else 0
+    return ["duration", "dose"] if number % 2 == 0 else ["dose", "duration"]</code></pre>
+  <table>
+    <tr><th>ID</th><th>digits</th><th>number</th><th>first block</th></tr>
+    <tr><td><code>P002</code></td><td>"002"</td><td>2 (even)</td><td>duration</td></tr>
+    <tr><td><code>P003</code></td><td>"003"</td><td>3 (odd)</td><td>dose</td></tr>
+    <tr><td><code>test</code></td><td>""</td><td>0 (even)</td><td>duration</td></tr>
+  </table>
+  <ul class="small">
+    <li><code>number % 2</code> is the remainder after dividing by 2: 0 for even, 1 for odd.</li>
+    <li>Why counterbalance? Whatever block comes first gets a fresh, un-fatigued participant. Alternating spreads that evenly across the two blocks.</li>
+  </ul>
+  <div class="think"><p>Why work the order out from the ID, instead of <code>random.choice</code>?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>It's <b>reproducible</b> (you can re-derive anyone's order from their ID if a file goes missing) and it <b>alternates</b> exactly. Coin flips could easily give 7 of one kind and 3 of the other.</p>
+  </details>
+</div>
+</section>
+
+<section class="slide" data-title="7 · The whole session">
+<div class="inner">
+  <div class="kicker">Part 3 · Putting it together</div>
+  <h2>The session itself is only a few lines</h2>
+<pre><code class="py">show_message(
+    "Welcome!\n\n"
+    "You will do a memory task, and watch some short videos between parts of it.\n\n"
+    "In the memory task, some colored squares flash up, disappear, and then come back.\n"
+    "Press  D  if ANY square changed color.\n"
+    "Press  S  if they are all the SAME.\n\n"
+    "Press SPACE to practice."
+)
+run_practice()
+show_message("Practice is over.\n\nWatch the videos as you normally would. Sound is on.\n\nPress SPACE to begin.")
+
+for number, block in enumerate(block_order_for(info["participant"])):
+    if number &gt; 0:
+        show_message("Short break.\n\nPress SPACE when you are ready to continue.")
+    run_block(block)
+
+save_data()
+show_message("Thank you! You are finished.\n\nPlease let the experimenter know.")
+win.close()
+core.quit()</code></pre>
+  <p class="small">Every function you wrote now pays off: this part reads almost like the plan on the "session at a glance" slide. Delete the old test lines at the bottom first.</p>
+</div>
+</section>
+
+<section class="slide" data-title="Checkpoint 3: a full session">
+<div class="inner">
+  <div class="kicker">Part 3 · Checkpoint</div>
+  <h2>Run a whole session (minus the memory tests)</h2>
+  <div class="check">
+    <ul>
+      <li>Run it with ID <code>P002</code>. With <code>DEV_MODE = True</code> it takes about <b>3 minutes</b>: practice, then Duration (control, 5 s, 45 s, 120 s in random order), a break, then Dose.</li>
+      <li>Each video plays for at most 6 s, then two ratings (<kbd>1</kbd>–<kbd>7</kbd>), "Memory task starting…", then 4 trials.</li>
+      <li>Run again with <code>P003</code>: the <b>Dose</b> block should come first.</li>
+      <li>No videos on this computer? You'll see "[a 45 s reward video would play here]" instead, and everything else works.</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section class="slide" data-title="Checkpoint 3: read the rewards">
+<div class="inner">
+  <div class="kicker">Part 3 · Checkpoint</div>
+  <h2>Read your <code>_rewards.csv</code></h2>
+  <p>You should see one row per condition. Example rows:</p>
+  <table style="font-size:0.72em">
+    <tr><th>block</th><th>condition</th><th>clips</th><th class="num">nominal_s</th><th class="num">file_s</th><th class="num">played_s</th><th class="num">wanting</th><th class="num">liking</th></tr>
+    <tr><td>duration</td><td>control</td><td></td><td class="num">0</td><td class="num">0.00</td><td class="num">0.00</td><td class="num"></td><td class="num"></td></tr>
+    <tr><td>duration</td><td>5s</td><td>duration_5s/clip_001.mp4</td><td class="num">5</td><td class="num">5.09</td><td class="num">5.12</td><td class="num">1</td><td class="num">4</td></tr>
+    <tr><td>dose</td><td>3x15s</td><td>dose_15s_fragment/clip_003.mp4;<br>dose_15s_fragment/clip_018.mp4;<br>dose_15s_fragment/clip_021.mp4</td><td class="num">45</td><td class="num">45.32</td><td class="num">18.02</td><td class="num">5</td><td class="num">1</td></tr>
+  </table>
+  <div class="think"><p>The 3x15s row shows <code>played_s</code> = 18.02, far below <code>file_s</code> = 45.32. Why? And why are there three different clip names?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>Dev mode cuts each clip at 6 s (3 × 6 ≈ 18). That's why we log <code>played_s</code>: real runs (<code>DEV_MODE = False</code>) should show it close to <code>file_s</code>. The three names come from <code>if clip not in used</code> in <code>choose_clips</code>.</p>
+  </details>
+</div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- PART 4 · MEMORY TESTS FOR THE VIDEOS (PROVISIONAL)                    -->
+<!-- ===================================================================== -->
+
+<section class="slide" data-title="Why test memory for the videos?">
+<div class="inner">
+  <div class="kicker">Part 4 · Memory tests for the videos</div>
+  <h2>After the last block: what do they remember <i>about the videos</i>?</h2>
+  <div class="flow">
+    <span class="node reward">1 · Free recall</span><span class="arrow">→</span>
+    <span class="node reward">2 · Pick the pictures</span><span class="arrow">→</span>
+    <span class="node reward">3 · One by one</span>
+  </div>
+  <ul>
+    <li><b>Free recall:</b> "tell me everything you remember". It comes <b>first</b>, before any pictures can jog their memory. The experimenter types a short summary.</li>
+    <li><b>Image selection:</b> a grid of 14 pictures; they click the ones they remember. Half are from videos they watched, half from videos they didn't.</li>
+    <li><b>Recognition:</b> the same idea one picture at a time, answering <kbd>Y</kbd> / <kbd>N</kbd>, which also gives us a reaction time.</li>
+  </ul>
+  <div class="prov"><p><b>Provisional.</b> The three tests come from the lab's Oct 1 notes. How many pictures, which test goes first, and whether to also test video <i>titles</i> are still being decided. Titles are left out of this workshop for now. Part 4 is the part most likely to change.</p></div>
+</div>
+</section>
+
+<section class="slide" data-title="1 · Stills from the videos">
+<div class="inner">
+  <div class="kicker">Part 4 · Memory tests for the videos</div>
+  <h2>First, we need pictures: <code>make_stills.py</code></h2>
+  <p>Another script, run <b>once</b> before sessions that include these tests. For each clip it saves two screenshots, from 35% and 65% of the way through:</p>
+<pre><code class="py" data-nocheck>stills/nature/duration_5s/clip_001_a.jpg      # "a": used by the image-selection grid
+stills/nature/duration_5s/clip_001_b.jpg      # "b": used by the one-by-one test</code></pre>
+<pre><code class="py" data-nocheck>subprocess.run(["ffmpeg", "-y", "-v", "error", "-ss", str(seconds * moment), "-i", str(clip),
+                "-frames:v", "1", "-vf", "scale=480:480:force_original_aspect_ratio=decrease", str(out_file)])</code></pre>
+  <ul class="small">
+    <li><b>ffmpeg</b> is a separate program that can grab one frame at any time. Python's <code>subprocess.run</code> calls it for us.</li>
+    <li>Two different pictures per clip, so the two tests <b>never show the identical image</b> (otherwise the second test could just be remembering the first test).</li>
+    <li>Not installed? The script stops with a clear message, and the main experiment says "run make_stills.py first".</li>
+  </ul>
+  <p class="muted small">Read the finished <code>make_stills.py</code> in the workshop folder: it's about 60 lines, all things you've now seen.</p>
+</div>
+</section>
+
+<section class="slide" data-title="2 · Old pictures and foils">
+<div class="inner">
+  <div class="kicker">Part 4 · Memory tests for the videos</div>
+  <h2>Which pictures go in the test?</h2>
+<pre><code class="py">def still_path(clip, tag):
+    return STILL_ROOT / clip.parent.parent.name / clip.parent.name / f"{clip.stem}_{tag}.jpg"
+
+
+def pick_foils(shown):
+    """For each clip they watched, a clip from the same folder that they did NOT watch."""
+    foils = []
+    for clip in shown:
+        options = [c for c in find_clips(clip.parent.name) if c not in shown and c not in foils]
+        foils.append(random.choice(options))
+    return foils
+
+
+def build_test_items(shown, foils, tag):
+    items = [{"image": still_path(clip, tag), "is_old": True, "shown_in": shown_in[clip]} for clip in shown]
+    items += [{"image": still_path(clip, tag), "is_old": False, "shown_in": (None, None)} for clip in foils]
+    return items</code></pre>
+  <ul class="small">
+    <li><b>Old</b> = from a video they watched. <b>Foil</b> (also called a "new" item) = from a video they did not, chosen from the <b>same folder</b> so it looks similar.</li>
+    <li>Each item is a small dictionary. <code>shown_in</code> remembers which block and condition an old picture came from, so we can later ask "did people remember the 120 s video better than the 5 s one?"</li>
+    <li>This needs <code>Image</code> in the imports (<code>from PIL import Image</code>, already at the top of our file). It reads a picture's real size so we don't stretch it.</li>
+  </ul>
+</div>
+</section>
+
+<section class="slide" data-title="3 · Showing and logging pictures">
+<div class="inner">
+  <div class="kicker">Part 4 · Memory tests for the videos</div>
+  <h2>Helpers: show a picture, log an answer</h2>
+<pre><code class="py">def make_image(path, box_width, box_height, pos=(0, 0)):
+    width, height = Image.open(path).size
+    return visual.ImageStim(win, image=str(path), pos=pos,
+                            size=fit_in_box(width, height, box_width, box_height))
+
+
+def log_memory(test, item=None, answer=None, correct=None, rt_s=None, notes=None):
+    memory_rows.append({
+        "participant": info["participant"],
+        "test": test,
+        "image": f"{item['image'].parent.name}/{item['image'].name}" if item else None,
+        "is_old": int(item["is_old"]) if item else None,
+        "block": item["shown_in"][0] if item else None,        # which block/condition the video was in
+        "condition": item["shown_in"][1] if item else None,    # (empty for pictures from unseen videos)
+        "answer": answer,
+        "correct": correct,
+        "rt_s": rt_s,
+        "notes": notes,
+    })</code></pre>
+  <ul class="small">
+    <li><code>fit_in_box</code> from Part 3 is back: pictures can be vertical or horizontal too.</li>
+    <li><code>log_memory</code> has defaults (<code>item=None</code>…) so one function serves all three tests. Free recall has no picture, just <code>notes</code>.</li>
+    <li>Same <b>truth + answer</b> pattern as the trials: <code>is_old</code> (truth) next to <code>answer</code> (what they said).</li>
+  </ul>
+</div>
+</section>
+
+<section class="slide" data-title="4 · Free recall">
+<div class="inner">
+  <div class="kicker">Part 4 · Memory tests for the videos</div>
+  <h2>Test 1: free recall</h2>
+<pre><code class="py">def free_recall():
+    show_message("Memory questions\n\nPlease tell the experimenter everything you remember "
+                 "about the videos you watched. Take as long as you like.\n\n"
+                 "(Experimenter: press SPACE when they are finished.)")
+    summary = {"notes": ""}
+    gui.DlgFromDict(summary, title="Experimenter: type a quick summary of what they recalled")
+    log_memory("free_recall", notes=summary["notes"])
+    save_data()</code></pre>
+  <ul class="small">
+    <li>The participant just <b>talks</b>. The experimenter presses SPACE, then types a short summary in a dialog, the same <code>gui.DlgFromDict</code> you used at the start.</li>
+    <li>We save the summary text in <code>notes</code>. We don't try to score it in code; that's done later, by hand, with a rubric.</li>
+  </ul>
+  <div class="prov"><p><b>Provisional.</b> Typing a summary while the participant talks is a placeholder. The lab may prefer an audio recording or a text box on the participant's screen.</p></div>
+</div>
+</section>
+
+<section class="slide" data-title="5 · Image selection">
+<div class="inner">
+  <div class="kicker">Part 4 · Memory tests for the videos</div>
+  <h2>Test 2: click the pictures you remember</h2>
+  <div class="cols">
+    <div>
+<pre><code class="py">    chosen = set()
+    was_down = False
+    while True:
+        is_down = mouse.getPressed()[0]
+        if is_down and not was_down:
+            for i, stim in enumerate(stims):
+                if stim.contains(mouse):
+                    if i in chosen:
+                        chosen.remove(i)
+                    else:
+                        chosen.add(i)
+        was_down = is_down</code></pre>
+    </div>
+    <div>
+      <img class="shot" alt="Grid of 14 nature pictures, three with yellow frames around them" src="data:image/jpeg;base64,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wOik5Az2xRFqDDcrbCT6qRj6YrSXRQ2VWPcQccNwKhl0nynAbeVzzsINAEAvroEPDcEEDA+fJxTm1G+YJumdtp3AkAkH2J5FTx6MjqWXcxHRWUAmnjSHHCWZORnJB/woAWPXNURh5QjEYyApiByPQ+tPi1XUUZpFkaNsYTACqPqO/FRGxkjYbbRQffNWI9Oa4Uj7Iu4f71ACtqMiJ800LJJgtACWAI79Rz1PtmrX9qrOpWCFGZ49rGZFRM5PHDdhjvyaqNoMhHCbT3ByB+dVX0GVpdkRYsTjGD1/LmgC7pUsZ1S3ijUwRAruDSsVLjg4wO/HX6E13FcLa6LPHqFkWdQYHXIVAON2eT3+td1QBS1s7dHvDnGIWrzuS4BbDhWPds16HroY6NehRljC2APpXm4tJlJDRP8AUqaTKi7Eok3EdSP72aJJjuKqQD3IPWhLOZVDMkv0CHFacXh57qAzRyiEAAmNlJYe/wBKmzHfUoxyuSCxB/2uhqdZeAPMfI6emKkXQLoBJGniSBhkTENj6EAEirNr4fmml8v7TGvGQwRyD9OKhplplQyKGxuz9KnQEruUYHua1D4Ye3LLI3zKeX3D9BU9t4ZkmKmWdAMd48YoS6hdlCzvbCGQ/aY1lZPuGRm2fiByfpS3esXNwxlN4UUY2pbBYwMcDjitabw9NG6RQS204JBxtIBI9eKlfwLq1xM6Np1nEhIPmLcBF/XNO6W4anLCZrlvnvk3dcXHzZNPhspJp2R54VK5OIRwOM556V2Eng7QtKgSTUL6OW4xzGjkoOO5H8utZkl1pEJ2JPdSRjqq2oAP5iqjJPYmSaK3hiNI9QnVLlJh5Z6Lg/eHeumrE0VraW/mmt0eMsnK+SEXqPeturIYUUUUCCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKADNGT60UUAFGTRRQAZooooAM0UUUAFFFFABRRRQAUZPrRRQAZPrRRRQAUUUUAFFFFABSYHpS0UAFGT60UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAf/9k=">
+      <p class="shotcap">Three pictures selected (yellow frames). Real screenshot from a test run.</p>
+    </div>
+  </div>
+  <ul class="small">
+    <li>A <b>set</b> holds each picture's number at most once, so clicking twice <b>un-selects</b> it. <code>stim.contains(mouse)</code> asks "is the mouse on this picture?"</li>
+    <li><code>was_down</code> remembers last frame's button state: a click counts only when the button goes <i>from up to down</i>, not for every frame it's held.</li>
+  </ul>
+  <p class="muted small">The grid layout (5 pictures per row, from <code>i % 5</code> and <code>i // 5</code>), the drawing loop, and the logging (one row per picture) are in <code>image_selection</code> in <code>svf_vwm_mini.py</code>, section 7.</p>
+</div>
+</section>
+
+<section class="slide" data-title="6 · Recognition, one by one">
+<div class="inner">
+  <div class="kicker">Part 4 · Memory tests for the videos</div>
+  <h2>Test 3: "did you see this?"</h2>
+  <div class="cols">
+    <div>
+<pre><code class="py">def recognition(items):
+    random.shuffle(items)
+    caption.text = "Did you see this picture in one of the videos?        Y = yes        N = no"
+    for item in items:
+        picture = make_image(item["image"], 1.2, 0.8)
+        picture.draw()
+        caption.draw()
+        win.callOnFlip(kb.clock.reset)
+        kb.clearEvents()
+        win.flip()
+        keys = kb.waitKeys(keyList=["y", "n", "escape"], waitRelease=False)
+        if keys[0].name == "escape":
+            quit_experiment()
+        said_old = keys[0].name == "y"
+        log_memory("recognition", item, int(said_old), int(said_old == item["is_old"]), keys[0].rt)
+    save_data()</code></pre>
+    </div>
+    <div>
+      <img class="shot" alt="A stream in a forest with the question 'Did you see this picture in one of the videos?'" src="data:image/jpeg;base64,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+dc1knqTRk+ppKm1sw9n5nSvq09vNJICQ787HQkZ+mait71HZpbtC+7rkqoz7nmufyT1JoodNvqL2fmdTdxaXMqlQ8UhX5VijJJP171hXEYjl+STJ744Iqpk+p/OkqXQv1H7M1obmd7V4ZHyjAAqwzxUEDvay7134PBINUMn1oyfWl7B9wdM3hFDcsJRlWfhiq5U/UVn3FhBMm63fa2ehPy/ge1UskdCfzpKfsPMn2XmPj8yNHXv1Zd2D+VH2wzZ85VJwMNjpTKKn6v5lezFWKKX/VuEb/a4Bpl5DPbsgnXG9dyHsy+oPcU6g89ecUfV/MfIVF680/bnGasUUfV/MXIQNynQAjuOtKJWChWP4nrU1FJ4bzHyBbMpO3zFA/2hkUt9bSsgKumB/c4z+FJRTWH8w5ChJGVHPaoDuByuK1qMD0FH1fzDlK1icxtnGd3arNFFbxjyqxaCiiiqAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//Z">
+      <p class="shotcap">One recognition trial.</p>
+    </div>
+  </div>
+  <ul class="small">
+    <li>The same <b>draw → flip → clock reset → wait for key</b> pattern as a memory-task trial. Same reason for it: an accurate RT.</li>
+    <li><code>said_old == item["is_old"]</code> is <code>True</code> or <code>False</code>; <code>int()</code> makes that 1 or 0.</li>
+  </ul>
+</div>
+</section>
+
+<section class="slide" data-title="7 · Run the memory tests">
+<div class="inner">
+  <div class="kicker">Part 4 · Putting it together</div>
+  <h2>One function runs all three</h2>
+<pre><code class="py">def run_memory_tests():
+    if not shown_in:
+        show_message("No real video files were played, so there is nothing to test.\n\nPress SPACE.")
+        return
+    shown = list(shown_in)
+    foils = pick_foils(shown)
+    selection_items = build_test_items(shown, foils, "a")
+    recognition_items = build_test_items(shown, foils, "b")   # other moments from the same clips
+    missing = [item["image"] for item in selection_items + recognition_items if not item["image"].exists()]
+    if missing:
+        show_message(f"{len(missing)} still image(s) are missing.\n\nRun make_stills.py first.\n\nPress SPACE.")
+        return
+    free_recall()                                      # first: nothing to jog their memory yet
+    image_selection(selection_items)
+    recognition(recognition_items)</code></pre>
+  <p>And in the session at the bottom, add one line after the blocks:</p>
+<pre><code class="py">run_memory_tests()</code></pre>
+  <ul class="small">
+    <li><code>shown_in</code> (the dictionary from Part 1) now pays off: its keys are exactly the clips this participant watched.</li>
+    <li>Two <b>guard clauses</b> (<code>return</code> early) handle "no videos played" and "stills not made", so test runs without the video files still finish cleanly.</li>
+  </ul>
+</div>
+</section>
+
+<section class="slide" data-title="Checkpoint 4: the memory CSV">
+<div class="inner">
+  <div class="kicker">Part 4 · Checkpoint</div>
+  <h2>Run it with videos and stills</h2>
+  <div class="check">
+    <ul>
+      <li>Put the videos in <code>videos/</code> and run <code>make_stills.py</code> once.</li>
+      <li>Run the full session (<code>DEV_MODE = True</code>, about 3 minutes). At the end you get the free-recall dialog, a grid of 14 pictures, then 14 single pictures.</li>
+      <li>Open <code>…_memory.csv</code>. Example rows from a test run:</li>
+    </ul>
+  </div>
+  <table style="font-size:0.7em">
+    <tr><th>test</th><th>image</th><th class="num">is_old</th><th>block</th><th>condition</th><th class="num">answer</th><th class="num">correct</th><th class="num">rt_s</th></tr>
+    <tr><td>selection</td><td>duration_120s/clip_004_a.jpg</td><td class="num">0</td><td></td><td></td><td class="num">1</td><td class="num">0</td><td class="num"></td></tr>
+    <tr><td>selection</td><td>duration_120s/clip_003_a.jpg</td><td class="num">1</td><td>duration</td><td>120s</td><td class="num">1</td><td class="num">1</td><td class="num"></td></tr>
+    <tr><td>recognition</td><td>dose_45s_single/clip_002_b.jpg</td><td class="num">1</td><td>dose</td><td>1x45s</td><td class="num">1</td><td class="num">1</td><td class="num">0.701</td></tr>
+  </table>
+  <p class="muted small" style="margin-top:-0.4em">(Simulated participant, not real data.)</p>
+  <div class="think"><p>Row 1: a picture from a video they never saw, and they selected it. What is that called? And why do the "new" pictures have empty <code>block</code> and <code>condition</code>?</p></div>
+  <details class="reveal"><summary>Answer</summary>
+    <p>A <b>false alarm</b>: same table as the change-detection task, now for pictures. Unseen videos weren't shown in any block or condition, so there's nothing to fill in.</p>
+  </details>
+</div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- PART 5 · RUNNING AND UPDATING                                         -->
+<!-- ===================================================================== -->
+
+<section class="slide" data-title="Before a real session">
+<div class="inner">
+  <div class="kicker">Part 5 · Running and updating</div>
+  <h2>Before you run a real participant</h2>
+  <div class="check">
+    <ul>
+      <li><code>DEV_MODE = False</code>. Otherwise you get 4 trials per condition and 6 s videos.</li>
+      <li>Videos are in <code>videos/&lt;genre&gt;/&lt;folder&gt;/</code> and <b>every folder needed has clips</b>. Check <code>GENRE</code>.</li>
+      <li><code>make_stills.py</code> has run, so <code>stills/</code> exists.</li>
+      <li>Sound is on and the volume is set; the screen is full-size; notifications are off.</li>
+      <li>Run the whole thing yourself once with the real participant ID <b>pattern</b> (e.g. <code>P001</code>) and look at all three CSVs.</li>
+      <li>Participant IDs: odd/even decides block order, so don't reuse an ID, and keep a log of which number you gave to whom.</li>
+    </ul>
+  </div>
+  <div class="warn"><p>Run a <b>full-length</b> session at least once with <code>DEV_MODE = False</code> before collecting data. The dev shortcuts hide timing problems (like a 120 s clip taking a few seconds to load).</p></div>
+</div>
+</section>
+
+<section class="slide" data-title="What will change, and where">
+<div class="inner">
+  <div class="kicker">Part 5 · Running and updating</div>
+  <h2>This experiment is still being tested. Here's where changes go.</h2>
+  <table>
+    <tr><th>If the lab decides…</th><th>Change</th></tr>
+    <tr><td>different timing / set size</td><td><code>SET_SIZE</code>, <code>ENCODING_TIME</code>, <code>RETENTION_TIME</code> (section 1)</td></tr>
+    <tr><td>a different video genre</td><td><code>GENRE</code> (section 1) and the matching folders</td></tr>
+    <tr><td>a new or changed condition</td><td><code>CONDITIONS</code>: one line per condition</td></tr>
+    <tr><td>another rating question</td><td><code>RATING_PROMPTS</code>: one line</td></tr>
+    <tr><td>feedback in real trials</td><td>the <code>feedback</code> argument of <code>run_trial</code></td></tr>
+    <tr><td>trials before the video, not after</td><td>the order of two lines in <code>run_block</code></td></tr>
+    <tr><td>different memory test sizes or order</td><td><code>run_memory_tests</code></td></tr>
+  </table>
+  <p class="small">Almost all of it is one line in the settings, which is the point of putting the numbers at the top. If a change would take more than about ten minutes, stop and check with the lab first.</p>
+  <p class="small">Slides marked <span class="prov" style="padding:0 0.4em">Provisional</span> are the ones to revisit as testing continues.</p>
+</div>
+</section>
+
+<section class="slide" data-title="Debugging habits">
+<div class="inner">
+  <div class="kicker">Part 5 · Running and updating</div>
+  <h2>When something breaks</h2>
+  <ol>
+    <li><b>Read the last line of the error.</b> It says what went wrong; the line above says where.</li>
+    <li><b>Change one thing at a time</b>, and re-run. If two things changed, you won't know which one fixed (or broke) it.</li>
+    <li><b>Make it small.</b> <code>DEV_MODE</code> is on, a short test participant ID, one condition. Print values with <code>print(...)</code> while you look around.</li>
+    <li><b>Save a copy before bigger edits</b> (or use Git, as in the earlier workshops).</li>
+    <li>Still stuck after 15 minutes? <b>Ask</b>, with the exact error and what you changed last.</li>
+  </ol>
+  <p class="muted small">The next slides have a cheat sheet and a table of problems we hit while building this.</p>
+</div>
+</section>
+
+<section class="slide" data-title="What's next">
+<div class="inner">
+  <div class="kicker">Part 5 · Running and updating</div>
+  <h2>Where this goes next</h2>
+  <ul>
+    <li><b>The real study needs more.</b> Clip genres assigned from each participant's calibration ratings (the lab's main project does this), more videos, and counterbalancing across genres.</li>
+    <li><b>Video titles.</b> The lab is considering a third memory test on video titles; left out for now.</li>
+    <li><b>Analysis.</b> Hit rate and false-alarm rate per condition from <code>_trials.csv</code>. A good first project for pandas.</li>
+    <li><b>Your turn:</b> pick one provisional item, change the script, run a checkpoint test, and show it to the lab.</li>
+  </ul>
+  <div class="prov"><p>This deck and <code>svf_vwm_mini.py</code> will change as the study does. Keep them in sync: the code on the slides is the same code, line for line, as in the script.</p></div>
+</div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- REFERENCE                                                             -->
+<!-- ===================================================================== -->
+
+<section class="slide" data-title="Cheat sheet: PsychoPy">
+<div class="inner">
+  <div class="kicker">Reference</div>
+  <h2>Cheat sheet: the PsychoPy pieces we used</h2>
+  <table style="font-size:0.78em">
+    <tr><th>What you want</th><th>Code</th></tr>
+    <tr><td>Window</td><td><code>win = visual.Window(fullscr=True, units="height", color=BACKGROUND, colorSpace="rgb255")</code></td></tr>
+    <tr><td>Text / square / picture / video</td><td><code>visual.TextStim</code> · <code>visual.Rect</code> · <code>visual.ImageStim</code> · <code>visual.MovieStim</code></td></tr>
+    <tr><td>Show what you've drawn</td><td><code>stim.draw()</code> then <code>win.flip()</code></td></tr>
+    <tr><td>Wait for a key</td><td><code>kb.waitKeys(keyList=["s", "d"], waitRelease=False)</code></td></tr>
+    <tr><td>Accurate reaction time</td><td><code>win.callOnFlip(kb.clock.reset)</code> before <code>win.flip()</code></td></tr>
+    <tr><td>Wait a number of seconds</td><td><code>core.wait(0.25)</code></td></tr>
+    <tr><td>Mouse on a picture?</td><td><code>mouse = event.Mouse(win=win)</code> · <code>stim.contains(mouse)</code></td></tr>
+    <tr><td>Participant dialog</td><td><code>gui.DlgFromDict(info)</code></td></tr>
+    <tr><td>Video finished?</td><td><code>movie.isFinished</code> (not <code>movie.status</code>)</td></tr>
+    <tr><td>Quit</td><td><code>win.close()</code> · <code>core.quit()</code></td></tr>
+  </table>
+</div>
+</section>
+
+<section class="slide" data-title="Cheat sheet: Python">
+<div class="inner">
+  <div class="kicker">Reference</div>
+  <h2>Cheat sheet: the Python pieces, and where you saw them in w3schools</h2>
+  <table style="font-size:0.78em">
+    <tr><th>Idea</th><th>Where we used it</th></tr>
+    <tr><td>Lists, <code>.copy()</code>, <code>.append()</code></td><td>colors for each trial; <code>trial_rows</code></td></tr>
+    <tr><td>Dictionaries, <code>.items()</code></td><td><code>COLORS</code>, <code>CONDITIONS</code>, every CSV row</td></tr>
+    <tr><td>Nested data</td><td><code>CONDITIONS["dose"]["3x15s"]</code></td></tr>
+    <tr><td>For / while loops</td><td>trials, frames of a video, waiting for a click</td></tr>
+    <tr><td>List comprehensions</td><td>making the squares; finding clips not yet used</td></tr>
+    <tr><td>Functions with defaults</td><td><code>run_trial(trial, feedback=False)</code>, <code>log_memory(...)</code></td></tr>
+    <tr><td><code>zip</code>, <code>enumerate</code></td><td>pairing slots with colors; numbering trials</td></tr>
+    <tr><td>f-strings, <code>join</code></td><td>messages and CSV cells</td></tr>
+    <tr><td>Sets</td><td>selected pictures</td></tr>
+    <tr><td><code>random</code></td><td><code>sample</code>, <code>choice</code>, <code>shuffle</code></td></tr>
+    <tr><td>pandas</td><td><code>pd.DataFrame(rows).to_csv(...)</code> in <code>save_data</code></td></tr>
+  </table>
+  <p class="muted small">New in this workshop (not in w3schools' basic path): objects such as <code>win.flip()</code>, and <code>Path</code> from <code>pathlib</code>.</p>
+</div>
+</section>
+
+<section class="slide" data-title="Common problems">
+<div class="inner">
+  <div class="kicker">Reference</div>
+  <h2>Common problems</h2>
+  <table style="font-size:0.74em">
+    <tr><th>You see</th><th>Likely cause</th><th>Fix</th></tr>
+    <tr><td>A video never ends</td><td>waiting on <code>movie.status</code></td><td>use <code>while not movie.isFinished</code></td></tr>
+    <tr><td>Frozen screen for a few seconds before a long video</td><td>the video is loading</td><td>normal; the "Get ready…" screen covers it</td></tr>
+    <tr><td>Reaction times look too large / too regular</td><td>no <code>callOnFlip(kb.clock.reset)</code></td><td>add it before <code>win.flip()</code></td></tr>
+    <tr><td>Key press seems to need a release</td><td><code>waitRelease</code> left at its default (<code>True</code>)</td><td>pass <code>waitRelease=False</code></td></tr>
+    <tr><td>Every trial's colors repeat or change the wrong item</td><td>a list changed in place without <code>.copy()</code></td><td>copy before editing</td></tr>
+    <tr><td>"[a 45 s reward video would play here]"</td><td>no video files for that folder</td><td>check <code>GENRE</code> and the folder name</td></tr>
+    <tr><td>"still image(s) are missing"</td><td>stills not made</td><td>run <code>make_stills.py</code></td></tr>
+    <tr><td><code>ffmpeg is not installed</code></td><td>not on this computer's PATH</td><td>install ffmpeg or ask the lab</td></tr>
+    <tr><td>Only 4 trials and 6 s videos</td><td><code>DEV_MODE = True</code></td><td>set it to <code>False</code> for real sessions</td></tr>
+    <tr><td><code>NameError</code></td><td>a name used before it's defined</td><td>functions and settings must come <i>above</i> the code that calls them</td></tr>
+  </table>
+</div>
+</section>
+
+<section class="slide" data-title="Glossary">
+<div class="inner">
+  <div class="kicker">Reference</div>
+  <h2>Glossary</h2>
+  <table style="font-size:0.76em">
+    <tr><td><b>SFV</b></td><td>short-form video (TikTok/Reels-style clips)</td></tr>
+    <tr><td><b>VWM</b></td><td>visual working memory: holding a few things in mind for a few seconds</td></tr>
+    <tr><td><b>Change detection</b></td><td>see an array, wait, see it again: did anything change?</td></tr>
+    <tr><td><b>Set size</b></td><td>how many squares are in the array</td></tr>
+    <tr><td><b>Hit / miss</b></td><td>change trial: said "different" / said "same"</td></tr>
+    <tr><td><b>False alarm / correct rejection</b></td><td>no-change trial: said "different" / said "same"</td></tr>
+    <tr><td><b>Block</b></td><td>a group of conditions run together (Duration or Dose)</td></tr>
+    <tr><td><b>Condition</b></td><td>one level of the design, like "5s" or "3x15s", followed by 16 trials</td></tr>
+    <tr><td><b>Counterbalancing</b></td><td>varying order across participants so order doesn't favor one condition</td></tr>
+    <tr><td><b>Foil</b></td><td>a picture from a video the participant <i>didn't</i> watch</td></tr>
+    <tr><td><b>Frame / flip</b></td><td>one screen refresh; <code>win.flip()</code> puts what you drew on screen</td></tr>
+    <tr><td><b>Stimulus (stim)</b></td><td>anything you draw: text, a square, a picture, a video</td></tr>
+    <tr><td><b>Nominal vs played</b></td><td>the length the condition says vs how long a video actually ran</td></tr>
+  </table>
+</div>
+</section>
+
+
+</main>
+
+<div class="nav"><button id="prevBtn" aria-label="Previous slide">‹</button><button id="nextBtn" aria-label="Next slide">›</button></div>
+<div class="slide-num" id="slideNum"></div>
+
+<script>
+(function () {
+  // --- tiny Python highlighter -------------------------------------------
+  var KW = /^(import|from|as|def|return|for|in|if|elif|else|break|continue|while|is|assert|True|False|None|and|or|not|print|len|int|max|min|sum)$/;
+  var TOKEN = /(#[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|(___)|\b([A-Za-z_]\w*)\b|\b(\d+(?:\.\d+)?)\b/g;
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  document.querySelectorAll("code.py").forEach(function (el) {
+    var src = el.textContent, out = "", last = 0, m;
+    while ((m = TOKEN.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      var t = esc(m[0]);
+      if (m[1]) out += '<span class="tok-c">' + t + "</span>";
+      else if (m[2]) out += '<span class="tok-s">' + t + "</span>";
+      else if (m[3]) out += '<span class="tok-b">' + t + "</span>";
+      else if (m[4]) out += KW.test(m[4]) ? '<span class="tok-k">' + t + "</span>" : t;
+      else out += '<span class="tok-n">' + t + "</span>";
+      last = TOKEN.lastIndex;
+    }
+    el.innerHTML = out + esc(src.slice(last));
+  });
+
+  // --- slides / reference mode --------------------------------------------
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var body = document.body, cur = 0;
+  var progress = document.getElementById("progress");
+  var num = document.getElementById("slideNum");
+  var modeBtn = document.getElementById("modeBtn");
+
+  slides.forEach(function (s, i) {
+    s.id = "s" + (i + 1);
+    var li = document.createElement("li");
+    li.innerHTML = '<a href="#s' + (i + 1) + '">' + esc(s.dataset.title) + "</a>";
+    document.getElementById("tocList").appendChild(li);
+  });
+
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  function show(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, j) { s.classList.toggle("active", j === cur); });
+    num.textContent = (cur + 1) + " / " + slides.length;
+    progress.style.width = ((cur + 1) / slides.length * 100) + "%";
+    if (location.hash !== "#s" + (cur + 1)) history.replaceState(null, "", "#s" + (cur + 1));
+  }
+
+  function setMode(mode) {
+    body.classList.toggle("mode-slides", mode === "slides");
+    body.classList.toggle("mode-ref", mode === "ref");
+    modeBtn.textContent = mode === "slides" ? "📖 Reference view" : "▶ Slide view";
+    progress.style.display = mode === "slides" ? "" : "none";
+    store("ws4-mode", mode);
+    if (mode === "slides") show(cur);
+    else slides[cur].scrollIntoView({ block: "start" });
+  }
+
+  function hashIndex() {
+    var m = /^#s(\d+)$/.exec(location.hash);
+    return m ? parseInt(m[1], 10) - 1 : 0;
+  }
+
+  cur = hashIndex();
+  var saved = load("ws4-mode");
+  setMode(saved || (window.innerWidth < 760 ? "ref" : "slides"));
+
+  window.addEventListener("hashchange", function () {
+    cur = hashIndex();
+    if (body.classList.contains("mode-slides")) show(cur);
+  });
+
+  modeBtn.addEventListener("click", function () {
+    setMode(body.classList.contains("mode-slides") ? "ref" : "slides");
+  });
+  document.getElementById("prevBtn").addEventListener("click", function () { show(cur - 1); });
+  document.getElementById("nextBtn").addEventListener("click", function () { show(cur + 1); });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === "r" || k === "R") { modeBtn.click(); return; }
+    if (k === "f" || k === "F") {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {});
+      else document.exitFullscreen();
+      return;
+    }
+    if (!body.classList.contains("mode-slides")) return;
+    if (k === "ArrowRight" || k === "PageDown" || k === " ") { e.preventDefault(); show(cur + 1); }
+    else if (k === "ArrowLeft" || k === "PageUp") { e.preventDefault(); show(cur - 1); }
+    else if (k === "Home") show(0);
+    else if (k === "End") show(slides.length - 1);
+  });
+
+  // swipe on touch screens
+  var x0 = null;
+  document.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener("touchend", function (e) {
+    if (x0 === null || !body.classList.contains("mode-slides")) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+
+  // theme toggle (follows the system by default)
+  var root = document.documentElement;
+  var savedTheme = load("ws4-theme");
+  if (savedTheme) root.setAttribute("data-theme", savedTheme);
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme")
+      ? root.getAttribute("data-theme") === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    store("ws4-theme", next);
+  });
+})();
+</script>
+</body>
+</html>
